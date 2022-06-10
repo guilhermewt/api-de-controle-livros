@@ -14,7 +14,6 @@ public class serviceLivro {
 	@Autowired
 	private RepositorioLivro repositorio;
 	
-	
 	public List<Livro> findAll(){
 		return repositorio.findAll();
 	}

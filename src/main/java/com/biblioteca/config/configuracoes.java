@@ -7,8 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 
+import com.biblioteca.entities.Emprestimo;
 import com.biblioteca.entities.Livro;
 import com.biblioteca.entities.Usuario;
+import com.biblioteca.repository.RepositorioEmprestimo;
 import com.biblioteca.repository.RepositorioLivro;
 import com.biblioteca.repository.RepositorioUsuario;
 
@@ -20,6 +22,9 @@ public class configuracoes implements CommandLineRunner{
 	
 	@Autowired
 	private RepositorioLivro repositorioLivro;
+	
+	@Autowired
+	private RepositorioEmprestimo repositorioEmprestimo;
 	
 	@Override
 	public void run(String... args) throws Exception {
@@ -34,6 +39,11 @@ public class configuracoes implements CommandLineRunner{
 		lv1.setUsuario(user1);
 		
 		repositorioLivro.save(lv1);
+		
+		Emprestimo emp1 = new Emprestimo(1l, sdf.parse("2022/05/22"), sdf.parse("2022/06/26"));
+		emp1.setUsuario(user1);
+		
+		repositorioEmprestimo.save(emp1);
 		
 		
 		

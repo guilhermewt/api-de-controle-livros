@@ -28,6 +28,9 @@ public class Usuario implements Serializable{
 	@OneToMany(mappedBy = "usuario")
 	private Set<Livro> livro = new HashSet<>();
 	
+	@OneToMany(mappedBy = "usuario")
+	private Set<Emprestimo> emprestimos = new HashSet<>();
+	
 	public Usuario() {
 	}
 
@@ -86,6 +89,14 @@ public class Usuario implements Serializable{
 
 	public void setLivro(Set<Livro> livro) {
 		this.livro = livro;
+	}
+
+	public Set<Emprestimo> getEmprestimos() {
+		return emprestimos;
+	}
+
+	public void setEmprestimos(Set<Emprestimo> emprestimos) {
+		this.emprestimos = emprestimos;
 	}
 
 }
