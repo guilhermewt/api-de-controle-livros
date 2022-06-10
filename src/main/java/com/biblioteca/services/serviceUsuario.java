@@ -14,6 +14,7 @@ public class serviceUsuario {
 	@Autowired
 	private RepositorioUsuario service;
 	
+	
 	public List<Usuario> findAll(){
 		return service.findAll();
 	}

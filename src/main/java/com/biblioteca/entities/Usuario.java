@@ -1,11 +1,14 @@
 package com.biblioteca.entities;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -21,6 +24,9 @@ public class Usuario implements Serializable{
 	private String email;
 	private String login;
 	private String senha;
+	
+	@OneToMany(mappedBy = "usuario")
+	private Set<Livro> livro = new HashSet<>();
 	
 	public Usuario() {
 	}
@@ -73,5 +79,13 @@ public class Usuario implements Serializable{
 	public void setSenha(String senha) {
 		this.senha = senha;
 	}
-	
+
+	public Set<Livro> getLivro() {
+		return livro;
+	}
+
+	public void setLivro(Set<Livro> livro) {
+		this.livro = livro;
+	}
+
 }
