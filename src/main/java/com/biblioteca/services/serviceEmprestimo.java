@@ -6,42 +6,49 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.biblioteca.entities.Emprestimo;
+import com.biblioteca.entities.Livro;
 import com.biblioteca.entities.Usuario;
 import com.biblioteca.repository.RepositorioEmprestimo;
+import com.biblioteca.repository.RepositorioLivro;
 import com.biblioteca.repository.RepositorioUsuario;
 
 @Service
 public class serviceEmprestimo {
 	
 	@Autowired
-	private RepositorioEmprestimo repositorio;
+	private RepositorioEmprestimo repositorioEmprestimo;
 	
 	@Autowired
 	private RepositorioUsuario userRepositorio;
 	
+	@Autowired
+	private RepositorioLivro livroRepositorio;
+	
 	public List<Emprestimo> findAll(){
-		return repositorio.findAll();
+		return repositorioEmprestimo.findAll();
 	}
 	
 	public Emprestimo findById(long id) {
-		return repositorio.findById(id).get();
+		return repositorioEmprestimo.findById(id).get();
 	}
 	
-	public Emprestimo insert(Emprestimo obj,long id) {
+	public Emprestimo insert(long id,Emprestimo obj,long idLivro) {
 		Usuario usuario = userRepositorio.findById(id).get();
+		Livro livro = livroRepositorio.findById(idLivro).get();
 		obj.setUsuario(usuario);
-		return repositorio.save(obj);
+		obj.getLivros().add(livro);
+		return repositorioEmprestimo.save(obj);
 	}
 	
 	public void delete(long id) {
 		findById(id);
-		repositorio.deleteById(id);
+		repositorioEmprestimo.deleteById(id);
 	}
 	
 	public Emprestimo update(Emprestimo obj) {
-		Emprestimo Emprestimo = repositorio.findById(obj.getId()).get();
+		Emprestimo Emprestimo = repositorioEmprestimo.findById(obj.getId()).get();
 		updateData(Emprestimo,obj);
-		return repositorio.save(Emprestimo);
+		return repositorioEmprestimo.save(Emprestimo);
 	}
 
 	private void updateData(Emprestimo Emprestimo, Emprestimo obj) {

@@ -36,12 +36,15 @@ public class configuracoes implements CommandLineRunner{
 		repositorioUsuario.saveAll(Arrays.asList(user1,user2,user3));
 		
 		Livro lv1 = new Livro(1l,"the lord of the kings" , sdf.parse("2009/05/26"));
+		Livro lv2 = new Livro(2l,"o poder da acao" , sdf.parse("2012/04/01"));
 		lv1.setUsuario(user1);
+		lv2.setUsuario(user2);
 		
-		repositorioLivro.save(lv1);
+		repositorioLivro.saveAll(Arrays.asList(lv1,lv2));
 		
 		Emprestimo emp1 = new Emprestimo(1l, sdf.parse("2022/05/22"), sdf.parse("2022/06/26"));
 		emp1.setUsuario(user1);
+		emp1.getLivros().add(lv1);
 		
 		repositorioEmprestimo.save(emp1);
 		

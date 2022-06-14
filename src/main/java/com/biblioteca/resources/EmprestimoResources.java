@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.biblioteca.entities.Emprestimo;
+import com.biblioteca.entities.Livro;
 import com.biblioteca.services.serviceEmprestimo;
 
 @RestController
@@ -33,9 +34,10 @@ public class EmprestimoResources {
 		return ResponseEntity.ok().body(usuario);
 	}
 	
-	@RequestMapping(path = "/{id}",method = RequestMethod.POST)
-	public ResponseEntity<Emprestimo> insert(@PathVariable long id,  @RequestBody Emprestimo obj){
-		Emprestimo usuario = serviceEmprestimo.insert(obj,id);
+	//http://localhost:8080/emprestimos/2/2
+	@RequestMapping(path = "/{id}/{idLivro}",method = RequestMethod.POST)
+	public ResponseEntity<Emprestimo> insert(@PathVariable long id,  @RequestBody Emprestimo obj, @PathVariable long idLivro){
+		Emprestimo usuario = serviceEmprestimo.insert(id,obj,idLivro);
 		return ResponseEntity.ok().body(usuario);
 	}
 	
