@@ -38,7 +38,7 @@ public class configuracoes implements CommandLineRunner{
 		Livro lv1 = new Livro(1l,"the lord of the kings" , sdf.parse("2009/05/26"));
 		Livro lv2 = new Livro(2l,"o poder da acao" , sdf.parse("2012/04/01"));
 		lv1.setUsuario(user1);
-		lv2.setUsuario(user2);
+		lv2.setUsuario(user2); 
 		
 		repositorioLivro.saveAll(Arrays.asList(lv1,lv2));
 		
@@ -47,8 +47,6 @@ public class configuracoes implements CommandLineRunner{
 		emp1.getLivros().add(lv1);
 		
 		repositorioEmprestimo.save(emp1);
-		
-		
 		
 	}
 

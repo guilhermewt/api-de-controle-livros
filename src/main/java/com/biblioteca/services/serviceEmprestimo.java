@@ -33,11 +33,19 @@ public class serviceEmprestimo {
 	}
 	
 	public Emprestimo insert(long id,Emprestimo obj,long idLivro) {
-		Usuario usuario = userRepositorio.findById(id).get();
 		Livro livro = livroRepositorio.findById(idLivro).get();
-		obj.setUsuario(usuario);
-		obj.getLivros().add(livro);
-		return repositorioEmprestimo.save(obj);
+		Usuario usuario = userRepositorio.findById(id).get();
+		
+		boolean temLivro = usuario.getLivro().contains(livro);
+		if(temLivro == true) {
+		  obj.setUsuario(usuario);
+		  obj.getLivros().add(livro);
+		  return repositorioEmprestimo.save(obj);
+		}
+		else {
+			throw new IllegalAccessError("este livro nao pertence ao usuario");
+		}
+		
 	}
 	
 	public void delete(long id) {

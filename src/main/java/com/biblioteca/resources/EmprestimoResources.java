@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.biblioteca.entities.Emprestimo;
-import com.biblioteca.entities.Livro;
 import com.biblioteca.services.serviceEmprestimo;
 
 @RestController
@@ -21,6 +20,7 @@ public class EmprestimoResources {
 
 	@Autowired
 	private serviceEmprestimo serviceEmprestimo;
+	
 	
 	@GetMapping
 	public ResponseEntity<List<Emprestimo>> findAll(){
@@ -35,9 +35,9 @@ public class EmprestimoResources {
 	}
 	
 	//http://localhost:8080/emprestimos/2/2
-	@RequestMapping(path = "/{id}/{idLivro}",method = RequestMethod.POST)
-	public ResponseEntity<Emprestimo> insert(@PathVariable long id,  @RequestBody Emprestimo obj, @PathVariable long idLivro){
-		Emprestimo usuario = serviceEmprestimo.insert(id,obj,idLivro);
+	@RequestMapping(path = "/{idUsuario}/{idLivro}",method = RequestMethod.POST)
+	public ResponseEntity<Emprestimo> insert(@PathVariable long idUsuario,  @RequestBody Emprestimo obj, @PathVariable long idLivro){
+		Emprestimo usuario = serviceEmprestimo.insert(idUsuario,obj,idLivro);
 		return ResponseEntity.ok().body(usuario);
 	}
 	
@@ -54,3 +54,5 @@ public class EmprestimoResources {
 		return ResponseEntity.ok().body(usuario);
 	}
 }
+
+//so inserir livro se o livro for do usuario colocar livro e emprestimo no cascade all para ver o que acontece

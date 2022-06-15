@@ -6,13 +6,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.biblioteca.entities.Livro;
+import com.biblioteca.entities.Usuario;
 import com.biblioteca.repository.RepositorioLivro;
+import com.biblioteca.repository.RepositorioUsuario;
 
 @Service
 public class serviceLivro {
 	
 	@Autowired
 	private RepositorioLivro repositorio;
+	
+	@Autowired
+	private RepositorioUsuario repositorioUsuario;
 	
 	public List<Livro> findAll(){
 		return repositorio.findAll();
@@ -22,7 +27,9 @@ public class serviceLivro {
 		return repositorio.findById(id).get();
 	}
 	
-	public Livro insert(Livro obj) {
+	public Livro insert(Livro obj,long idUsuario) {
+		Usuario user = repositorioUsuario.findById(idUsuario).get();
+		obj.setUsuario(user);
 		return repositorio.save(obj);
 	}
 	

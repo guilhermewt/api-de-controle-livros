@@ -45,7 +45,7 @@ public class Livro implements Serializable{
 		this.anoPublicacao = anoPublicacao;
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 

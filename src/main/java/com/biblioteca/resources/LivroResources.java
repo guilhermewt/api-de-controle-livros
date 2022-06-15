@@ -33,10 +33,11 @@ public class LivroResources {
 		return ResponseEntity.ok().body(usuario);
 	}
 	
-	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<Livro> insert(@RequestBody Livro obj){
-		Livro usuario = serviceLivro.insert(obj);
-		return ResponseEntity.ok().body(usuario);
+	//http://localhost:8080/livros/3
+	@RequestMapping(path = "/{idUsuario}",method = RequestMethod.POST)
+	public ResponseEntity<Livro> insert(@PathVariable long idUsuario, @RequestBody Livro obj){
+		Livro livro = serviceLivro.insert(obj,idUsuario);
+		return ResponseEntity.ok().body(livro);
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
