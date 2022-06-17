@@ -35,6 +35,10 @@ public class Livro implements Serializable{
 	@ManyToMany(mappedBy = "livros")
 	private Set<Emprestimo> emprestimos = new HashSet<>();
 	
+	@ManyToOne
+	@JoinColumn(name = "editora_id")
+	private Editora editora;
+	
 	public Livro() {
 	}
 
@@ -85,6 +89,14 @@ public class Livro implements Serializable{
 
 	public void setEmprestimos(Set<Emprestimo> emprestimos) {
 		this.emprestimos = emprestimos;
+	}
+
+	public Editora getEditora() {
+		return editora;
+	}
+
+	public void setEditora(Editora editora) {
+		this.editora = editora;
 	}
 
 }

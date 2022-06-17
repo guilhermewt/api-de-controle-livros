@@ -21,7 +21,6 @@ public class EmprestimoResources {
 	@Autowired
 	private serviceEmprestimo serviceEmprestimo;
 	
-	
 	@GetMapping
 	public ResponseEntity<List<Emprestimo>> findAll(){
 		List<Emprestimo> list = serviceEmprestimo.findAll();

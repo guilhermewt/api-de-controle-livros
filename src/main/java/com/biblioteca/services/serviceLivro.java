@@ -5,8 +5,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.biblioteca.entities.Editora;
 import com.biblioteca.entities.Livro;
 import com.biblioteca.entities.Usuario;
+import com.biblioteca.repository.RepositorioEditora;
 import com.biblioteca.repository.RepositorioLivro;
 import com.biblioteca.repository.RepositorioUsuario;
 
@@ -15,6 +17,9 @@ public class serviceLivro {
 	
 	@Autowired
 	private RepositorioLivro repositorio;
+	
+	@Autowired
+	private RepositorioEditora editoraRepositorio;
 	
 	@Autowired
 	private RepositorioUsuario repositorioUsuario;
@@ -27,9 +32,11 @@ public class serviceLivro {
 		return repositorio.findById(id).get();
 	}
 	
-	public Livro insert(Livro obj,long idUsuario) {
+	public Livro insert(Livro obj,long idUsuario,long idEditora) {
 		Usuario user = repositorioUsuario.findById(idUsuario).get();
+		Editora editora = editoraRepositorio.findById(idEditora).get();
 		obj.setUsuario(user);
+		obj.setEditora(editora);
 		return repositorio.save(obj);
 	}
 	

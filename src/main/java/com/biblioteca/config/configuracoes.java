@@ -7,9 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 
+import com.biblioteca.entities.Editora;
 import com.biblioteca.entities.Emprestimo;
 import com.biblioteca.entities.Livro;
 import com.biblioteca.entities.Usuario;
+import com.biblioteca.repository.RepositorioEditora;
 import com.biblioteca.repository.RepositorioEmprestimo;
 import com.biblioteca.repository.RepositorioLivro;
 import com.biblioteca.repository.RepositorioUsuario;
@@ -26,6 +28,9 @@ public class configuracoes implements CommandLineRunner{
 	@Autowired
 	private RepositorioEmprestimo repositorioEmprestimo;
 	
+	@Autowired
+	private RepositorioEditora repositorioEditora;
+	
 	@Override
 	public void run(String... args) throws Exception {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
@@ -35,11 +40,20 @@ public class configuracoes implements CommandLineRunner{
 		
 		repositorioUsuario.saveAll(Arrays.asList(user1,user2,user3));
 		
+		Editora edit1 = new Editora(1l,"editora rocco");
+		Editora edit2 = new Editora(2l,"saraiva");
+		
+		repositorioEditora.saveAll(Arrays.asList(edit1,edit2));
+		
 		Livro lv1 = new Livro(1l,"the lord of the kings" , sdf.parse("2009/05/26"));
 		Livro lv2 = new Livro(2l,"o poder da acao" , sdf.parse("2012/04/01"));
+			
 		lv1.setUsuario(user1);
-		lv2.setUsuario(user2); 
+		lv2.setUsuario(user2);
 		
+		lv1.setEditora(edit2);
+		lv2.setEditora(edit1);
+ 		
 		repositorioLivro.saveAll(Arrays.asList(lv1,lv2));
 		
 		Emprestimo emp1 = new Emprestimo(1l, sdf.parse("2022/05/22"), sdf.parse("2022/06/26"));
