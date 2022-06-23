@@ -1,6 +1,7 @@
 package com.biblioteca.services;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,49 +14,51 @@ import com.biblioteca.repository.RepositorioAutor;
 import com.biblioteca.repository.RepositorioEditora;
 import com.biblioteca.repository.RepositorioLivro;
 import com.biblioteca.repository.RepositorioUsuario;
+import com.biblioteca.services.exceptions.ResourceNotFoundException;
 
 @Service
 public class serviceLivro {
 	
 	@Autowired
-	private RepositorioLivro repositorio;
+	private RepositorioLivro livroRepositorio;
 	
 	@Autowired
 	private RepositorioEditora editoraRepositorio;
 	
 	@Autowired
-	private RepositorioUsuario repositorioUsuario;
+	private RepositorioUsuario UsuarioRepositorio;
 	
 	@Autowired
 	private RepositorioAutor autorRepositorio;
 	
 	public List<Livro> findAll(){
-		return repositorio.findAll();
+		return livroRepositorio.findAll();
 	}
 	
 	public Livro findById(long id) {
-		return repositorio.findById(id).get();
+		Optional<Livro> livro = livroRepositorio.findById(id);
+		return livro.orElseThrow(() -> new ResourceNotFoundException(id));
 	}
 	
 	public Livro insert(Livro obj,long idUsuario,long idEditora,long idAutor) {
-		Usuario user = repositorioUsuario.findById(idUsuario).get();
+		Usuario user = UsuarioRepositorio.findById(idUsuario).get();
 		Editora editora = editoraRepositorio.findById(idEditora).get();
 		Autor autor = autorRepositorio.findById(idAutor).get();
 		obj.setUsuario(user);
 		obj.setEditora(editora);
 		obj.setAutor(autor);
-		return repositorio.save(obj);
+		return livroRepositorio.save(obj);
 	}
 	
 	public void delete(long id) {
 		findById(id);
-		repositorio.deleteById(id);
+		livroRepositorio.deleteById(id);
 	}
 	
 	public Livro update(Livro obj) {
-		Livro Livro = repositorio.findById(obj.getId()).get();
+		Livro Livro = livroRepositorio.findById(obj.getId()).get();
 		updateData(Livro,obj);
-		return repositorio.save(Livro);
+		return livroRepositorio.save(Livro);
 	}
 
 	private void updateData(Livro Livro, Livro obj) {

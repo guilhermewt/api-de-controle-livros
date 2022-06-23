@@ -1,6 +1,7 @@
 package com.biblioteca.services;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,12 +12,13 @@ import com.biblioteca.entities.Usuario;
 import com.biblioteca.repository.RepositorioEmprestimo;
 import com.biblioteca.repository.RepositorioLivro;
 import com.biblioteca.repository.RepositorioUsuario;
+import com.biblioteca.services.exceptions.ResourceNotFoundException;
 
 @Service
 public class serviceEmprestimo {
 	
 	@Autowired
-	private RepositorioEmprestimo repositorioEmprestimo;
+	private RepositorioEmprestimo emprestimoRepositorio;
 	
 	@Autowired
 	private RepositorioUsuario userRepositorio;
@@ -25,11 +27,12 @@ public class serviceEmprestimo {
 	private RepositorioLivro livroRepositorio;
 	
 	public List<Emprestimo> findAll(){
-		return repositorioEmprestimo.findAll();
+		return emprestimoRepositorio.findAll();
 	}
 	
 	public Emprestimo findById(long id) {
-		return repositorioEmprestimo.findById(id).get();
+		Optional<Emprestimo> emprestimo = emprestimoRepositorio.findById(id);
+		return emprestimo.orElseThrow(() -> new ResourceNotFoundException(id));
 	}
 	
 	public Emprestimo insert(long id,Emprestimo obj,long idLivro) {
@@ -40,7 +43,7 @@ public class serviceEmprestimo {
 		if(temLivro == true) {
 		  obj.setUsuario(usuario);
 		  obj.getLivros().add(livro);
-		  return repositorioEmprestimo.save(obj);
+		  return emprestimoRepositorio.save(obj);
 		}
 		else {
 			throw new IllegalAccessError("este livro nao pertence ao usuario");
@@ -50,13 +53,13 @@ public class serviceEmprestimo {
 	
 	public void delete(long id) {
 		findById(id);
-		repositorioEmprestimo.deleteById(id);
+		emprestimoRepositorio.deleteById(id);
 	}
 	
 	public Emprestimo update(Emprestimo obj) {
-		Emprestimo Emprestimo = repositorioEmprestimo.findById(obj.getId()).get();
+		Emprestimo Emprestimo = emprestimoRepositorio.findById(obj.getId()).get();
 		updateData(Emprestimo,obj);
-		return repositorioEmprestimo.save(Emprestimo);
+		return emprestimoRepositorio.save(Emprestimo);
 	}
 
 	private void updateData(Emprestimo Emprestimo, Emprestimo obj) {

@@ -21,7 +21,6 @@ public class LivroResources {
 	@Autowired
 	private serviceLivro serviceLivro;
 	
-	
 	@GetMapping
 	public ResponseEntity<List<Livro>> findAll(){
 		List<Livro> list = serviceLivro.findAll();

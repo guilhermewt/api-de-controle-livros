@@ -1,41 +1,43 @@
 package com.biblioteca.services;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.biblioteca.entities.Autor;
 import com.biblioteca.repository.RepositorioAutor;
+import com.biblioteca.services.exceptions.ResourceNotFoundException;
 
 @Service
 public class serviceAutor {
 	
 	@Autowired
-	private RepositorioAutor service;
-	
+	private RepositorioAutor serviceRepositorio;
 	
 	public List<Autor> findAll(){
-		return service.findAll();
+		return serviceRepositorio.findAll();
 	}
 	
 	public Autor findById(long id) {
-		return service.findById(id).get();
+		Optional<Autor> autor = serviceRepositorio.findById(id);
+		return autor.orElseThrow(() -> new ResourceNotFoundException(id));
 	}
 	
 	public Autor insert(Autor obj) {
-		return service.save(obj);
+		return serviceRepositorio.save(obj);
 	}
 	
 	public void delete(long id) {
 		findById(id);
-		service.deleteById(id);
+		serviceRepositorio.deleteById(id);
 	}
 	
 	public Autor update(Autor obj) {
-		Autor usuario = service.findById(obj.getId()).get();
+		Autor usuario = serviceRepositorio.findById(obj.getId()).get();
 		updateData(usuario,obj);
-		return service.save(usuario);
+		return serviceRepositorio.save(usuario);
 	}
 
 	private void updateData(Autor usuario, Autor obj) {
