@@ -39,6 +39,10 @@ public class Livro implements Serializable{
 	@JoinColumn(name = "editora_id")
 	private Editora editora;
 	
+	@ManyToOne
+	@JoinColumn(name = "autor_id")
+	private Autor autor;
+	
 	public Livro() {
 	}
 
@@ -99,4 +103,12 @@ public class Livro implements Serializable{
 		this.editora = editora;
 	}
 
+	public Autor getAutor() {
+		return autor;
+	}
+
+	public void setAutor(Autor autor) {
+		this.autor = autor;
+	}
+	
 }

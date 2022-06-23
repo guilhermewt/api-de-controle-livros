@@ -7,10 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 
+import com.biblioteca.entities.Autor;
 import com.biblioteca.entities.Editora;
 import com.biblioteca.entities.Emprestimo;
 import com.biblioteca.entities.Livro;
 import com.biblioteca.entities.Usuario;
+import com.biblioteca.repository.RepositorioAutor;
 import com.biblioteca.repository.RepositorioEditora;
 import com.biblioteca.repository.RepositorioEmprestimo;
 import com.biblioteca.repository.RepositorioLivro;
@@ -31,6 +33,9 @@ public class configuracoes implements CommandLineRunner{
 	@Autowired
 	private RepositorioEditora repositorioEditora;
 	
+	@Autowired
+	private RepositorioAutor repositorioAutor; 
+	
 	@Override
 	public void run(String... args) throws Exception {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
@@ -44,6 +49,10 @@ public class configuracoes implements CommandLineRunner{
 		Editora edit2 = new Editora(2l,"saraiva");
 		
 		repositorioEditora.saveAll(Arrays.asList(edit1,edit2));
+		
+		Autor autor = new Autor(1l,"nelson mandela");
+		
+		repositorioAutor.save(autor);
 		
 		Livro lv1 = new Livro(1l,"the lord of the kings" , sdf.parse("2009/05/26"));
 		Livro lv2 = new Livro(2l,"o poder da acao" , sdf.parse("2012/04/01"));

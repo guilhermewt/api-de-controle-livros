@@ -21,6 +21,7 @@ public class LivroResources {
 	@Autowired
 	private serviceLivro serviceLivro;
 	
+	
 	@GetMapping
 	public ResponseEntity<List<Livro>> findAll(){
 		List<Livro> list = serviceLivro.findAll();
@@ -34,9 +35,9 @@ public class LivroResources {
 	}
 	
 	//http://localhost:8080/livros/3/1
-	@RequestMapping(path = "/{idUsuario}/{idEditora}",method = RequestMethod.POST)
-	public ResponseEntity<Livro> insert(@PathVariable long idUsuario,@PathVariable long idEditora, @RequestBody Livro obj){
-		Livro livro = serviceLivro.insert(obj,idUsuario,idEditora);
+	@RequestMapping(path = "/{idUsuario}/{idEditora}/{idAutor}",method = RequestMethod.POST)
+	public ResponseEntity<Livro> insert(@PathVariable long idUsuario,@PathVariable long idEditora,@PathVariable long idAutor, @RequestBody Livro obj){
+		Livro livro = serviceLivro.insert(obj,idUsuario,idEditora,idAutor);
 		return ResponseEntity.ok().body(livro);
 	}
 	
