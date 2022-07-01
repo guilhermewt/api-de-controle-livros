@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,12 +36,14 @@ public class EmprestimoResources {
 	
 	//http://localhost:8080/emprestimos/2/2
 	@RequestMapping(path = "/{idUsuario}/{idLivro}",method = RequestMethod.POST)
+	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<Emprestimo> insert(@PathVariable long idUsuario,  @RequestBody Emprestimo obj, @PathVariable long idLivro){
 		Emprestimo usuario = serviceEmprestimo.insert(idUsuario,obj,idLivro);
 		return ResponseEntity.ok().body(usuario);
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<Emprestimo> delete(@PathVariable long id){
 		serviceEmprestimo.delete(id);
 		return ResponseEntity.noContent().build();

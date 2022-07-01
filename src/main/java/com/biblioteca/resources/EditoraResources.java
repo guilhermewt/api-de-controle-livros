@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,18 +35,21 @@ public class EditoraResources {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<Editora> insert(@RequestBody Editora obj){
 		Editora usuario = serviceEditora.insert(obj);
 		return ResponseEntity.ok().body(usuario);
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<Editora> delete(@PathVariable long id){
 		serviceEditora.delete(id);
 		return ResponseEntity.noContent().build();
 	}	
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<Editora> findById(@RequestBody Editora obj,  @PathVariable long id){
 		obj.setId(id);
 		Editora usuario = serviceEditora.update(obj);
