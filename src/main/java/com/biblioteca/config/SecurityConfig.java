@@ -1,5 +1,7 @@
 package com.biblioteca.config;
 
+import org.aspectj.lang.annotation.RequiredTypes;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -9,9 +11,14 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
+import com.biblioteca.services.serviceUsuario;
+
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
+	
+	@Autowired
+	private serviceUsuario usuarioService;
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -21,7 +28,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 		.anyRequest()
 		.authenticated()
 		.and()
-		.formLogin();
+		.httpBasic();
 	}
 	
 	@Override
@@ -37,5 +44,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 		.withUser("userBiblioteca")
 		.password(passwordEncoder.encode("biblioteca"))
 		.roles("User");
+		
+		auth.userDetailsService(usuarioService).passwordEncoder(passwordEncoder);
 	}
 }

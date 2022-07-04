@@ -7,5 +7,6 @@ import com.biblioteca.entities.Usuario;
 
 @Repository
 public interface RepositorioUsuario extends JpaRepository<Usuario, Long>{
-
+	
+	Usuario findByusername(String username);
 }

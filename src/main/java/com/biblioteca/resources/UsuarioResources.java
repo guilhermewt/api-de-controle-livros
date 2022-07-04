@@ -23,28 +23,28 @@ public class UsuarioResources {
 	private serviceUsuario serviceUsuario;
 	
 	@GetMapping
-	@PreAuthorize("hasRole('USER')")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<List<Usuario>> findAll(){
 		List<Usuario> list = serviceUsuario.findAll();
 		return ResponseEntity.ok().body(list);
 	}
 	
 	@RequestMapping(value = "/{id}")
-	@PreAuthorize("hasRole('USER')")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<Usuario> findById(@PathVariable long id){
 		Usuario usuario = serviceUsuario.findById(id);
 		return ResponseEntity.ok().body(usuario);
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
-	@PreAuthorize("hasRole('USER')")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<Usuario> insert(@RequestBody Usuario obj){
 		Usuario usuario = serviceUsuario.insert(obj);
 		return ResponseEntity.ok().body(usuario);
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	@PreAuthorize("hasRole('USER')")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<Usuario> delete(@PathVariable long id){
 		serviceUsuario.delete(id);
 		return ResponseEntity.noContent().build();

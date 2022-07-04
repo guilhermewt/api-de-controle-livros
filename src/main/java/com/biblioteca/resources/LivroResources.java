@@ -36,21 +36,18 @@ public class LivroResources {
 	
 	//http://localhost:8080/livros/3/1
 	@RequestMapping(path = "/{idUsuario}/{idEditora}/{idAutor}",method = RequestMethod.POST)
-	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<Livro> insert(@PathVariable long idUsuario,@PathVariable long idEditora,@PathVariable long idAutor, @RequestBody Livro obj){
 		Livro livro = serviceLivro.insert(obj,idUsuario,idEditora,idAutor);
 		return ResponseEntity.ok().body(livro);
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<Livro> delete(@PathVariable long id){
 		serviceLivro.delete(id);
 		return ResponseEntity.noContent().build();
 	}	
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<Livro> findById(@RequestBody Livro obj,  @PathVariable long id){
 		obj.setId(id);
 		Livro usuario = serviceLivro.update(obj);

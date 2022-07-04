@@ -1,8 +1,11 @@
 package com.biblioteca.entities;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,9 +14,13 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 @Entity
 @Table(name="tb_usuario")
-public class Usuario implements Serializable{
+public class Usuario implements Serializable, UserDetails{
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -23,7 +30,9 @@ public class Usuario implements Serializable{
 	private String nome;
 	private String email;
 	private String login;
-	private String senha;
+	private String username;
+	private String password;
+	private String authorities;
 	
 	@OneToMany(mappedBy = "usuario")
 	private Set<Livro> livro = new HashSet<>();
@@ -34,13 +43,16 @@ public class Usuario implements Serializable{
 	public Usuario() {
 	}
 
-	public Usuario(Long id, String nome, String email, String login, String senha) {
+	public Usuario(Long id, String nome, String email, String login, String username, String password,
+			String authorities) {
 		super();
 		this.id = id;
 		this.nome = nome;
 		this.email = email;
 		this.login = login;
-		this.senha = senha;
+		this.username = username;
+		this.password = password;
+		this.authorities = authorities;
 	}
 
 	public Long getId() {
@@ -75,14 +87,6 @@ public class Usuario implements Serializable{
 		this.login = login;
 	}
 
-	public String getSenha() {
-		return senha;
-	}
-
-	public void setSenha(String senha) {
-		this.senha = senha;
-	}
-
 	public Set<Livro> getLivro() {
 		return livro;
 	}
@@ -97,6 +101,59 @@ public class Usuario implements Serializable{
 
 	public void setEmprestimos(Set<Emprestimo> emprestimos) {
 		this.emprestimos = emprestimos;
+	}
+
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return Arrays.stream(authorities.split(","))
+				.map(SimpleGrantedAuthority::new)
+				.collect(Collectors.toList());
+	}
+	
+	public void setAuthorities(String authorities) {
+		this.authorities = authorities;
+	}
+
+	@Override
+	public String getPassword() {
+		return this.password;
+	}
+	
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	@Override
+	public String getUsername() {
+		return this.username;
+	}
+	
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	@Override
+	public boolean isAccountNonExpired() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		// TODO Auto-generated method stub
+		return true;
 	}
 
 }
