@@ -13,8 +13,19 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
 @Entity
 @Table(name = "tb_autor")
+@NoArgsConstructor
+@Getter
+@Setter
+@EqualsAndHashCode(of= {"id","nome"})
+@ToString
 public class Autor implements Serializable{
 
 	private static final long serialVersionUID = 1L;
@@ -26,39 +37,16 @@ public class Autor implements Serializable{
 	
 	@OneToMany(mappedBy = "autor")
 	private Set<Livro> livros = new HashSet<>();
-
-	public Autor() {
-	}
-
-	public Autor(long id,String nome) {
+	
+	public Autor(Long id, String nome) {
 		super();
 		this.id = id;
 		this.nome = nome;
 	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getNome() {
-		return nome;
-	}
-
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
-
+	
 	@JsonIgnore
 	public Set<Livro> getLivros() {
 		return livros;
-	}
-
-	public void setLivros(Set<Livro> livros) {
-		this.livros = livros;
 	}
 	
 }

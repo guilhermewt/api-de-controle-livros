@@ -13,8 +13,19 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
 @Entity
 @Table(name = "tb_editora")
+@NoArgsConstructor
+@Getter
+@Setter
+@EqualsAndHashCode(of= {"id","nome"})
+@ToString
 public class Editora implements Serializable{
 
 	private static final long serialVersionUID = 1L;
@@ -26,29 +37,10 @@ public class Editora implements Serializable{
 	
 	@OneToMany(mappedBy = "editora")
 	private Set<Livro> livros = new HashSet<>();
-
-	public Editora() {
-	}
-
-	public Editora(long id,String nome) {
+	
+	public Editora(Long id, String nome) {
 		super();
 		this.id = id;
-		this.nome = nome;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getNome() {
-		return nome;
-	}
-
-	public void setNome(String nome) {
 		this.nome = nome;
 	}
 
@@ -57,8 +49,4 @@ public class Editora implements Serializable{
 		return livros;
 	}
 
-	public void setLivros(Set<Livro> livros) {
-		this.livros = livros;
-	}
-	
 }

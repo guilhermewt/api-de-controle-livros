@@ -68,6 +68,9 @@ public class configuracoes implements CommandLineRunner{
 		
 		lv1.setEditora(edit2);
 		lv2.setEditora(edit1);
+		
+		lv1.setAutor(autor);
+		lv2.setAutor(autor);
  		
 		repositorioLivro.saveAll(Arrays.asList(lv1,lv2));
 		

@@ -16,8 +16,19 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
 @Entity
 @Table(name = "tb_emprestimo")
+@NoArgsConstructor
+@Getter
+@Setter
+@EqualsAndHashCode(of= {"id"})
+@ToString
 public class Emprestimo {
 	
 	@Id
@@ -35,57 +46,16 @@ public class Emprestimo {
 	                                , inverseJoinColumns = @JoinColumn(name = "livro_id"))
 	private Set<Livro> livros = new HashSet<>();
 	
-	public Emprestimo() {
-	}
-
 	public Emprestimo(Long id, Date dataEmprestimo, Date dataDevolucao) {
 		super();
 		this.id = id;
 		this.dataEmprestimo = dataEmprestimo;
 		this.dataDevolucao = dataDevolucao;
 	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public Date getDataEmprestimo() {
-		return dataEmprestimo;
-	}
-
-	public void setDataEmprestimo(Date dataEmprestimo) {
-		this.dataEmprestimo = dataEmprestimo;
-	}
-
-	public Date getDataDevolucao() {
-		return dataDevolucao;
-	}
-
-	public void setDataDevolucao(Date dataDevolucao) {
-		this.dataDevolucao = dataDevolucao;
-	}
-
+	
 	@JsonIgnore
 	public Usuario getUsuario() {
 		return usuario;
 	}
-
-	public void setUsuario(Usuario usuario) {
-		this.usuario = usuario;
-	}
-
-	public Set<Livro> getLivros() {
-		return livros;
-	}
-
-	public void setLivros(Set<Livro> livros) {
-		this.livros = livros;
-	}
-	
-	
 
 }
