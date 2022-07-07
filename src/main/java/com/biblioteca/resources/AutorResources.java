@@ -15,7 +15,7 @@ import com.biblioteca.entities.Autor;
 import com.biblioteca.services.serviceAutor;
 
 @RestController
-@RequestMapping(value = "/autor")
+@RequestMapping(value = "/autores")
 public class AutorResources {
 
 	@Autowired

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import com.biblioteca.entities.Usuario;
 import com.biblioteca.repository.RepositorioUsuario;
+import com.biblioteca.services.exceptions.DatabaseException;
 import com.biblioteca.services.exceptions.ResourceNotFoundException;
 
 @Service
@@ -20,7 +22,6 @@ public class serviceUsuario implements UserDetailsService{
 	
 	@Autowired
 	private RepositorioUsuario serviceRepository;
-	
 	
 	public List<Usuario> findAll(){
 		return serviceRepository.findAll();
@@ -38,8 +39,13 @@ public class serviceUsuario implements UserDetailsService{
 	}
 	
 	public void delete(long id) {
+		try {
 		findById(id);
 		serviceRepository.deleteById(id);
+		}
+		catch(DataIntegrityViolationException e) {
+			throw new DatabaseException(e.getMessage());
+		}
 	}
 	
 	public Usuario update(Usuario obj) {
