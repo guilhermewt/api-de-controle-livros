@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.biblioteca.entities.Autor;
+import com.biblioteca.requests.AutorPostRequestBody;
+import com.biblioteca.requests.AutorPutRequestBody;
 import com.biblioteca.services.serviceAutor;
 
 @RestController
@@ -34,9 +36,8 @@ public class AutorResources {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<Autor> insert(@RequestBody Autor obj){
-		Autor usuario = serviceAutor.insert(obj);
-		return ResponseEntity.ok().body(usuario);
+	public ResponseEntity<Autor> insert(@RequestBody AutorPostRequestBody autorPostRequestBody){
+		return ResponseEntity.ok().body(serviceAutor.insert(autorPostRequestBody));
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
@@ -45,10 +46,9 @@ public class AutorResources {
 		return ResponseEntity.noContent().build();
 	}	
 	
-	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-	public ResponseEntity<Autor> findById(@RequestBody Autor obj,  @PathVariable long id){
-		obj.setId(id);
-		Autor usuario = serviceAutor.update(obj);
-		return ResponseEntity.ok().body(usuario);
+	@RequestMapping(method = RequestMethod.PUT)
+	public ResponseEntity<Autor> findById(@RequestBody AutorPutRequestBody autorPutRequestBody){
+		serviceAutor.update(autorPutRequestBody);
+		return ResponseEntity.noContent().build();
 	}
 }

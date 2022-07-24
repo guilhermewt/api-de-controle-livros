@@ -1,5 +1,6 @@
 package com.biblioteca.entities;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -16,20 +17,21 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import lombok.Builder;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "tb_emprestimo")
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
 @EqualsAndHashCode(of= {"id"})
-@ToString
-public class Emprestimo {
+@SuperBuilder
+public class Emprestimo implements Serializable{
+	
+	private static final long serialVersionUID = 1L;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,7 +45,8 @@ public class Emprestimo {
 	
 	@ManyToMany
 	@JoinTable(name = "tb_emprestimo_livro", joinColumns = @JoinColumn(name = "emprestimo_id")
-	                                , inverseJoinColumns = @JoinColumn(name = "livro_id"))
+                                                           , inverseJoinColumns = @JoinColumn(name = "livro_id"))
+    
 	private Set<Livro> livros = new HashSet<>();
 	
 	public Emprestimo(Long id, Date dataEmprestimo, Date dataDevolucao) {

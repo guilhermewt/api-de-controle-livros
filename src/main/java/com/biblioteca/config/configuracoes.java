@@ -76,7 +76,7 @@ public class configuracoes implements CommandLineRunner{
 		
 		Emprestimo emp1 = new Emprestimo(1l, sdf.parse("2022/05/22"), sdf.parse("2022/06/26"));
 		emp1.setUsuario(user1);
-		emp1.getLivros().add(lv1);
+		emp1.getLivros().add(lv2);
 		
 		repositorioEmprestimo.save(emp1);
 		

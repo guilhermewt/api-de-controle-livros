@@ -3,7 +3,6 @@ package com.biblioteca.services;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,14 +13,18 @@ import org.springframework.stereotype.Service;
 
 import com.biblioteca.entities.Usuario;
 import com.biblioteca.repository.RepositorioUsuario;
+import com.biblioteca.requests.UsuarioPostRequestBody;
+import com.biblioteca.requests.UsuarioPutRequestBody;
 import com.biblioteca.services.exceptions.DatabaseException;
 import com.biblioteca.services.exceptions.ResourceNotFoundException;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class serviceUsuario implements UserDetailsService{
 	
-	@Autowired
-	private RepositorioUsuario serviceRepository;
+	private final RepositorioUsuario serviceRepository;
 	
 	public List<Usuario> findAll(){
 		return serviceRepository.findAll();
@@ -32,10 +35,18 @@ public class serviceUsuario implements UserDetailsService{
 		return usuario.orElseThrow(() -> new ResourceNotFoundException(id)); 
 	}
 	
-	public Usuario insert(Usuario obj) {
+	public void insert(UsuarioPostRequestBody usuarioPutRequestBody) {
 		PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-		obj.setPassword(passwordEncoder.encode(obj.getPassword()));
-		return serviceRepository.save(obj);
+		
+		Usuario usuario = Usuario.builder()
+		.nome(usuarioPutRequestBody.getNome())
+		.email(usuarioPutRequestBody.getEmail())
+		.login(usuarioPutRequestBody.getLogin())
+		.username(usuarioPutRequestBody.getUsername())
+		.password(passwordEncoder.encode(usuarioPutRequestBody.getPassword()))
+		.authorities(usuarioPutRequestBody.getAuthorities()).build();
+		
+	    serviceRepository.save(usuario);
 	}
 	
 	public void delete(long id) {
@@ -48,20 +59,21 @@ public class serviceUsuario implements UserDetailsService{
 		}
 	}
 	
-	public Usuario update(Usuario obj) {
-		Usuario usuario = serviceRepository.findById(obj.getId()).get();
-		updateData(usuario,obj);
+	public Usuario update(UsuarioPutRequestBody usuarioPutRequestBody) {
+		PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+		Usuario savedUsuario = serviceRepository.findById(usuarioPutRequestBody.getId()).get();
+		Usuario usuario = Usuario.builder()
+				.id(savedUsuario.getId())
+				.nome(usuarioPutRequestBody.getNome())
+				.email(usuarioPutRequestBody.getEmail())
+				.login(usuarioPutRequestBody.getLogin())
+				.username(usuarioPutRequestBody.getUsername())
+				.password(passwordEncoder.encode(usuarioPutRequestBody.getPassword()))
+				.authorities(usuarioPutRequestBody.getAuthorities()).build();
+		
 		return serviceRepository.save(usuario);
 	}
 
-	private void updateData(Usuario usuario, Usuario obj) {
-		PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-		usuario.setNome(obj.getNome());
-		usuario.setEmail(obj.getEmail());
-		usuario.setLogin(obj.getLogin());
-		usuario.setUsername(obj.getUsername());
-		usuario.setPassword(passwordEncoder.encode(obj.getPassword()));
-	}
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

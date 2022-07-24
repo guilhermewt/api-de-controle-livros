@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.biblioteca.entities.Usuario;
+import com.biblioteca.requests.UsuarioPostRequestBody;
+import com.biblioteca.requests.UsuarioPutRequestBody;
 import com.biblioteca.services.serviceUsuario;
 
 @RestController
@@ -38,9 +40,9 @@ public class UsuarioResources {
 	
 	@RequestMapping(method = RequestMethod.POST)
 	@PreAuthorize("hasRole('ADMIN')")
-	public ResponseEntity<Usuario> insert(@RequestBody Usuario obj){
-		Usuario usuario = serviceUsuario.insert(obj);
-		return ResponseEntity.ok().body(usuario);
+	public ResponseEntity<Void> insert(@RequestBody UsuarioPostRequestBody usuarioPostRequestBody){
+	    serviceUsuario.insert(usuarioPostRequestBody);
+		return ResponseEntity.noContent().build();
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
@@ -50,11 +52,10 @@ public class UsuarioResources {
 		return ResponseEntity.noContent().build();
 	}	
 	
-	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+	@RequestMapping(method = RequestMethod.PUT)
 	@PreAuthorize("hasRole('ADMIN')")
-	public ResponseEntity<Usuario> findById(@RequestBody Usuario obj,  @PathVariable long id){
-		obj.setId(id);
-		Usuario usuario = serviceUsuario.update(obj);
-		return ResponseEntity.ok().body(usuario);
+	public ResponseEntity<Usuario> findById(@RequestBody UsuarioPutRequestBody usuarioPutRequestBody){
+		serviceUsuario.update(usuarioPutRequestBody);
+		return ResponseEntity.noContent().build();
 	}
 }

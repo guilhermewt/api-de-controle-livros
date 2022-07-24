@@ -16,19 +16,18 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import lombok.Builder;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "tb_livro")
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
 @EqualsAndHashCode(of={"id","titulo"})
-@ToString
+@SuperBuilder
 public class Livro implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -44,6 +43,7 @@ public class Livro implements Serializable {
 	private Usuario usuario;
 
 	@ManyToMany(mappedBy = "livros")
+	@Builder.Default
 	private Set<Emprestimo> emprestimos = new HashSet<>();
 
 	@ManyToOne

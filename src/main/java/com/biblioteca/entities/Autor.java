@@ -13,29 +13,29 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import lombok.Builder;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "tb_autor")
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
 @EqualsAndHashCode(of= {"id","nome"})
-@ToString
+@SuperBuilder
 public class Autor implements Serializable{
 
 	private static final long serialVersionUID = 1L;
-
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String nome;
 	
 	@OneToMany(mappedBy = "autor")
+	@Builder.Default
 	private Set<Livro> livros = new HashSet<>();
 	
 	public Autor(Long id, String nome) {

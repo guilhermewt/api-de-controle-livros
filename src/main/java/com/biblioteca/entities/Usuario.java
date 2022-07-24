@@ -18,23 +18,22 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import lombok.Builder;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "tb_usuario")
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
 @EqualsAndHashCode(of= {"id","nome"})
-@ToString
+@SuperBuilder
 public class Usuario implements Serializable, UserDetails {
 
 	private static final long serialVersionUID = 1L;
-
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -46,9 +45,11 @@ public class Usuario implements Serializable, UserDetails {
 	private String authorities;
 
 	@OneToMany(mappedBy = "usuario")
+	@Builder.Default
 	private Set<Livro> livro = new HashSet<>();
 
 	@OneToMany(mappedBy = "usuario")
+	@Builder.Default
 	private Set<Emprestimo> emprestimos = new HashSet<>();
 	
 	public Usuario(Long id, String nome, String email, String login, String username, String password,
@@ -76,10 +77,6 @@ public class Usuario implements Serializable, UserDetails {
 	@Override
 	public String getUsername() {
 		return this.username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
 	}
 
 	@Override
