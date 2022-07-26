@@ -30,12 +30,11 @@ public class serviceUsuario implements UserDetailsService{
 		return serviceRepository.findAll();
 	}
 	
-	public Usuario findById(long id) {
-		Optional<Usuario> usuario = serviceRepository.findById(id);
-		return usuario.orElseThrow(() -> new ResourceNotFoundException(id)); 
+	public Usuario findByIdOrElseThrowResourceNotFoundException(long id) {
+		return serviceRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
 	}
 	
-	public void insert(UsuarioPostRequestBody usuarioPutRequestBody) {
+	public Usuario insert(UsuarioPostRequestBody usuarioPutRequestBody) {
 		PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 		
 		Usuario usuario = Usuario.builder()
@@ -46,13 +45,12 @@ public class serviceUsuario implements UserDetailsService{
 		.password(passwordEncoder.encode(usuarioPutRequestBody.getPassword()))
 		.authorities(usuarioPutRequestBody.getAuthorities()).build();
 		
-	    serviceRepository.save(usuario);
+	    return serviceRepository.save(usuario);
 	}
 	
 	public void delete(long id) {
 		try {
-		findById(id);
-		serviceRepository.deleteById(id);
+		serviceRepository.delete(findByIdOrElseThrowResourceNotFoundException(id));
 		}
 		catch(DataIntegrityViolationException e) {
 			throw new DatabaseException(e.getMessage());

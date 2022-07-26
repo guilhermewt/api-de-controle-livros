@@ -1,9 +1,7 @@
 package com.biblioteca.services;
 
 import java.util.List;
-import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
@@ -12,19 +10,20 @@ import com.biblioteca.repository.RepositorioEditora;
 import com.biblioteca.services.exceptions.DatabaseException;
 import com.biblioteca.services.exceptions.ResourceNotFoundException;
 
-@Service
-public class serviceEditora {
+import lombok.RequiredArgsConstructor;
 
-	@Autowired
-	private RepositorioEditora editoraRepositorio;
+@Service
+@RequiredArgsConstructor
+public class serviceEditora {
+	
+	private final RepositorioEditora editoraRepositorio;
 
 	public List<Editora> findAll() {
 		return editoraRepositorio.findAll();
 	}
 
-	public Editora findById(long id) {
-		Optional<Editora> editora = editoraRepositorio.findById(id);
-		return editora.orElseThrow(() -> new ResourceNotFoundException(id));
+	public Editora findByIdOrElseThrowResourceNotFoundException(long id) {
+		return editoraRepositorio.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
 	}
 
 	public Editora insert(Editora obj) {
@@ -33,8 +32,7 @@ public class serviceEditora {
 
 	public void delete(long id) {
 		try {
-			findById(id);
-			editoraRepositorio.deleteById(id);
+			editoraRepositorio.delete(findByIdOrElseThrowResourceNotFoundException(id));
 		} catch (DataIntegrityViolationException e) {
 			throw new DatabaseException(e.getMessage());
 		}

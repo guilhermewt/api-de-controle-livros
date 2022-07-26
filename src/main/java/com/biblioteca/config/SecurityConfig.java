@@ -1,6 +1,5 @@
 package com.biblioteca.config;
 
-import org.aspectj.lang.annotation.RequiredTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -9,7 +8,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 import com.biblioteca.services.serviceUsuario;
 
@@ -25,6 +23,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 		http.csrf().disable()
 		//.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
 		.authorizeRequests()
+		.antMatchers("/usuarios/admin/**").hasRole("ADMIN")
+		.antMatchers("/usuarios/**").hasRole("USER")
 		.anyRequest()
 		.authenticated()
 		.and()

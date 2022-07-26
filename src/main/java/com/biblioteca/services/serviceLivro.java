@@ -1,9 +1,7 @@
 package com.biblioteca.services;
 
 import java.util.List;
-import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
@@ -18,28 +16,26 @@ import com.biblioteca.repository.RepositorioUsuario;
 import com.biblioteca.services.exceptions.DatabaseException;
 import com.biblioteca.services.exceptions.ResourceNotFoundException;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class serviceLivro {
 
-	@Autowired
-	private RepositorioLivro livroRepositorio;
+	private final RepositorioLivro livroRepositorio;
 
-	@Autowired
-	private RepositorioEditora editoraRepositorio;
+	private final RepositorioEditora editoraRepositorio;
 
-	@Autowired
-	private RepositorioUsuario UsuarioRepositorio;
+	private final RepositorioUsuario UsuarioRepositorio;
 
-	@Autowired
-	private RepositorioAutor autorRepositorio;
+	private final RepositorioAutor autorRepositorio;
 
 	public List<Livro> findAll() {
 		return livroRepositorio.findAll();
 	}
 
-	public Livro findById(long id) {
-		Optional<Livro> livro = livroRepositorio.findById(id);
-		return livro.orElseThrow(() -> new ResourceNotFoundException(id));
+	public Livro findByIdOrElseThrowResourceNotFoundException(long id) {
+		return  livroRepositorio.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
 	}
 
 	public Livro insert(Livro obj, long idUsuario, long idEditora, long idAutor) {
@@ -54,8 +50,7 @@ public class serviceLivro {
 
 	public void delete(long id) {
 		try {
-			findById(id);
-			livroRepositorio.deleteById(id);
+			livroRepositorio.delete(findByIdOrElseThrowResourceNotFoundException(id));
 		} catch (DataIntegrityViolationException e) {
 			throw new DatabaseException(e.getMessage());
 		}

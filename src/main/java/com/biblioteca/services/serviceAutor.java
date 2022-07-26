@@ -1,9 +1,7 @@
 package com.biblioteca.services;
 
 import java.util.List;
-import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
@@ -14,19 +12,20 @@ import com.biblioteca.requests.AutorPutRequestBody;
 import com.biblioteca.services.exceptions.DatabaseException;
 import com.biblioteca.services.exceptions.ResourceNotFoundException;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class serviceAutor {
 
-	@Autowired
-	private RepositorioAutor serviceRepositorio;
+	private final RepositorioAutor serviceRepositorio;
 
 	public List<Autor> findAll() {
 		return serviceRepositorio.findAll();
 	}
 
-	public Autor findById(long id) {
-		Optional<Autor> autor = serviceRepositorio.findById(id);
-		return autor.orElseThrow(() -> new ResourceNotFoundException(id));
+	public Autor findByIdOrElseThrowResourceNotFoundException(long id) {
+		return serviceRepositorio.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
 	}
 
 	public Autor insert(AutorPostRequestBody autorPostRequestBody) {
@@ -36,7 +35,7 @@ public class serviceAutor {
 
 	public void delete(long id) {
 		try {
-			serviceRepositorio.delete(findById(id));
+			serviceRepositorio.delete(findByIdOrElseThrowResourceNotFoundException(id));
 		} catch (DataIntegrityViolationException e) {
 			throw new DatabaseException(e.getMessage());
 		}
@@ -44,7 +43,6 @@ public class serviceAutor {
 
 	public void update(AutorPutRequestBody autorPutRequestBody) {
 		Autor savedUsuario = serviceRepositorio.findById(autorPutRequestBody.getId()).get();
-
 		serviceRepositorio.save(Autor.builder().id(savedUsuario.getId()).nome(autorPutRequestBody.getNome()).build());
 	}
 

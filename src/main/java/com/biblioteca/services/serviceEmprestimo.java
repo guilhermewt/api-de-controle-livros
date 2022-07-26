@@ -1,9 +1,7 @@
 package com.biblioteca.services;
 
 import java.util.List;
-import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
@@ -16,25 +14,24 @@ import com.biblioteca.repository.RepositorioUsuario;
 import com.biblioteca.services.exceptions.DatabaseException;
 import com.biblioteca.services.exceptions.ResourceNotFoundException;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class serviceEmprestimo {
+	
+	private final RepositorioEmprestimo emprestimoRepositorio;
 
-	@Autowired
-	private RepositorioEmprestimo emprestimoRepositorio;
+	private final RepositorioUsuario userRepositorio;
 
-	@Autowired
-	private RepositorioUsuario userRepositorio;
-
-	@Autowired
-	private RepositorioLivro livroRepositorio;
+	private final RepositorioLivro livroRepositorio;
 
 	public List<Emprestimo> findAll() {
 		return emprestimoRepositorio.findAll();
 	}
 
-	public Emprestimo findById(long id) {
-		Optional<Emprestimo> emprestimo = emprestimoRepositorio.findById(id);
-		return emprestimo.orElseThrow(() -> new ResourceNotFoundException(id));
+	public Emprestimo findByIdOrElseThrowResourceNotFoundException(long id) {
+		return emprestimoRepositorio.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));	
 	}
 
 	public Emprestimo insert(long id, Emprestimo obj, long idLivro) {
@@ -54,8 +51,7 @@ public class serviceEmprestimo {
 
 	public void delete(long id) {
 		try {
-			findById(id);
-			emprestimoRepositorio.deleteById(id);
+			emprestimoRepositorio.delete(findByIdOrElseThrowResourceNotFoundException(id));
 		} catch (DataIntegrityViolationException e) {
 			throw new DatabaseException(e.getMessage());
 		}

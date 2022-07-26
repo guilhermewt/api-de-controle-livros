@@ -2,55 +2,55 @@ package com.biblioteca.resources;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.biblioteca.entities.Livro;
 import com.biblioteca.services.serviceLivro;
 
+import lombok.RequiredArgsConstructor;
+
 @RestController
 @RequestMapping(value = "/livros")
+@RequiredArgsConstructor
 public class LivroResources {
 
-	@Autowired
-	private serviceLivro serviceLivro;
+	private final serviceLivro serviceLivro;
 	
 	@GetMapping
 	public ResponseEntity<List<Livro>> findAll(){
-		List<Livro> list = serviceLivro.findAll();
-		return ResponseEntity.ok().body(list);
+		return ResponseEntity.ok(serviceLivro.findAll());
 	}
 	
-	@RequestMapping(value = "/{id}")
+	@GetMapping(value = "/{id}")
 	public ResponseEntity<Livro> findById(@PathVariable long id){
-		Livro usuario = serviceLivro.findById(id);
-		return ResponseEntity.ok().body(usuario);
+		return ResponseEntity.ok(serviceLivro.findByIdOrElseThrowResourceNotFoundException(id));
 	}
 	
 	//http://localhost:8080/livros/3/1
-	@RequestMapping(path = "/{idUsuario}/{idEditora}/{idAutor}",method = RequestMethod.POST)
+	@PostMapping(path = "/{idUsuario}/{idEditora}/{idAutor}")
 	public ResponseEntity<Livro> insert(@PathVariable long idUsuario,@PathVariable long idEditora,@PathVariable long idAutor, @RequestBody Livro obj){
-		Livro livro = serviceLivro.insert(obj,idUsuario,idEditora,idAutor);
-		return ResponseEntity.ok().body(livro);
+		return ResponseEntity.ok(serviceLivro.insert(obj,idUsuario,idEditora,idAutor));
 	}
 	
-	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<Livro> delete(@PathVariable long id){
 		serviceLivro.delete(id);
-		return ResponseEntity.noContent().build();
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}	
 	
-	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-	public ResponseEntity<Livro> findById(@RequestBody Livro obj,  @PathVariable long id){
+    @PutMapping(value = "/{id}")
+	public ResponseEntity<Livro> update(@RequestBody Livro obj,  @PathVariable long id){
 		obj.setId(id);
-		Livro usuario = serviceLivro.update(obj);
-		return ResponseEntity.ok().body(usuario);
+		serviceLivro.update(obj);
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 }

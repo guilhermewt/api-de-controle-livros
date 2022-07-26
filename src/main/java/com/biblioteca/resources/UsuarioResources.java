@@ -2,14 +2,15 @@ package com.biblioteca.resources;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.biblioteca.entities.Usuario;
@@ -17,45 +18,39 @@ import com.biblioteca.requests.UsuarioPostRequestBody;
 import com.biblioteca.requests.UsuarioPutRequestBody;
 import com.biblioteca.services.serviceUsuario;
 
+import lombok.RequiredArgsConstructor;
+
 @RestController
 @RequestMapping(value = "/usuarios")
+@RequiredArgsConstructor
 public class UsuarioResources {
 
-	@Autowired
-	private serviceUsuario serviceUsuario;
-	
+	private final serviceUsuario serviceUsuario;
+
 	@GetMapping
-	@PreAuthorize("hasRole('ADMIN')")
-	public ResponseEntity<List<Usuario>> findAll(){
-		List<Usuario> list = serviceUsuario.findAll();
-		return ResponseEntity.ok().body(list);
+	public ResponseEntity<List<Usuario>> findAll() {
+		return ResponseEntity.ok(serviceUsuario.findAll());
 	}
-	
-	@RequestMapping(value = "/{id}")
-	@PreAuthorize("hasRole('ADMIN')")
-	public ResponseEntity<Usuario> findById(@PathVariable long id){
-		Usuario usuario = serviceUsuario.findById(id);
-		return ResponseEntity.ok().body(usuario);
+
+	@GetMapping(value = "/{id}")
+	public ResponseEntity<Usuario> findById(@PathVariable long id) {
+		return ResponseEntity.ok(serviceUsuario.findByIdOrElseThrowResourceNotFoundException(id));
 	}
-	
-	@RequestMapping(method = RequestMethod.POST)
-	@PreAuthorize("hasRole('ADMIN')")
-	public ResponseEntity<Void> insert(@RequestBody UsuarioPostRequestBody usuarioPostRequestBody){
-	    serviceUsuario.insert(usuarioPostRequestBody);
-		return ResponseEntity.noContent().build();
+
+	@PostMapping
+	public ResponseEntity<Usuario> insert(@RequestBody UsuarioPostRequestBody usuarioPostRequestBody) {
+		return new ResponseEntity<>(serviceUsuario.insert(usuarioPostRequestBody),HttpStatus.CREATED);
 	}
-	
-	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	@PreAuthorize("hasRole('ADMIN')")
-	public ResponseEntity<Usuario> delete(@PathVariable long id){
+
+	@DeleteMapping(path = "/{id}")
+	public ResponseEntity<Usuario> delete(@PathVariable long id) {
 		serviceUsuario.delete(id);
-		return ResponseEntity.noContent().build();
-	}	
-	
-	@RequestMapping(method = RequestMethod.PUT)
-	@PreAuthorize("hasRole('ADMIN')")
-	public ResponseEntity<Usuario> findById(@RequestBody UsuarioPutRequestBody usuarioPutRequestBody){
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	}
+
+	@PutMapping
+	public ResponseEntity<Usuario> update(@RequestBody UsuarioPutRequestBody usuarioPutRequestBody) {
 		serviceUsuario.update(usuarioPutRequestBody);
-		return ResponseEntity.noContent().build();
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 }
