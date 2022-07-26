@@ -15,8 +15,7 @@ import com.biblioteca.entities.Usuario;
 import com.biblioteca.repository.RepositorioUsuario;
 import com.biblioteca.requests.UsuarioPostRequestBody;
 import com.biblioteca.requests.UsuarioPutRequestBody;
-import com.biblioteca.services.exceptions.DatabaseException;
-import com.biblioteca.services.exceptions.ResourceNotFoundException;
+import com.biblioteca.services.exceptions.BadRequestException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,7 +30,7 @@ public class serviceUsuario implements UserDetailsService{
 	}
 	
 	public Usuario findByIdOrElseThrowResourceNotFoundException(long id) {
-		return serviceRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
+		return serviceRepository.findById(id).orElseThrow(() -> new BadRequestException("usuario not found"));
 	}
 	
 	public Usuario insert(UsuarioPostRequestBody usuarioPutRequestBody) {
@@ -53,7 +52,7 @@ public class serviceUsuario implements UserDetailsService{
 		serviceRepository.delete(findByIdOrElseThrowResourceNotFoundException(id));
 		}
 		catch(DataIntegrityViolationException e) {
-			throw new DatabaseException(e.getMessage());
+			throw new BadRequestException(e.getMessage());
 		}
 	}
 	

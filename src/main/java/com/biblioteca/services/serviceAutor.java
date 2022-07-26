@@ -9,8 +9,7 @@ import com.biblioteca.entities.Autor;
 import com.biblioteca.repository.RepositorioAutor;
 import com.biblioteca.requests.AutorPostRequestBody;
 import com.biblioteca.requests.AutorPutRequestBody;
-import com.biblioteca.services.exceptions.DatabaseException;
-import com.biblioteca.services.exceptions.ResourceNotFoundException;
+import com.biblioteca.services.exceptions.BadRequestException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,7 +24,7 @@ public class serviceAutor {
 	}
 
 	public Autor findByIdOrElseThrowResourceNotFoundException(long id) {
-		return serviceRepositorio.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
+		return serviceRepositorio.findById(id).orElseThrow(() -> new BadRequestException("autor not found"));
 	}
 
 	public Autor insert(AutorPostRequestBody autorPostRequestBody) {
@@ -37,7 +36,7 @@ public class serviceAutor {
 		try {
 			serviceRepositorio.delete(findByIdOrElseThrowResourceNotFoundException(id));
 		} catch (DataIntegrityViolationException e) {
-			throw new DatabaseException(e.getMessage());
+			throw new BadRequestException(e.getMessage());
 		}
 	}
 

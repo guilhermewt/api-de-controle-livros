@@ -11,8 +11,7 @@ import com.biblioteca.entities.Usuario;
 import com.biblioteca.repository.RepositorioEmprestimo;
 import com.biblioteca.repository.RepositorioLivro;
 import com.biblioteca.repository.RepositorioUsuario;
-import com.biblioteca.services.exceptions.DatabaseException;
-import com.biblioteca.services.exceptions.ResourceNotFoundException;
+import com.biblioteca.services.exceptions.BadRequestException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,7 +30,7 @@ public class serviceEmprestimo {
 	}
 
 	public Emprestimo findByIdOrElseThrowResourceNotFoundException(long id) {
-		return emprestimoRepositorio.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));	
+		return emprestimoRepositorio.findById(id).orElseThrow(() -> new BadRequestException("emprestimo not found"));	
 	}
 
 	public Emprestimo insert(long id, Emprestimo obj, long idLivro) {
@@ -53,7 +52,7 @@ public class serviceEmprestimo {
 		try {
 			emprestimoRepositorio.delete(findByIdOrElseThrowResourceNotFoundException(id));
 		} catch (DataIntegrityViolationException e) {
-			throw new DatabaseException(e.getMessage());
+			throw new BadRequestException(e.getMessage());
 		}
 	}
 

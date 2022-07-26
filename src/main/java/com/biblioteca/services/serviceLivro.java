@@ -13,8 +13,7 @@ import com.biblioteca.repository.RepositorioAutor;
 import com.biblioteca.repository.RepositorioEditora;
 import com.biblioteca.repository.RepositorioLivro;
 import com.biblioteca.repository.RepositorioUsuario;
-import com.biblioteca.services.exceptions.DatabaseException;
-import com.biblioteca.services.exceptions.ResourceNotFoundException;
+import com.biblioteca.services.exceptions.BadRequestException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -35,7 +34,7 @@ public class serviceLivro {
 	}
 
 	public Livro findByIdOrElseThrowResourceNotFoundException(long id) {
-		return  livroRepositorio.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
+		return  livroRepositorio.findById(id).orElseThrow(() -> new BadRequestException("livro not founnd"));
 	}
 
 	public Livro insert(Livro obj, long idUsuario, long idEditora, long idAutor) {
@@ -52,7 +51,7 @@ public class serviceLivro {
 		try {
 			livroRepositorio.delete(findByIdOrElseThrowResourceNotFoundException(id));
 		} catch (DataIntegrityViolationException e) {
-			throw new DatabaseException(e.getMessage());
+			throw new BadRequestException(e.getMessage());
 		}
 	}
 

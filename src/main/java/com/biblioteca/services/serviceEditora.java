@@ -7,8 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.biblioteca.entities.Editora;
 import com.biblioteca.repository.RepositorioEditora;
-import com.biblioteca.services.exceptions.DatabaseException;
-import com.biblioteca.services.exceptions.ResourceNotFoundException;
+import com.biblioteca.services.exceptions.BadRequestException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,7 +22,7 @@ public class serviceEditora {
 	}
 
 	public Editora findByIdOrElseThrowResourceNotFoundException(long id) {
-		return editoraRepositorio.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
+		return editoraRepositorio.findById(id).orElseThrow(() -> new BadRequestException("editora not found"));
 	}
 
 	public Editora insert(Editora obj) {
@@ -34,7 +33,7 @@ public class serviceEditora {
 		try {
 			editoraRepositorio.delete(findByIdOrElseThrowResourceNotFoundException(id));
 		} catch (DataIntegrityViolationException e) {
-			throw new DatabaseException(e.getMessage());
+			throw new BadRequestException(e.getMessage());
 		}
 	}
 
