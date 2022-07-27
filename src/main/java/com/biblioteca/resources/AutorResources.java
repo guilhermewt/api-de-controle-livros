@@ -2,6 +2,8 @@ package com.biblioteca.resources;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -38,7 +40,7 @@ public class AutorResources {
 	}
 	
 	@PostMapping
-	public ResponseEntity<Autor> insert(@RequestBody AutorPostRequestBody autorPostRequestBody){
+	public ResponseEntity<Autor> insert(@RequestBody @Valid AutorPostRequestBody autorPostRequestBody){
 		return new ResponseEntity<>(serviceAutor.insert(autorPostRequestBody),HttpStatus.CREATED);
 	}
 	

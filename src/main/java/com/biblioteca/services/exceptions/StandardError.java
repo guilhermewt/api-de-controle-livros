@@ -12,11 +12,10 @@ public class StandardError implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	
-	private Instant timestamp;
-	private Integer status;
-	private String title;
-	private String details;
-	private String developerMessage;
-	
+	protected Instant timestamp;
+	protected Integer status;
+	protected String title;
+	protected String details;
+	protected String developerMessage;
 
 }

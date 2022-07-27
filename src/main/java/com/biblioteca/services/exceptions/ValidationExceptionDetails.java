@@ -5,9 +5,11 @@ import lombok.experimental.SuperBuilder;
 
 @Getter
 @SuperBuilder
-public class BadRequestExceptionDetails extends StandardError {
-
+public class ValidationExceptionDetails extends StandardError{
+	
 	private static final long serialVersionUID = 1L;
-
+	
+	private final String fields;
+	private final String fieldsMessage;
 
 }
