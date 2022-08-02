@@ -1,12 +1,12 @@
 package com.biblioteca.requests;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.validation.constraints.NotEmpty;
-
 import com.biblioteca.entities.Livro;
+import com.biblioteca.entities.Usuario;
 
 import lombok.Builder;
 import lombok.Data;
@@ -16,18 +16,22 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @Data
 @SuperBuilder
-public class AutorPostRequestBody implements Serializable{
-	/////mapstruct do autor,editora,usuario
+public class EmprestimosPostRequestBody implements Serializable{
+	
 	private static final long serialVersionUID = 1L;
-
-	@NotEmpty(message = "the autor name cannot be empty")
-	private String nome;
-
+	
+	private Date dataEmprestimo;
+	private Date dataDevolucao;
+		
+	private Usuario usuario;
+    
 	@Builder.Default
 	private Set<Livro> livros = new HashSet<>();
-
-	public AutorPostRequestBody(String nome) {
+	
+	public EmprestimosPostRequestBody(Date dataEmprestimo, Date dataDevolucao) {
 		super();
-		this.nome = nome;
+		this.dataEmprestimo = dataEmprestimo;
+		this.dataDevolucao = dataDevolucao;
 	}
+
 }

@@ -9,10 +9,13 @@ import com.biblioteca.entities.Autor;
 import com.biblioteca.entities.Editora;
 import com.biblioteca.entities.Livro;
 import com.biblioteca.entities.Usuario;
+import com.biblioteca.mapper.LivroMapper;
 import com.biblioteca.repository.RepositorioAutor;
 import com.biblioteca.repository.RepositorioEditora;
 import com.biblioteca.repository.RepositorioLivro;
 import com.biblioteca.repository.RepositorioUsuario;
+import com.biblioteca.requests.LivroPostRequestBody;
+import com.biblioteca.requests.LivroPutRequestBody;
 import com.biblioteca.services.exceptions.BadRequestException;
 
 import lombok.RequiredArgsConstructor;
@@ -37,14 +40,17 @@ public class serviceLivro {
 		return  livroRepositorio.findById(id).orElseThrow(() -> new BadRequestException("livro not founnd"));
 	}
 
-	public Livro insert(Livro obj, long idUsuario, long idEditora, long idAutor) {
+	public Livro insert(LivroPostRequestBody livroPostRequestBody, long idUsuario, long idEditora, long idAutor) {
 		Usuario user = UsuarioRepositorio.findById(idUsuario).get();
 		Editora editora = editoraRepositorio.findById(idEditora).get();
 		Autor autor = autorRepositorio.findById(idAutor).get();
-		obj.setUsuario(user);
-		obj.setEditora(editora);
-		obj.setAutor(autor);
-		return livroRepositorio.save(obj);
+		
+		Livro livro = LivroMapper.INSTANCE.toLivro(livroPostRequestBody);
+		
+		livro.setUsuario(user);
+		livro.setEditora(editora);
+		livro.setAutor(autor);
+		return livroRepositorio.save(livro);
 	}
 
 	public void delete(long id) {
@@ -55,15 +61,10 @@ public class serviceLivro {
 		}
 	}
 
-	public Livro update(Livro obj) {
-		Livro Livro = livroRepositorio.findById(obj.getId()).get();
-		updateData(Livro, obj);
-		return livroRepositorio.save(Livro);
-	}
-
-	private void updateData(Livro Livro, Livro obj) {
-		Livro.setTitulo(obj.getTitulo());
-		Livro.setAnoPublicacao(obj.getAnoPublicacao());
-
+	public void update(LivroPutRequestBody livroPutRequestBody) {
+		Livro livroSaved = livroRepositorio.findById(livroPutRequestBody.getId()).get();
+		Livro livro = LivroMapper.INSTANCE.toLivro(livroPutRequestBody);
+		livro.setId(livroSaved.getId());
+		livroRepositorio.save(livro);
 	}
 }

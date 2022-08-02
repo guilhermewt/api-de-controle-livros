@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.biblioteca.entities.Usuario;
+import com.biblioteca.mapper.UsuarioMapper;
 import com.biblioteca.repository.RepositorioUsuario;
 import com.biblioteca.requests.UsuarioPostRequestBody;
 import com.biblioteca.requests.UsuarioPutRequestBody;
@@ -33,16 +34,11 @@ public class serviceUsuario implements UserDetailsService{
 		return serviceRepository.findById(id).orElseThrow(() -> new BadRequestException("usuario not found"));
 	}
 	
-	public Usuario insert(UsuarioPostRequestBody usuarioPutRequestBody) {
+	public Usuario insert(UsuarioPostRequestBody usuarioPostRequestBody) {
 		PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 		
-		Usuario usuario = Usuario.builder()
-		.nome(usuarioPutRequestBody.getNome())
-		.email(usuarioPutRequestBody.getEmail())
-		.login(usuarioPutRequestBody.getLogin())
-		.username(usuarioPutRequestBody.getUsername())
-		.password(passwordEncoder.encode(usuarioPutRequestBody.getPassword()))
-		.authorities(usuarioPutRequestBody.getAuthorities()).build();
+		Usuario usuario = UsuarioMapper.INSTANCE.toUsuario(usuarioPostRequestBody);
+		usuario.setPassword(passwordEncoder.encode(usuarioPostRequestBody.getPassword()));
 		
 	    return serviceRepository.save(usuario);
 	}
@@ -59,14 +55,9 @@ public class serviceUsuario implements UserDetailsService{
 	public Usuario update(UsuarioPutRequestBody usuarioPutRequestBody) {
 		PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 		Usuario savedUsuario = serviceRepository.findById(usuarioPutRequestBody.getId()).get();
-		Usuario usuario = Usuario.builder()
-				.id(savedUsuario.getId())
-				.nome(usuarioPutRequestBody.getNome())
-				.email(usuarioPutRequestBody.getEmail())
-				.login(usuarioPutRequestBody.getLogin())
-				.username(usuarioPutRequestBody.getUsername())
-				.password(passwordEncoder.encode(usuarioPutRequestBody.getPassword()))
-				.authorities(usuarioPutRequestBody.getAuthorities()).build();
+		Usuario usuario = UsuarioMapper.INSTANCE.toUsuario(usuarioPutRequestBody);
+		usuario.setId(savedUsuario.getId());
+		usuario.setPassword(passwordEncoder.encode(usuarioPutRequestBody.getPassword()));
 		
 		return serviceRepository.save(usuario);
 	}

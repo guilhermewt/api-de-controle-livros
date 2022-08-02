@@ -6,6 +6,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.biblioteca.entities.Autor;
+import com.biblioteca.mapper.AutorMapper;
 import com.biblioteca.repository.RepositorioAutor;
 import com.biblioteca.requests.AutorPostRequestBody;
 import com.biblioteca.requests.AutorPutRequestBody;
@@ -28,8 +29,7 @@ public class serviceAutor {
 	}
 
 	public Autor insert(AutorPostRequestBody autorPostRequestBody) {
-		Autor autor = Autor.builder().nome(autorPostRequestBody.getNome()).build();
-		return serviceRepositorio.save(autor);
+		return serviceRepositorio.save(AutorMapper.INSTANCE.toAutor(autorPostRequestBody));
 	}
 
 	public void delete(long id) {
@@ -42,7 +42,9 @@ public class serviceAutor {
 
 	public void update(AutorPutRequestBody autorPutRequestBody) {
 		Autor savedUsuario = serviceRepositorio.findById(autorPutRequestBody.getId()).get();
-		serviceRepositorio.save(Autor.builder().id(savedUsuario.getId()).nome(autorPutRequestBody.getNome()).build());
+		Autor autor = AutorMapper.INSTANCE.toAutor(autorPutRequestBody);
+		autor.setId(savedUsuario.getId());
+		serviceRepositorio.save(autor);
 	}
 
 }

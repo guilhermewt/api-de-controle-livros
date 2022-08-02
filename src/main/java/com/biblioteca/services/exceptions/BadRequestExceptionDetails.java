@@ -9,5 +9,4 @@ public class BadRequestExceptionDetails extends StandardError {
 
 	private static final long serialVersionUID = 1L;
 
-
 }

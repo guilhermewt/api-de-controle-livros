@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.biblioteca.entities.Livro;
+import com.biblioteca.requests.LivroPostRequestBody;
+import com.biblioteca.requests.LivroPutRequestBody;
 import com.biblioteca.services.serviceLivro;
 
 import lombok.RequiredArgsConstructor;
@@ -37,8 +39,8 @@ public class LivroResources {
 	
 	//http://localhost:8080/livros/3/1
 	@PostMapping(path = "/{idUsuario}/{idEditora}/{idAutor}")
-	public ResponseEntity<Livro> insert(@PathVariable long idUsuario,@PathVariable long idEditora,@PathVariable long idAutor, @RequestBody Livro obj){
-		return ResponseEntity.ok(serviceLivro.insert(obj,idUsuario,idEditora,idAutor));
+	public ResponseEntity<Livro> insert(@PathVariable long idUsuario,@PathVariable long idEditora,@PathVariable long idAutor, @RequestBody LivroPostRequestBody livroPostRequestBody){
+		return new ResponseEntity<Livro>(serviceLivro.insert(livroPostRequestBody,idUsuario,idEditora,idAutor), HttpStatus.CREATED);
 	}
 	
 	@DeleteMapping(value = "/{id}")
@@ -47,10 +49,9 @@ public class LivroResources {
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}	
 	
-    @PutMapping(value = "/{id}")
-	public ResponseEntity<Livro> update(@RequestBody Livro obj,  @PathVariable long id){
-		obj.setId(id);
-		serviceLivro.update(obj);
+    @PutMapping
+	public ResponseEntity<Livro> update(@RequestBody LivroPutRequestBody livroPutRequestBody){
+		serviceLivro.update(livroPutRequestBody);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 }

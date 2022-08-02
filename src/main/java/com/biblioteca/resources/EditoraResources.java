@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.biblioteca.entities.Editora;
+import com.biblioteca.requests.EditoraPostRequestBody;
+import com.biblioteca.requests.EditoraPutRequestBody;
 import com.biblioteca.services.serviceEditora;
 
 import lombok.RequiredArgsConstructor;
@@ -36,8 +38,8 @@ public class EditoraResources {
 	}
 	
 	@PostMapping
-	public ResponseEntity<Editora> insert(@RequestBody Editora obj){
-		return new ResponseEntity<Editora>(serviceEditora.insert(obj), HttpStatus.CREATED);
+	public ResponseEntity<Editora> insert(@RequestBody EditoraPostRequestBody editoraPostRequestBody){
+		return new ResponseEntity<>(serviceEditora.insert(editoraPostRequestBody), HttpStatus.CREATED);
 	}
 	
 	@DeleteMapping(value = "/{id}")
@@ -46,10 +48,9 @@ public class EditoraResources {
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}	
 	
-    @PutMapping(value = "/{id}")
-	public ResponseEntity<Editora> update(@RequestBody Editora obj,  @PathVariable long id){
-		obj.setId(id);
-		serviceEditora.update(obj);
+    @PutMapping()
+	public ResponseEntity<Editora> update(@RequestBody EditoraPutRequestBody editoraPutRequestBody){
+		serviceEditora.update(editoraPutRequestBody);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 }

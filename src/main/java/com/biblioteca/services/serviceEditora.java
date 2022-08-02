@@ -6,7 +6,10 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.biblioteca.entities.Editora;
+import com.biblioteca.mapper.EditoraMapper;
 import com.biblioteca.repository.RepositorioEditora;
+import com.biblioteca.requests.EditoraPostRequestBody;
+import com.biblioteca.requests.EditoraPutRequestBody;
 import com.biblioteca.services.exceptions.BadRequestException;
 
 import lombok.RequiredArgsConstructor;
@@ -25,8 +28,8 @@ public class serviceEditora {
 		return editoraRepositorio.findById(id).orElseThrow(() -> new BadRequestException("editora not found"));
 	}
 
-	public Editora insert(Editora obj) {
-		return editoraRepositorio.save(obj);
+	public Editora insert(EditoraPostRequestBody editoraPostRequestBody) {
+		return editoraRepositorio.save(EditoraMapper.INSTANCE.toEditora(editoraPostRequestBody));
 	}
 
 	public void delete(long id) {
@@ -37,13 +40,12 @@ public class serviceEditora {
 		}
 	}
 
-	public Editora update(Editora obj) {
-		Editora usuario = editoraRepositorio.findById(obj.getId()).get();
-		updateData(usuario, obj);
-		return editoraRepositorio.save(usuario);
+	public void update(EditoraPutRequestBody editoraPutRequestBody) {
+		Editora editoraSaved = editoraRepositorio.findById(editoraPutRequestBody.getId()).get();
+		Editora editora = EditoraMapper.INSTANCE.toEditora(editoraPutRequestBody);
+		editora.setId(editoraSaved.getId());
+		
+		editoraRepositorio.save(editora);
 	}
 
-	private void updateData(Editora usuario, Editora obj) {
-		usuario.setNome(obj.getNome());
-	}
 }

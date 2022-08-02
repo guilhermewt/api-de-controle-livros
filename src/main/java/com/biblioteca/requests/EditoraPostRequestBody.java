@@ -4,30 +4,34 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.validation.constraints.NotEmpty;
-
 import com.biblioteca.entities.Livro;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-@NoArgsConstructor
 @Data
 @SuperBuilder
-public class AutorPostRequestBody implements Serializable{
-	/////mapstruct do autor,editora,usuario
+@NoArgsConstructor
+public class EditoraPostRequestBody implements Serializable{
+	
 	private static final long serialVersionUID = 1L;
 
-	@NotEmpty(message = "the autor name cannot be empty")
 	private String nome;
-
+	
 	@Builder.Default
 	private Set<Livro> livros = new HashSet<>();
 
-	public AutorPostRequestBody(String nome) {
+	public EditoraPostRequestBody(String nome) {
 		super();
 		this.nome = nome;
 	}
+	
+	@JsonIgnore
+	public Set<Livro> getLivros() {
+		return livros;
+	}
+
 }
