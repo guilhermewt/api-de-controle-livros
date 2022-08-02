@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.validation.constraints.NotEmpty;
+
 import com.biblioteca.entities.Livro;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -19,6 +21,7 @@ public class EditoraPostRequestBody implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 
+	@NotEmpty(message = "the editora name cannot be empty")
 	private String nome;
 	
 	@Builder.Default

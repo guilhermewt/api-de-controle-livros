@@ -2,6 +2,8 @@ package com.biblioteca.resources;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -38,7 +40,7 @@ public class UsuarioResources {
 	}
 
 	@PostMapping
-	public ResponseEntity<Usuario> insert(@RequestBody UsuarioPostRequestBody usuarioPostRequestBody) {
+	public ResponseEntity<Usuario> insert(@RequestBody @Valid UsuarioPostRequestBody usuarioPostRequestBody) {
 		return new ResponseEntity<>(serviceUsuario.insert(usuarioPostRequestBody),HttpStatus.CREATED);
 	}
 

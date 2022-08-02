@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.springframework.lang.NonNull;
+
 import com.biblioteca.entities.Livro;
 import com.biblioteca.entities.Usuario;
 
@@ -20,7 +22,10 @@ public class EmprestimosPostRequestBody implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 	
+	@NonNull
 	private Date dataEmprestimo;
+	
+	@NonNull
 	private Date dataDevolucao;
 		
 	private Usuario usuario;

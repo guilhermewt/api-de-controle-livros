@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotEmpty;
 
 import com.biblioteca.entities.Emprestimo;
 import com.biblioteca.entities.Livro;
@@ -20,11 +21,17 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class UsuarioPostRequestBody{
 	
+	@NotEmpty
 	private String nome;
+	@NotEmpty
 	private String email;
+	@NotEmpty
 	private String login;
+	@NotEmpty
 	private String username;
+	@NotEmpty
 	private String password;
+	@NotEmpty
 	private String authorities;
 
 	@OneToMany(mappedBy = "usuario")

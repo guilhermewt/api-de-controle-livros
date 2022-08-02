@@ -5,6 +5,10 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.validation.constraints.NotEmpty;
+
+import org.springframework.lang.NonNull;
+
 import com.biblioteca.entities.Autor;
 import com.biblioteca.entities.Editora;
 import com.biblioteca.entities.Emprestimo;
@@ -22,7 +26,10 @@ public class LivroPostRequestBody implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 	
+	@NotEmpty(message = "the livro titulo cannot be empty")
 	private String titulo;
+	
+	@NonNull
 	private Date anoPublicacao;
 	
 	private Usuario usuario;

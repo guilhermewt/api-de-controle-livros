@@ -2,6 +2,8 @@ package com.biblioteca.resources;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -39,7 +41,7 @@ public class EmprestimoResources {
 	
 	//http://localhost:8080/emprestimos/2/2
 	@PostMapping(path = "/{idUsuario}/{idLivro}")
-	public ResponseEntity<Emprestimo> insert(@PathVariable long idUsuario,  @RequestBody EmprestimosPostRequestBody emprestimosPostRequestBody, @PathVariable long idLivro){
+	public ResponseEntity<Emprestimo> insert(@PathVariable long idUsuario,  @RequestBody @Valid EmprestimosPostRequestBody emprestimosPostRequestBody, @PathVariable long idLivro){
 		return new ResponseEntity<Emprestimo>(serviceEmprestimo.insert(idUsuario,emprestimosPostRequestBody,idLivro), HttpStatus.CREATED);
 	}
 	
