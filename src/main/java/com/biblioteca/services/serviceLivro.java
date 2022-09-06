@@ -2,7 +2,11 @@ package com.biblioteca.services;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.biblioteca.entities.Autor;
@@ -32,15 +36,20 @@ public class serviceLivro {
 
 	private final RepositorioAutor autorRepositorio;
 
-	public List<Livro> findAll() {
+	public List<Livro> findAllNonPageable() {
 		return livroRepositorio.findAll();
+	}
+	
+	public Page<Livro> findAll(Pageable pageable) {
+		return livroRepositorio.findAll(pageable);
 	}
 
 	public Livro findByIdOrElseThrowResourceNotFoundException(long id) {
 		return  livroRepositorio.findById(id).orElseThrow(() -> new BadRequestException("livro not founnd"));
 	}
 
-	public Livro insert(LivroPostRequestBody livroPostRequestBody, long idUsuario, long idEditora, long idAutor) {
+	@Transactional
+	public Livro save(LivroPostRequestBody livroPostRequestBody, long idUsuario, long idEditora, long idAutor) {
 		Usuario user = UsuarioRepositorio.findById(idUsuario).get();
 		Editora editora = editoraRepositorio.findById(idEditora).get();
 		Autor autor = autorRepositorio.findById(idAutor).get();

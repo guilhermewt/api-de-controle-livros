@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -29,9 +31,14 @@ public class EmprestimoResources {
 
 	private final serviceEmprestimo serviceEmprestimo;
 	
+	@GetMapping(value = "/all")
+	public ResponseEntity<List<Emprestimo>> findAllNonPageable(){
+		return ResponseEntity.ok(serviceEmprestimo.findAllNonPageable());
+	}
+	
 	@GetMapping
-	public ResponseEntity<List<Emprestimo>> findAll(){
-		return ResponseEntity.ok(serviceEmprestimo.findAll());
+	public ResponseEntity<Page<Emprestimo>> findAll(Pageable pageable){
+		return ResponseEntity.ok(serviceEmprestimo.findAll(pageable));
 	}
 	
 	@GetMapping(value = "/{id}")
@@ -41,8 +48,8 @@ public class EmprestimoResources {
 	
 	//http://localhost:8080/emprestimos/2/2
 	@PostMapping(path = "/{idUsuario}/{idLivro}")
-	public ResponseEntity<Emprestimo> insert(@PathVariable long idUsuario,  @RequestBody @Valid EmprestimosPostRequestBody emprestimosPostRequestBody, @PathVariable long idLivro){
-		return new ResponseEntity<Emprestimo>(serviceEmprestimo.insert(idUsuario,emprestimosPostRequestBody,idLivro), HttpStatus.CREATED);
+	public ResponseEntity<Emprestimo> save(@PathVariable long idUsuario,  @RequestBody @Valid EmprestimosPostRequestBody emprestimosPostRequestBody, @PathVariable long idLivro){
+		return new ResponseEntity<>(serviceEmprestimo.save(idUsuario,emprestimosPostRequestBody,idLivro), HttpStatus.CREATED);
 	}
 	
 	@DeleteMapping(value = "/{id}")

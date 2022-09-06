@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -29,9 +31,14 @@ public class EditoraResources {
 
 	private final serviceEditora serviceEditora;
 	
+	@GetMapping(value = "/all")
+	public ResponseEntity<List<Editora>> findAllNonPageable(){
+		return ResponseEntity.ok(serviceEditora.findAllNonPageable());
+	}
+	
 	@GetMapping
-	public ResponseEntity<List<Editora>> findAll(){
-		return ResponseEntity.ok(serviceEditora.findAll());
+	public ResponseEntity<Page<Editora>> findAll(Pageable pageable){
+		return ResponseEntity.ok(serviceEditora.findAll(pageable));
 	}
 	
 	@GetMapping(value = "/{id}")
@@ -40,8 +47,8 @@ public class EditoraResources {
 	}
 	
 	@PostMapping
-	public ResponseEntity<Editora> insert(@RequestBody @Valid EditoraPostRequestBody editoraPostRequestBody){
-		return new ResponseEntity<>(serviceEditora.insert(editoraPostRequestBody), HttpStatus.CREATED);
+	public ResponseEntity<Editora> save(@RequestBody @Valid EditoraPostRequestBody editoraPostRequestBody){
+		return new ResponseEntity<>(serviceEditora.save(editoraPostRequestBody), HttpStatus.CREATED);
 	}
 	
 	@DeleteMapping(value = "/{id}")

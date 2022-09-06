@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -29,9 +31,14 @@ public class AutorResources {
 
 	private final serviceAutor serviceAutor;
 	
+	@GetMapping(value = "/all")
+	public ResponseEntity<List<Autor>> findAllNonPageable(){
+		return ResponseEntity.ok(serviceAutor.findAllNonPageable());
+	}
+	
 	@GetMapping
-	public ResponseEntity<List<Autor>> findAll(){
-		return ResponseEntity.ok(serviceAutor.findAll());
+	public ResponseEntity<Page<Autor>> findAll(Pageable pageable){
+		return ResponseEntity.ok(serviceAutor.findAll(pageable));
 	}
 	
 	@GetMapping(value = "/{id}")
@@ -40,8 +47,8 @@ public class AutorResources {
 	}
 	
 	@PostMapping
-	public ResponseEntity<Autor> insert(@RequestBody @Valid AutorPostRequestBody autorPostRequestBody){
-		return new ResponseEntity<>(serviceAutor.insert(autorPostRequestBody),HttpStatus.CREATED);
+	public ResponseEntity<Autor> save(@RequestBody @Valid AutorPostRequestBody autorPostRequestBody){
+		return new ResponseEntity<>(serviceAutor.save(autorPostRequestBody),HttpStatus.CREATED);
 	}
 	
 	@DeleteMapping(value = "/{id}")

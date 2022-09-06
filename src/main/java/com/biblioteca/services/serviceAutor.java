@@ -1,8 +1,13 @@
 package com.biblioteca.services;
 
+
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.biblioteca.entities.Autor;
@@ -20,15 +25,20 @@ public class serviceAutor {
 
 	private final RepositorioAutor serviceRepositorio;
 
-	public List<Autor> findAll() {
+	public List<Autor> findAllNonPageable() {
 		return serviceRepositorio.findAll();
+	}
+	
+	public Page<Autor> findAll(Pageable pageable) {
+		return serviceRepositorio.findAll(pageable);
 	}
 
 	public Autor findByIdOrElseThrowResourceNotFoundException(long id) {
 		return serviceRepositorio.findById(id).orElseThrow(() -> new BadRequestException("autor not found"));
 	}
 
-	public Autor insert(AutorPostRequestBody autorPostRequestBody) {
+	@Transactional
+	public Autor save(AutorPostRequestBody autorPostRequestBody) {
 		return serviceRepositorio.save(AutorMapper.INSTANCE.toAutor(autorPostRequestBody));
 	}
 

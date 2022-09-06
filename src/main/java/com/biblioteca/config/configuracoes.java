@@ -39,9 +39,9 @@ public class configuracoes implements CommandLineRunner{
 	@Override
 	public void run(String... args) throws Exception {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
-		Usuario user1 = new Usuario(null,"rafael silva","rafa@gmail.com","rafa12","rafasilva","{bcrypt}$2a$10$gUqmuiSjMuhIRW6T8IQWAOy/IcyNPj0yMyWBBd3g1HWQRa3FQkFeW","ROLE_ADMIN,ROLE_USER");
-		Usuario user2 = new Usuario(null, "marcos pereira","marcos@gmail.com", "marcos87","marcospereira","{bcrypt}$2a$10$gUqmuiSjMuhIRW6T8IQWAOy/IcyNPj0yMyWBBd3g1HWQRa3FQkFeW","ROLE_USER");
-		Usuario user3 = new Usuario(null, "tony roque","tony@gmail.com", "tony","tonyroque","{bcrypt}$2a$10$gUqmuiSjMuhIRW6T8IQWAOy/IcyNPj0yMyWBBd3g1HWQRa3FQkFeW","ROLE_USER");
+		Usuario user1 = new Usuario(null,"rafael silva","rafa@gmail.com","rafasilva","{bcrypt}$2a$10$gUqmuiSjMuhIRW6T8IQWAOy/IcyNPj0yMyWBBd3g1HWQRa3FQkFeW","ROLE_ADMIN,ROLE_USER");
+		Usuario user2 = new Usuario(null, "marcos pereira","marcos@gmail.com","marcospereira","{bcrypt}$2a$10$gUqmuiSjMuhIRW6T8IQWAOy/IcyNPj0yMyWBBd3g1HWQRa3FQkFeW","ROLE_USER");
+		Usuario user3 = new Usuario(null, "tony roque","tony@gmail.com","tonyroque","{bcrypt}$2a$10$gUqmuiSjMuhIRW6T8IQWAOy/IcyNPj0yMyWBBd3g1HWQRa3FQkFeW","ROLE_USER");
 		
 		/*
 		Usuario user1 = new Usuario(1l,"rafael silva", "rafa@gmail","rafa silva","123");

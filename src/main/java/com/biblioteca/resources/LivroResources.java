@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -29,9 +31,14 @@ public class LivroResources {
 
 	private final serviceLivro serviceLivro;
 	
+	@GetMapping(value = "/all")
+	public ResponseEntity<List<Livro>> findAllNonPageable(){
+		return ResponseEntity.ok(serviceLivro.findAllNonPageable());
+	}
+	
 	@GetMapping
-	public ResponseEntity<List<Livro>> findAll(){
-		return ResponseEntity.ok(serviceLivro.findAll());
+	public ResponseEntity<Page<Livro>> findAll(Pageable pageable){
+		return ResponseEntity.ok(serviceLivro.findAll(pageable));
 	}
 	
 	@GetMapping(value = "/{id}")
@@ -41,8 +48,8 @@ public class LivroResources {
 	
 	//http://localhost:8080/livros/3/1
 	@PostMapping(path = "/{idUsuario}/{idEditora}/{idAutor}")
-	public ResponseEntity<Livro> insert(@PathVariable long idUsuario,@PathVariable long idEditora,@PathVariable long idAutor, @RequestBody @Valid LivroPostRequestBody livroPostRequestBody){
-		return new ResponseEntity<Livro>(serviceLivro.insert(livroPostRequestBody,idUsuario,idEditora,idAutor), HttpStatus.CREATED);
+	public ResponseEntity<Livro> save(@PathVariable long idUsuario,@PathVariable long idEditora,@PathVariable long idAutor, @RequestBody @Valid LivroPostRequestBody livroPostRequestBody){
+		return new ResponseEntity<Livro>(serviceLivro.save(livroPostRequestBody,idUsuario,idEditora,idAutor), HttpStatus.CREATED);
 	}
 	
 	@DeleteMapping(value = "/{id}")

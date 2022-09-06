@@ -2,7 +2,11 @@ package com.biblioteca.services;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.biblioteca.entities.Emprestimo;
@@ -28,15 +32,20 @@ public class serviceEmprestimo {
 
 	private final RepositorioLivro livroRepositorio;
 
-	public List<Emprestimo> findAll() {
+	public List<Emprestimo> findAllNonPageable() {
 		return emprestimoRepositorio.findAll();
+	}
+	
+	public Page<Emprestimo> findAll(Pageable pageable) {
+		return emprestimoRepositorio.findAll(pageable);
 	}
 
 	public Emprestimo findByIdOrElseThrowResourceNotFoundException(long id) {
 		return emprestimoRepositorio.findById(id).orElseThrow(() -> new BadRequestException("emprestimo not found"));	
 	}
 
-	public Emprestimo insert(long id, EmprestimosPostRequestBody emprestimosPostRequestBody, long idLivro) {
+	@Transactional
+	public Emprestimo save(long id, EmprestimosPostRequestBody emprestimosPostRequestBody, long idLivro) {
 		Livro livroSaved = livroRepositorio.findById(idLivro).get();
 		Usuario usuarioSaved = userRepositorio.findById(id).get();
         Emprestimo emprestimo = EmprestimoMapper.INSTANCE.toEmprestimo(emprestimosPostRequestBody);

@@ -3,7 +3,11 @@ package com.biblioteca.services;
 import java.util.List;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -26,15 +30,20 @@ public class serviceUsuario implements UserDetailsService{
 	
 	private final RepositorioUsuario serviceRepository;
 	
-	public List<Usuario> findAll(){
+	public List<Usuario> findAllNonPageable(){
 		return serviceRepository.findAll();
+	}
+	
+	public Page<Usuario> findAll(Pageable pageable){
+		return serviceRepository.findAll(pageable);
 	}
 	
 	public Usuario findByIdOrElseThrowResourceNotFoundException(long id) {
 		return serviceRepository.findById(id).orElseThrow(() -> new BadRequestException("usuario not found"));
 	}
 	
-	public Usuario insert(UsuarioPostRequestBody usuarioPostRequestBody) {
+	@Transactional
+	public Usuario save(UsuarioPostRequestBody usuarioPostRequestBody) {
 		PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 		
 		Usuario usuario = UsuarioMapper.INSTANCE.toUsuario(usuarioPostRequestBody);

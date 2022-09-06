@@ -39,7 +39,6 @@ public class Usuario implements Serializable, UserDetails {
 	private Long id;
 	private String nome;
 	private String email;
-	private String login;
 	private String username;
 	private String password;
 	private String authorities;
@@ -52,13 +51,12 @@ public class Usuario implements Serializable, UserDetails {
 	@Builder.Default
 	private Set<Emprestimo> emprestimos = new HashSet<>();
 	
-	public Usuario(Long id, String nome, String email, String login, String username, String password,
+	public Usuario(Long id, String nome, String email, String username, String password,
 			String authorities) {
 		super();
 		this.id = id;
 		this.nome = nome;
 		this.email = email;
-		this.login = login;
 		this.username = username;
 		this.password = password;
 		this.authorities = authorities;

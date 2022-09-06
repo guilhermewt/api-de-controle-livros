@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,8 +32,13 @@ public class UsuarioResources {
 	private final serviceUsuario serviceUsuario;
 
 	@GetMapping
-	public ResponseEntity<List<Usuario>> findAll() {
-		return ResponseEntity.ok(serviceUsuario.findAll());
+	public ResponseEntity<List<Usuario>> findAllNonPageable() {
+		return ResponseEntity.ok(serviceUsuario.findAllNonPageable());
+	}
+	
+	@GetMapping
+	public ResponseEntity<Page<Usuario>> findAll(Pageable pageable) {
+		return ResponseEntity.ok(serviceUsuario.findAll(pageable));
 	}
 
 	@GetMapping(value = "/{id}")
@@ -40,8 +47,8 @@ public class UsuarioResources {
 	}
 
 	@PostMapping
-	public ResponseEntity<Usuario> insert(@RequestBody @Valid UsuarioPostRequestBody usuarioPostRequestBody) {
-		return new ResponseEntity<>(serviceUsuario.insert(usuarioPostRequestBody),HttpStatus.CREATED);
+	public ResponseEntity<Usuario> save(@RequestBody @Valid UsuarioPostRequestBody usuarioPostRequestBody) {
+		return new ResponseEntity<>(serviceUsuario.save(usuarioPostRequestBody),HttpStatus.CREATED);
 	}
 
 	@DeleteMapping(path = "/{id}")

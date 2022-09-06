@@ -2,7 +2,11 @@ package com.biblioteca.services;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.biblioteca.entities.Editora;
@@ -20,15 +24,20 @@ public class serviceEditora {
 	
 	private final RepositorioEditora editoraRepositorio;
 
-	public List<Editora> findAll() {
+	public List<Editora> findAllNonPageable() {
 		return editoraRepositorio.findAll();
+	}
+	
+	public Page<Editora> findAll(Pageable pageable) {
+		return editoraRepositorio.findAll(pageable);
 	}
 
 	public Editora findByIdOrElseThrowResourceNotFoundException(long id) {
 		return editoraRepositorio.findById(id).orElseThrow(() -> new BadRequestException("editora not found"));
 	}
 
-	public Editora insert(EditoraPostRequestBody editoraPostRequestBody) {
+	@Transactional
+	public Editora save(EditoraPostRequestBody editoraPostRequestBody) {
 		return editoraRepositorio.save(EditoraMapper.INSTANCE.toEditora(editoraPostRequestBody));
 	}
 
