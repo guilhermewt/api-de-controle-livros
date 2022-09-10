@@ -50,4 +50,8 @@ de uma loja virtual
   
 ## modelo conceitual
 
-<img src="https://github.com/guilhermewt/assets/blob/main/webservice%20pedidos.PNG">
+# diagrama de classe da biblioteca
+https://github.com/guilhermewt/assets/blob/main/IMAGE%20-%20diagrama%20de%20classe%20da%20biblioteca.png
+
+# diagrama de de memoria da biblioteca
+https://github.com/guilhermewt/assets/blob/main/IMAGE-%20diagrama%20de%20memoria.png
