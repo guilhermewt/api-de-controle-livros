@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -28,12 +29,12 @@ import lombok.experimental.SuperBuilder;
 public class Autor implements Serializable{
 
 	private static final long serialVersionUID = 1L;
-	
-	
+		//testa projeto como todo e test a class autorrepository de autor
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	
 	private Long id;
+	@NotEmpty(message = "the autor name cannot be empty")
 	private String nome;
 	
 	@OneToMany(mappedBy = "autor")

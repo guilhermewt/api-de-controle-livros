@@ -41,6 +41,11 @@ public class AutorResources {
 		return ResponseEntity.ok(serviceAutor.findAll(pageable));
 	}
 	
+	@GetMapping(value = "/find")
+	public ResponseEntity<List<Autor>> findByName(@RequestBody String name){
+		return ResponseEntity.ok(serviceAutor.findByName(name));
+	}
+	
 	@GetMapping(value = "/{id}")
 	public ResponseEntity<Autor> findById(@PathVariable long id){
 		return ResponseEntity.ok(serviceAutor.findByIdOrElseThrowResourceNotFoundException(id));
@@ -52,13 +57,13 @@ public class AutorResources {
 	}
 	
 	@DeleteMapping(value = "/{id}")
-	public ResponseEntity<Autor> delete(@PathVariable long id){
+	public ResponseEntity<Void> delete(@PathVariable long id){
 		serviceAutor.delete(id);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}	
 	
 	@PutMapping
-	public ResponseEntity<Autor> update(@RequestBody AutorPutRequestBody autorPutRequestBody){
+	public ResponseEntity<Void> update(@RequestBody AutorPutRequestBody autorPutRequestBody){
 		serviceAutor.update(autorPutRequestBody);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}

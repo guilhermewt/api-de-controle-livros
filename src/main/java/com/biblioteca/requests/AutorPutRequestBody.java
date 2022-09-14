@@ -5,11 +5,14 @@ import java.util.Set;
 
 import com.biblioteca.entities.Livro;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
 @NoArgsConstructor
+@SuperBuilder
 public class AutorPutRequestBody {
 	
 	private Long id;

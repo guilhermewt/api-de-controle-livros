@@ -32,6 +32,10 @@ public class serviceAutor {
 	public Page<Autor> findAll(Pageable pageable) {
 		return serviceRepositorio.findAll(pageable);
 	}
+	
+	public List<Autor> findByName(String name) {
+		return serviceRepositorio.findByNomeContainingIgnoreCase(name);
+	}
 
 	public Autor findByIdOrElseThrowResourceNotFoundException(long id) {
 		return serviceRepositorio.findById(id).orElseThrow(() -> new BadRequestException("autor not found"));

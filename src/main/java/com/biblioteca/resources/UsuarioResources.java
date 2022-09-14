@@ -31,7 +31,7 @@ public class UsuarioResources {
 
 	private final serviceUsuario serviceUsuario;
 
-	@GetMapping
+	@GetMapping(value = "/all")
 	public ResponseEntity<List<Usuario>> findAllNonPageable() {
 		return ResponseEntity.ok(serviceUsuario.findAllNonPageable());
 	}
