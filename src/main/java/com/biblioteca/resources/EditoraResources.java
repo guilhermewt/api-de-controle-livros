@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.biblioteca.entities.Editora;
@@ -41,6 +42,11 @@ public class EditoraResources {
 		return ResponseEntity.ok(serviceEditora.findAll(pageable));
 	}
 	
+	@GetMapping(value = "/findByName")
+	public ResponseEntity<List<Editora>> findByName(@RequestParam String name){
+		return ResponseEntity.ok(serviceEditora.findByName(name));
+	}
+	
 	@GetMapping(value = "/{id}")
 	public ResponseEntity<Editora> findById(@PathVariable long id){
 		return ResponseEntity.ok(serviceEditora.findByIdOrElseThrowResourceNotFoundException(id));
@@ -52,13 +58,13 @@ public class EditoraResources {
 	}
 	
 	@DeleteMapping(value = "/{id}")
-	public ResponseEntity<Editora> delete(@PathVariable long id){
+	public ResponseEntity<Void> delete(@PathVariable long id){
 		serviceEditora.delete(id);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}	
 	
     @PutMapping()
-	public ResponseEntity<Editora> update(@RequestBody EditoraPutRequestBody editoraPutRequestBody){
+	public ResponseEntity<Void> update(@RequestBody EditoraPutRequestBody editoraPutRequestBody){
 		serviceEditora.update(editoraPutRequestBody);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}

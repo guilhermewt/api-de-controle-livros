@@ -14,23 +14,23 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.annotation.DirtiesContext;
 
-import com.biblioteca.entities.Autor;
-import com.biblioteca.util.AutorCreator;
+import com.biblioteca.entities.Editora;
+import com.biblioteca.util.EditoraCreator;
 
 @DataJpaTest
 @DisplayName("test for editora repository")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-public class AutorRepositoryTests {
+public class EditoraRepositoryTest {
 	
 	@Autowired
-	private RepositorioAutor reposityAutor;
+	private RepositorioEditora repositoryEditora;
 	
 	@Test
 	@DisplayName("find all return list of object inside page whensuccessful")
 	void findAll_returnListOfObjectInsidePage_whenSuccessful() {
 		
-		Autor editoraToBeSaved = this.reposityAutor.save(AutorCreator.createAutorToBeSaved());
-		Page<Autor> editoraSaved = this.reposityAutor.findAll(PageRequest.of(0, 5));
+		Editora editoraToBeSaved = this.repositoryEditora.save(EditoraCreator.createEditoraToBeSaved());
+		Page<Editora> editoraSaved = this.repositoryEditora.findAll(PageRequest.of(0, 5));
 		
 		Assertions.assertThat(editoraSaved).isNotNull().isNotEmpty();
 		Assertions.assertThat(editoraSaved.toList().get(0)).isEqualTo(editoraToBeSaved);
@@ -38,10 +38,10 @@ public class AutorRepositoryTests {
 	
 	@Test
 	@DisplayName("find all return list of editora whensuccessful")
-	void findAll_returnListOfAutor_whenSuccessful() {
+	void findAll_returnListOfEditora_whenSuccessful() {
 		
-		Autor editoraToBeSaved = this.reposityAutor.save(AutorCreator.createAutorToBeSaved());
-		List<Autor> editoraSaved = this.reposityAutor.findAll();
+		Editora editoraToBeSaved = this.repositoryEditora.save(EditoraCreator.createEditoraToBeSaved());
+		List<Editora> editoraSaved = this.repositoryEditora.findAll();
 		
 		Assertions.assertThat(editoraSaved).isNotNull().isNotEmpty();
 		Assertions.assertThat(editoraSaved.get(0)).isEqualTo(editoraToBeSaved);
@@ -49,9 +49,9 @@ public class AutorRepositoryTests {
 	
 	@Test
 	@DisplayName("findById return editora whenSuccessful")
-	void findByid_returnAutor_whenSuccessful() {
-		Autor editoraToBeSaved = this.reposityAutor.save(AutorCreator.createValidAutor());
-		Autor editoraSaved = this.reposityAutor.findById(editoraToBeSaved.getId()).get();
+	void findByid_returnEditora_whenSuccessful() {
+		Editora editoraToBeSaved = this.repositoryEditora.save(EditoraCreator.createValidEditora());
+		Editora editoraSaved = this.repositoryEditora.findById(editoraToBeSaved.getId()).get();
 		
 		Assertions.assertThat(editoraSaved).isNotNull();
 		Assertions.assertThat(editoraSaved.getId()).isNotNull();
@@ -59,12 +59,12 @@ public class AutorRepositoryTests {
 	}
 	
 	@Test
-	@DisplayName("findByName Return List Of Autor whenSuccessful")
-	void findByName_ReturnListOfAutor_whenSuccessful() {
-		Autor editoraToBeSaved = this.reposityAutor.save(AutorCreator.createValidAutor());
+	@DisplayName("findByName Return List Of Editora whenSuccessful")
+	void findByName_ReturnListOfEditora_whenSuccessful() {
+		Editora editoraToBeSaved = this.repositoryEditora.save(EditoraCreator.createValidEditora());
 		String name = editoraToBeSaved.getNome();
 		
-		List<Autor> editoraSaved = this.reposityAutor.findByNomeContainingIgnoreCase(name);
+		List<Editora> editoraSaved = this.repositoryEditora.findByNomeContainingIgnoreCase(name);
 		
 		Assertions.assertThat(editoraSaved).isNotNull().isNotEmpty();
 		Assertions.assertThat(editoraSaved.get(0).getId()).isNotNull();
@@ -73,9 +73,9 @@ public class AutorRepositoryTests {
 	
 	@Test
 	@DisplayName("save return editora whenSuccessful")
-	void save_returnAutor_whenSuccessful() {
-		Autor editoraToBeSaved = AutorCreator.createAutorToBeSaved();
-		Autor editoraSaved = this.reposityAutor.save(editoraToBeSaved);
+	void save_returnEditora_whenSuccessful() {
+		Editora editoraToBeSaved = EditoraCreator.createEditoraToBeSaved();
+		Editora editoraSaved = this.repositoryEditora.save(editoraToBeSaved);
 		
 		Assertions.assertThat(editoraSaved).isNotNull();
 		Assertions.assertThat(editoraSaved.getId()).isNotNull();
@@ -84,24 +84,24 @@ public class AutorRepositoryTests {
 	
 	@Test
 	@DisplayName("delete removes editora whenSuccessful")
-	void delete_removesAutor_whenSuccessful() {
-		Autor editoraSaved = this.reposityAutor.save(AutorCreator.createAutorToBeSaved());
+	void delete_removesEditora_whenSuccessful() {
+		Editora editoraSaved = this.repositoryEditora.save(EditoraCreator.createEditoraToBeSaved());
 		
-	    this.reposityAutor.deleteById(editoraSaved.getId());
+	    this.repositoryEditora.deleteById(editoraSaved.getId());
 	    
-	    Optional<Autor> editoraDeleted = this.reposityAutor.findById(editoraSaved.getId());
+	    Optional<Editora> editoraDeleted = this.repositoryEditora.findById(editoraSaved.getId());
 	    
 	    Assertions.assertThat(editoraDeleted).isEmpty();
 	}
 	
 	@Test
 	@DisplayName("update replace editora whenSuccessful")
-	void update_replaceAutor_whenSuccessful() {
-		this.reposityAutor.save(AutorCreator.createAutorToBeSaved());
+	void update_replaceEditora_whenSuccessful() {
+		this.repositoryEditora.save(EditoraCreator.createEditoraToBeSaved());
 		
-		Autor editoraToBeUpdate = AutorCreator.createUpdatedAutor();
+		Editora editoraToBeUpdate = EditoraCreator.createUpdatedEditora();
 		
-	    Autor editoraUpdate = this.reposityAutor.save(editoraToBeUpdate);
+	    Editora editoraUpdate = this.repositoryEditora.save(editoraToBeUpdate);
 	    
 	    Assertions.assertThat(editoraUpdate).isNotNull();
 	    Assertions.assertThat(editoraUpdate.getId()).isNotNull();
@@ -110,10 +110,10 @@ public class AutorRepositoryTests {
 	
 	@Test
 	@DisplayName("save  throw Contration Violation Exception when editora name is empty")
-	void save_throwConstrationViolationException_whenAutorNameIsEmpty() {
-		Autor editora = new Autor();
+	void save_throwConstrationViolationException_whenEditoraNameIsEmpty() {
+		Editora editora = new Editora();
 		
-		Assertions.assertThatThrownBy(() -> this.reposityAutor.save(editora))
+		Assertions.assertThatThrownBy(() -> this.repositoryEditora.save(editora))
 		.isInstanceOf(ConstraintViolationException.class);
 	}
 	

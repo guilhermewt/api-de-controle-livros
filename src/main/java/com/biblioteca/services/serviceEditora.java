@@ -31,6 +31,10 @@ public class serviceEditora {
 	public Page<Editora> findAll(Pageable pageable) {
 		return editoraRepositorio.findAll(pageable);
 	}
+	
+	public List<Editora> findByName(String name) {
+		return editoraRepositorio.findByNomeContainingIgnoreCase(name);
+	}
 
 	public Editora findByIdOrElseThrowResourceNotFoundException(long id) {
 		return editoraRepositorio.findById(id).orElseThrow(() -> new BadRequestException("editora not found"));

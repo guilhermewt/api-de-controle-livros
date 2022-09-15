@@ -43,6 +43,7 @@ public class AutorResourceIT {
 	@Qualifier(value = "testRestTemplateRoleAdmin")
 	private TestRestTemplate testRestTemplateRoleAdmin;
 	
+	
 	@Autowired
 	@Qualifier(value = "testRestTemplateRoleUser")
 	private TestRestTemplate testRestTemplateRoleUser;
@@ -114,7 +115,7 @@ public class AutorResourceIT {
 		
 		Autor autorSaved = repositoryAutor.save(AutorCreator.createAutorToBeSaved());
 			
-		String url = String.format("/autores/all?name=%s",autorSaved.getNome());
+		String url = String.format("/autores/find?name=%s",autorSaved.getNome());
 		
 		List<Autor> autor = testRestTemplateRoleUser.exchange(url, HttpMethod.GET,null,
 				new ParameterizedTypeReference<List<Autor>>() {
@@ -130,7 +131,7 @@ public class AutorResourceIT {
 	void findByName_ReturnEmptyListOfAutor_whenSuccessful() {
 		repositoryUser.save(USER);
 		
-		List<Autor> autor = testRestTemplateRoleUser.exchange("/autores/all?name=test", HttpMethod.GET,null,
+		List<Autor> autor = testRestTemplateRoleUser.exchange("/autores/find?name=test", HttpMethod.GET,null,
 				new ParameterizedTypeReference<List<Autor>>() {
 				}).getBody();		
 		

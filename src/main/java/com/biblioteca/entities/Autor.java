@@ -29,7 +29,7 @@ import lombok.experimental.SuperBuilder;
 public class Autor implements Serializable{
 
 	private static final long serialVersionUID = 1L;
-		//testa projeto como todo e test a class autorrepository de autor
+		
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	

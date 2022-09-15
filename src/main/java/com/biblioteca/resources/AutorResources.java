@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.biblioteca.entities.Autor;
@@ -42,7 +43,7 @@ public class AutorResources {
 	}
 	
 	@GetMapping(value = "/find")
-	public ResponseEntity<List<Autor>> findByName(@RequestBody String name){
+	public ResponseEntity<List<Autor>> findByName(@RequestParam String name){
 		return ResponseEntity.ok(serviceAutor.findByName(name));
 	}
 	
