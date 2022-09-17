@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.biblioteca.entities.Livro;
@@ -46,6 +47,11 @@ public class LivroResources {
 		return ResponseEntity.ok(serviceLivro.findByIdOrElseThrowResourceNotFoundException(id));
 	}
 	
+	@GetMapping(value = "/findbytitulo")
+	public ResponseEntity<List<Livro>> findByTitulo(@RequestParam String titulo){
+		return ResponseEntity.ok(serviceLivro.findByTitulo(titulo));
+	}
+	
 	//http://localhost:8080/livros/3/1
 	@PostMapping(path = "/{idUsuario}/{idEditora}/{idAutor}")
 	public ResponseEntity<Livro> save(@PathVariable long idUsuario,@PathVariable long idEditora,@PathVariable long idAutor, @RequestBody @Valid LivroPostRequestBody livroPostRequestBody){
@@ -53,13 +59,13 @@ public class LivroResources {
 	}
 	
 	@DeleteMapping(value = "/{id}")
-	public ResponseEntity<Livro> delete(@PathVariable long id){
+	public ResponseEntity<Void> delete(@PathVariable long id){
 		serviceLivro.delete(id);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}	
 	
     @PutMapping
-	public ResponseEntity<Livro> update(@RequestBody LivroPutRequestBody livroPutRequestBody){
+	public ResponseEntity<Void> update(@RequestBody LivroPutRequestBody livroPutRequestBody){
 		serviceLivro.update(livroPutRequestBody);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}

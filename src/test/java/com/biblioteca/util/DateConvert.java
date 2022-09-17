@@ -16,7 +16,9 @@ public class DateConvert {
 		try {
 			date = sdf.parse(text);
 		} catch (ParseException e) {
+			e.printStackTrace();
 			throw new BadRequestException(e.getMessage());
+			
 		}
 		
 		return date;

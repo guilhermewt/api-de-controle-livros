@@ -47,6 +47,10 @@ public class serviceLivro {
 	public Livro findByIdOrElseThrowResourceNotFoundException(long id) {
 		return  livroRepositorio.findById(id).orElseThrow(() -> new BadRequestException("livro not founnd"));
 	}
+	
+	public List<Livro> findByTitulo(String titulo){
+		return livroRepositorio.findByTituloContainingIgnoreCase(titulo);
+	}
 
 	@Transactional
 	public Livro save(LivroPostRequestBody livroPostRequestBody, long idUsuario, long idEditora, long idAutor) {
