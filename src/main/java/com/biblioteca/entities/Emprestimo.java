@@ -14,6 +14,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -36,7 +38,9 @@ public class Emprestimo implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	@NotNull(message = "the emprestimo dataEmprestimo cannot be empty")
 	private Date dataEmprestimo;
+	@NotNull(message = "the emprestimo dataEmprestimo cannot be empty")
 	private Date dataDevolucao;
 	
 	@ManyToOne
@@ -46,7 +50,7 @@ public class Emprestimo implements Serializable{
 	@ManyToMany
 	@JoinTable(name = "tb_emprestimo_livro", joinColumns = @JoinColumn(name = "emprestimo_id")
                                                            , inverseJoinColumns = @JoinColumn(name = "livro_id"))
-    
+    @Builder.Default 
 	private Set<Livro> livros = new HashSet<>();
 	
 	public Emprestimo(Long id, Date dataEmprestimo, Date dataDevolucao) {
