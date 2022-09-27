@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,9 @@ import com.biblioteca.requests.EmprestimosPostRequestBody;
 import com.biblioteca.requests.EmprestimosPutRequestBody;
 import com.biblioteca.services.serviceEmprestimo;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -32,37 +36,46 @@ public class EmprestimoResources {
 	private final serviceEmprestimo serviceEmprestimo;
 	
 	@GetMapping(value = "/all")
+	@Operation(summary = "find all loans that are not paginated")
 	public ResponseEntity<List<Emprestimo>> findAllNonPageable(){
 		return ResponseEntity.ok(serviceEmprestimo.findAllNonPageable());
 	}
 	
 	@GetMapping
-	public ResponseEntity<Page<Emprestimo>> findAll(Pageable pageable){
+	@Operation(summary = "find all loans paginated", description = "the default size is 20, use the parameter to change the default value")
+	public ResponseEntity<Page<Emprestimo>> findAll(@ParameterObject Pageable pageable){
 		return ResponseEntity.ok(serviceEmprestimo.findAll(pageable));
 	}
 	
 	@GetMapping(value = "/{id}")
+	@Operation(summary = "find loan by Id")
 	public ResponseEntity<Emprestimo> findById(@PathVariable long id){
 		return ResponseEntity.ok(serviceEmprestimo.findByIdOrElseThrowResourceNotFoundException(id));
 	}
 	
 	//http://localhost:8080/emprestimos/2/2
 	@PostMapping(path = "/{idUsuario}/{idLivro}")
+	@Operation(description = "for the loan to be made, the user id and the book id are required")
 	public ResponseEntity<Emprestimo> save(@PathVariable long idUsuario,  @RequestBody @Valid EmprestimosPostRequestBody emprestimosPostRequestBody, @PathVariable long idLivro){
 		return new ResponseEntity<>(serviceEmprestimo.save(idUsuario,emprestimosPostRequestBody,idLivro), HttpStatus.CREATED);
 	}
 	
 	@DeleteMapping(value = "/{id}")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "204", description = "successful operation"),
+			@ApiResponse(responseCode = "400", description = "when loan does not exist in the dataBase")
+	})
 	public ResponseEntity<Void> delete(@PathVariable long id){
 		serviceEmprestimo.delete(id);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}	
 	
-	@PutMapping
-	public ResponseEntity<Void> update(@RequestBody EmprestimosPutRequestBody emprestimosPutRequestBody){
-		serviceEmprestimo.update(emprestimosPutRequestBody);
+	@PutMapping(value = "/{idUsuario}/{idLivro}")
+	@Operation(description = "for the loan to be made, the user Id and the book Id are required")
+	public ResponseEntity<Void> update(@PathVariable long idUsuario, @PathVariable long idLivro,@RequestBody @Valid EmprestimosPutRequestBody emprestimosPutRequestBody){
+		serviceEmprestimo.update(emprestimosPutRequestBody,idUsuario,idLivro);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 }
 
-//so inserir livro se o livro for do usuario colocar livro e emprestimo no cascade all para ver o que acontece
+//mecher nos tests

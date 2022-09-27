@@ -7,7 +7,7 @@ public class UsuarioCreator {
 	public static Usuario createAdminUsuario() {
 		return Usuario.builder()
 				.id(1l)
-				.nome("guilhermeSilva")
+				.name("guilhermeSilva")
 				.username("guilherme")
 				.email("guilherme@gmail.com")
 				.password("{bcrypt}$2a$10$gUqmuiSjMuhIRW6T8IQWAOy/IcyNPj0yMyWBBd3g1HWQRa3FQkFeW")
@@ -18,7 +18,7 @@ public class UsuarioCreator {
 	public static Usuario createUserUsuario() {
 		return Usuario.builder()
 				.id(1l)
-				.nome("joao")
+				.name("joao")
 				.username("UserBiblioteca")
 				.email("joao@gmail.com")
 				.password("{bcrypt}$2a$10$gUqmuiSjMuhIRW6T8IQWAOy/IcyNPj0yMyWBBd3g1HWQRa3FQkFeW")

@@ -34,8 +34,12 @@ public class serviceUsuario implements UserDetailsService{
 		return serviceRepository.findAll();
 	}
 	
-	public Page<Usuario> findAll(Pageable pageable){
+	public Page<Usuario> findAll(Pageable pageable) {
 		return serviceRepository.findAll(pageable);
+	}
+	
+	public List<Usuario> findByName(String name){
+		return serviceRepository.findBynameContainingIgnoreCase(name);
 	}
 	
 	public Usuario findByIdOrElseThrowResourceNotFoundException(long id) {
@@ -74,7 +78,7 @@ public class serviceUsuario implements UserDetailsService{
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		return Optional.ofNullable(serviceRepository.findByusername(username))
+		return Optional.ofNullable(serviceRepository.findByUsername(username))
 				.orElseThrow(() -> new UsernameNotFoundException("usuario not found"));
 	}
 }

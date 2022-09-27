@@ -40,7 +40,7 @@ public class Livro implements Serializable {
 	@NotEmpty(message = "the livro titulo cannot be empty")
 	private String titulo;
 	@NotNull(message = "the livro ano publicacao cannot be null")
-	private Date anoPublicacao;
+	private Date anoPublicacao; 
 
 	@ManyToOne
 	@JoinColumn(name = "usuario_id")
@@ -61,7 +61,7 @@ public class Livro implements Serializable {
 	public Livro(Long id, String titulo, Date anoPublicacao) {
 		super();
 		this.id = id;
-		this.titulo = titulo;
+		this.titulo = titulo;;
 		this.anoPublicacao = anoPublicacao;
 	}
 

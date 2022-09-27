@@ -28,7 +28,7 @@ import lombok.experimental.SuperBuilder;
 @Table(name = "tb_usuario")
 @NoArgsConstructor
 @Data
-@EqualsAndHashCode(of= {"id","nome"})
+@EqualsAndHashCode(of= {"id","name"})
 @SuperBuilder
 public class Usuario implements Serializable, UserDetails {
 
@@ -37,7 +37,7 @@ public class Usuario implements Serializable, UserDetails {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private String nome;
+	private String name;
 	private String email;
 	private String username;
 	private String password;
@@ -51,11 +51,11 @@ public class Usuario implements Serializable, UserDetails {
 	@Builder.Default
 	private Set<Emprestimo> emprestimos = new HashSet<>();
 	
-	public Usuario(Long id, String nome, String email, String username, String password,
+	public Usuario(Long id, String name, String email, String username, String password,
 			String authorities) {
 		super();
 		this.id = id;
-		this.nome = nome;
+		this.name = name;
 		this.email = email;
 		this.username = username;
 		this.password = password;

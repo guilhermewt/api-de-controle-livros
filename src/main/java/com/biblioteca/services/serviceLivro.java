@@ -63,6 +63,7 @@ public class serviceLivro {
 		livro.setUsuario(user);
 		livro.setEditora(editora);
 		livro.setAutor(autor);
+		
 		return livroRepositorio.save(livro);
 	}
 
@@ -74,10 +75,18 @@ public class serviceLivro {
 		}
 	}
 
-	public void update(LivroPutRequestBody livroPutRequestBody) {
+	public void update(LivroPutRequestBody livroPutRequestBody, long idUsuario, long idEditora, long idAutor) {
+		Usuario user = UsuarioRepositorio.findById(idUsuario).get();
+		Editora editora = editoraRepositorio.findById(idEditora).get();
+		Autor autor = autorRepositorio.findById(idAutor).get();
+		
 		Livro livroSaved = livroRepositorio.findById(livroPutRequestBody.getId()).get();
 		Livro livro = LivroMapper.INSTANCE.toLivro(livroPutRequestBody);
 		livro.setId(livroSaved.getId());
+		livro.setUsuario(user);
+		livro.setEditora(editora);
+		livro.setAutor(autor);
+		
 		livroRepositorio.save(livro);
 	}
 }

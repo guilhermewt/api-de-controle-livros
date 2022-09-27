@@ -1,15 +1,10 @@
 package com.biblioteca.requests;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.validation.constraints.NotEmpty;
 
-import com.biblioteca.entities.Livro;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import lombok.Builder;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -22,19 +17,14 @@ public class EditoraPostRequestBody implements Serializable{
 	private static final long serialVersionUID = 1L;
 
 	@NotEmpty(message = "the editora name cannot be empty")
+	@Schema(description = "this is the editora name", example = "editora saraiva,editora atena")
 	private String nome;
-	
-	@Builder.Default
-	private Set<Livro> livros = new HashSet<>();
 
 	public EditoraPostRequestBody(String nome) {
 		super();
 		this.nome = nome;
 	}
 	
-	@JsonIgnore
-	public Set<Livro> getLivros() {
-		return livros;
-	}
+	
 
 }

@@ -1,11 +1,6 @@
 package com.biblioteca.requests;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import com.biblioteca.entities.Livro;
-
-import lombok.Builder;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -15,10 +10,9 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class AutorPutRequestBody {
 	
+    @Schema(description = "id to identify the book to be updated")
 	private Long id;
 	private String nome;
-	
-	private Set<Livro> livros = new HashSet<>();
 	
 	public AutorPutRequestBody(Long id, String nome) {
 		super();

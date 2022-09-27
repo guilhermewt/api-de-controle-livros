@@ -45,9 +45,9 @@ public class serviceEmprestimo {
 	}
 
 	@Transactional
-	public Emprestimo save(long id, EmprestimosPostRequestBody emprestimosPostRequestBody, long idLivro) {
+	public Emprestimo save(long idUsuario, EmprestimosPostRequestBody emprestimosPostRequestBody, long idLivro) {
 		Livro livroSaved = livroRepositorio.findById(idLivro).get();
-		Usuario usuarioSaved = userRepositorio.findById(id).get();
+		Usuario usuarioSaved = userRepositorio.findById(idUsuario).get();
         Emprestimo emprestimo = EmprestimoMapper.INSTANCE.toEmprestimo(emprestimosPostRequestBody);
 		
 		boolean temLivro = usuarioSaved.getLivro().contains(livroSaved);
@@ -69,10 +69,18 @@ public class serviceEmprestimo {
 		}
 	}
 
-	public void update(EmprestimosPutRequestBody emprestimosPutRequestBody) {
+	public void update(EmprestimosPutRequestBody emprestimosPutRequestBody,long idUsuario,long idLivro) {
 		Emprestimo emprestimoSaved = emprestimoRepositorio.findById(emprestimosPutRequestBody.getId()).get();
 		Emprestimo emprestimo = EmprestimoMapper.INSTANCE.toEmprestimmo(emprestimosPutRequestBody);
+		
 		emprestimo.setId(emprestimoSaved.getId());		
+		
+		/* entidades associadas a emprestimo */
+		Livro livroSaved = livroRepositorio.findById(idLivro).get();
+		Usuario usuarioSaved = userRepositorio.findById(idUsuario).get();
+		
+		emprestimo.setUsuario(usuarioSaved);
+		emprestimo.getLivros().add(livroSaved);
 		emprestimoRepositorio.save(emprestimo);
 	}
 	

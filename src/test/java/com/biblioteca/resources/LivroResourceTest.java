@@ -138,7 +138,7 @@ public class LivroResourceTest {
 	void update_replaceLivro_whenSuccessful() {		
 	    this.livroResource.save(1l,1l,1l,LivroPostRequestBodyCreator.createLivroPostRequestBodyCreator()).getBody();
 		
-		ResponseEntity<Void> livro = this.livroResource.update(LivroPutRequestBodyCreator.createLivroPutRequestBodyCreator());
+		ResponseEntity<Void> livro = this.livroResource.update(1l,1l,1l,LivroPutRequestBodyCreator.createLivroPutRequestBodyCreator());
 		
 		Assertions.assertThat(livro.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);					
 	}

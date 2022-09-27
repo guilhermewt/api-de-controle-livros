@@ -113,7 +113,7 @@ public class EmprestimoResourceTest {
 	void update_replaceEmprestimo_whenSuccessful() {		
 	    this.emprestimoResource.save(1l,EmprestimoPostRequestBodyCreator.createEmprestimoPostRequestBodyCreator(),1l).getBody();
 		
-		ResponseEntity<Void> emprestimo = this.emprestimoResource.update(EmprestimoPutRequestBodyCreator.createEmprestimoPutRequestBodyCreator());
+		ResponseEntity<Void> emprestimo = this.emprestimoResource.update(1l,1l,EmprestimoPutRequestBodyCreator.createEmprestimoPutRequestBodyCreator());
 		
 		Assertions.assertThat(emprestimo.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);					
 	}

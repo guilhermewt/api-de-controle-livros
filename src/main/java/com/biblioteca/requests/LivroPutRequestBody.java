@@ -2,15 +2,12 @@ package com.biblioteca.requests;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
-import com.biblioteca.entities.Autor;
-import com.biblioteca.entities.Editora;
-import com.biblioteca.entities.Emprestimo;
-import com.biblioteca.entities.Usuario;
+import javax.validation.constraints.NotEmpty;
 
-import lombok.Builder;
+import org.springframework.lang.NonNull;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -22,18 +19,12 @@ public class LivroPutRequestBody implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 	
+	@Schema(description = "id to identify the book to be updated")
 	private Long id;
+	@NotEmpty(message = "the book title cannot be empty")
 	private String titulo;
+	@NonNull
 	private Date anoPublicacao;
-	
-	private Usuario usuario;
-	
-	@Builder.Default
-	private Set<Emprestimo> emprestimos = new HashSet<>();
-	
-	private Editora editora;
-
-	private Autor autor;
 	
 	public LivroPutRequestBody(Long id, String titulo, Date anoPublicacao) {
 		super();

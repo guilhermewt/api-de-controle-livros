@@ -168,7 +168,16 @@ public class LivroServiceTest {
 	@Test
 	@DisplayName("update Replace Livro whenSuccessful")
 	void update_ReplaveLivro_whenSuccessful() {		
-		Assertions.assertThatCode(() -> this.livroService.update(LivroPutRequestBodyCreator.createLivroPutRequestBodyCreator())).doesNotThrowAnyException();
+		BDDMockito.when(usuarioRepositoryMock.findById(ArgumentMatchers.anyLong()))
+		.thenReturn(Optional.of(UsuarioCreator.createAdminUsuario()));
+		
+		BDDMockito.when(autorRepositoryMock.findById(ArgumentMatchers.anyLong()))
+		.thenReturn(Optional.of(AutorCreator.createValidAutor()));
+		
+		BDDMockito.when(editoraRepositoryMock.findById(ArgumentMatchers.anyLong()))
+		.thenReturn(Optional.of(EditoraCreator.createValidEditora()));
+		
+		Assertions.assertThatCode(() -> this.livroService.update(LivroPutRequestBodyCreator.createLivroPutRequestBodyCreator(),1l,1l,1l)).doesNotThrowAnyException();
 	}
 	
 }

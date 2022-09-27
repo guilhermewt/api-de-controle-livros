@@ -115,13 +115,13 @@ public class EmprestimoServiceTest {
 	@Test
 	@DisplayName("save Return Emprestimo whenSuccessful")
 	void save_ReturnEmprestimo_whenSuccessful() {
+		
 		Usuario usuario = UsuarioCreator.createAdminUsuario();
 		Livro livro = LivroCreator.createValidLivro();
 		
 		usuario.getLivro().add(livro);
 		
 		BDDMockito.when(usuarioRepositoryMock.findById(ArgumentMatchers.anyLong())).thenReturn(Optional.of(usuario));
-		
 		
 		Emprestimo emprestimoSaved = EmprestimoCreator.createValidEmprestimo();
 		
@@ -140,8 +140,15 @@ public class EmprestimoServiceTest {
 	
 	@Test
 	@DisplayName("update Replace Emprestimo whenSuccessful")
-	void update_ReplaveEmprestimo_whenSuccessful() {		
-		Assertions.assertThatCode(() -> this.emprestimoService.update(EmprestimoPutRequestBodyCreator.createEmprestimoPutRequestBodyCreator())).doesNotThrowAnyException();
+	void update_ReplaveEmprestimo_whenSuccessful() {	
+		Usuario usuario = UsuarioCreator.createAdminUsuario();
+		Livro livro = LivroCreator.createValidLivro();
+		
+		usuario.getLivro().add(livro);
+		
+		BDDMockito.when(usuarioRepositoryMock.findById(ArgumentMatchers.anyLong())).thenReturn(Optional.of(usuario));
+		
+		Assertions.assertThatCode(() -> this.emprestimoService.update(EmprestimoPutRequestBodyCreator.createEmprestimoPutRequestBodyCreator(),1l,1l)).doesNotThrowAnyException();
 	}
 	
 }
