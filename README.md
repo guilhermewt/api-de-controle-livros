@@ -1,7 +1,7 @@
 # webservice de uma biblioteca
 
 sistema de uma biblioteca que faz o controler de livros de uma livraria, adicionando livros, fazendo emprestimos do mesmo, associando-os as suas respectivas
-editoras.
+editoras. O sistema é construído com base na Api Restfull, os testes feito com Junit, segurança feita com spring securiry e para armazenamento de dados o postgree
 
 
 Webservice de um projeto que contem as funcionalidades de fazer pedidos, escolher produtos, o sistema pega estes pedidos e retornar as
@@ -40,7 +40,7 @@ de uma loja virtual
 # tests
   * TEST DE JPA
   * TESTS UNITÁRIOS
-  * TESTS DE INTEGRACAO COM RESTTemplate
+  * TESTS DE INTEGRACAO COM RestTemplate
   
 # security
   * spring security
