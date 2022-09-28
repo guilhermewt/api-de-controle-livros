@@ -1,5 +1,9 @@
 # webservice de uma biblioteca
 
+sistema de uma biblioteca que faz o controler de livros de uma livraria, adicionando livros, fazendo emprestimos do mesmo, associando-os as suas respectivas
+editoras.
+
+
 Webservice de um projeto que contem as funcionalidades de fazer pedidos, escolher produtos, o sistema pega estes pedidos e retornar as
 características como preço,preço tota dependendo da quantidade de produtos feitos e suas respectivas categorias. Faz a verificação se o 
 pagamento do pedido já foi efetuado ou em que etapa está (pago,aguardando pagamento...).  Um webService que trabalha com a venda de produtos  
