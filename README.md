@@ -1,7 +1,7 @@
 # webservice de uma biblioteca
 
 sistema de uma biblioteca que faz o controler de livros de uma livraria, adicionando livros e fazendo emprestimos do mesmo e associando-os as suas respectivas
-editoras. O sistema é construído em Restfull. Os testes são feitos com Junit, contendo teste de de jpa para armazenamento de dados, teste unitarios com BDDMockito e teste de integracao tentando simula o maximo possível um ambiente real com RestTemplate. A segurança é feita com spring securiry. Para a documentar a Api foi usado a openAPI 3 com Swagger. O banco de dados para armazenamento foi o postgreeSQL
+editoras. O sistema é construído em Restfull. Os testes são feitos com Junit, contendo teste de de jpa para armazenamento de dados, teste unitarios com BDDMockito e teste de integracao tentando simula o maximo possível um ambiente real com RestTemplate. A segurança é feita com spring securiry. Para documentar a Api foi usado a openAPI 3 com Swagger. O banco de dados para armazenamento foi o postgreeSQL
 
 
 Webservice de um projeto que contem as funcionalidades de fazer pedidos, escolher produtos, o sistema pega estes pedidos e retornar as
