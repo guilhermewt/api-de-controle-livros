@@ -8,6 +8,7 @@ import javax.transaction.Transactional;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -23,27 +24,29 @@ import com.biblioteca.requests.UsuarioPutRequestBody;
 import com.biblioteca.services.exceptions.BadRequestException;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class serviceUsuario implements UserDetailsService{
 	
-	private final RepositorioUsuario serviceRepository;
+	private final RepositorioUsuario userRepository;
 	
 	public List<Usuario> findAllNonPageable(){
-		return serviceRepository.findAll();
+		return userRepository.findAll();
 	}
 	
 	public Page<Usuario> findAll(Pageable pageable) {
-		return serviceRepository.findAll(pageable);
+		return userRepository.findAll(pageable);
 	}
 	
 	public List<Usuario> findByName(String name){
-		return serviceRepository.findBynameContainingIgnoreCase(name);
+		return userRepository.findBynameContainingIgnoreCase(name);
 	}
 	
 	public Usuario findByIdOrElseThrowResourceNotFoundException(long id) {
-		return serviceRepository.findById(id).orElseThrow(() -> new BadRequestException("usuario not found"));
+		return userRepository.findById(id).orElseThrow(() -> new BadRequestException("usuario not found"));
 	}
 	
 	@Transactional
@@ -53,12 +56,12 @@ public class serviceUsuario implements UserDetailsService{
 		Usuario usuario = UsuarioMapper.INSTANCE.toUsuario(usuarioPostRequestBody);
 		usuario.setPassword(passwordEncoder.encode(usuarioPostRequestBody.getPassword()));
 		
-	    return serviceRepository.save(usuario);
+	    return userRepository.save(usuario);
 	}
 	
 	public void delete(long id) {
 		try {
-		serviceRepository.delete(findByIdOrElseThrowResourceNotFoundException(id));
+		userRepository.delete(findByIdOrElseThrowResourceNotFoundException(id));
 		}
 		catch(DataIntegrityViolationException e) {
 			throw new BadRequestException(e.getMessage());
@@ -67,18 +70,19 @@ public class serviceUsuario implements UserDetailsService{
 	
 	public Usuario update(UsuarioPutRequestBody usuarioPutRequestBody) {
 		PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-		Usuario savedUsuario = serviceRepository.findById(usuarioPutRequestBody.getId()).get();
+		Usuario savedUsuario = userRepository.findById(usuarioPutRequestBody.getId()).get();
 		Usuario usuario = UsuarioMapper.INSTANCE.toUsuario(usuarioPutRequestBody);
 		usuario.setId(savedUsuario.getId());
 		usuario.setPassword(passwordEncoder.encode(usuarioPutRequestBody.getPassword()));
 		
-		return serviceRepository.save(usuario);
+		return userRepository.save(usuario);
+		
 	}
 
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		return Optional.ofNullable(serviceRepository.findByUsername(username))
+		return Optional.ofNullable(userRepository.findByUsername(username))
 				.orElseThrow(() -> new UsernameNotFoundException("usuario not found"));
 	}
 }

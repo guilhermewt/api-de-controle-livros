@@ -21,6 +21,7 @@ import com.biblioteca.repository.RepositorioUsuario;
 import com.biblioteca.requests.LivroPostRequestBody;
 import com.biblioteca.requests.LivroPutRequestBody;
 import com.biblioteca.services.exceptions.BadRequestException;
+import com.biblioteca.services.utilService.GetUserDetails;
 
 import lombok.RequiredArgsConstructor;
 
@@ -35,26 +36,30 @@ public class serviceLivro {
 	private final RepositorioUsuario UsuarioRepositorio;
 
 	private final RepositorioAutor autorRepositorio;
+    
+	private final GetUserDetails userAuthenticated;
+	
 
 	public List<Livro> findAllNonPageable() {
-		return livroRepositorio.findAll();
+		return livroRepositorio.findByUsuarioId(userAuthenticated.userAuthenticated().getId());
 	}
 	
 	public Page<Livro> findAll(Pageable pageable) {
-		return livroRepositorio.findAll(pageable);
+		return livroRepositorio.findByUsuarioId(userAuthenticated.userAuthenticated().getId(), pageable);
 	}
 
-	public Livro findByIdOrElseThrowResourceNotFoundException(long id) {
-		return  livroRepositorio.findById(id).orElseThrow(() -> new BadRequestException("livro not founnd"));
+	public Livro findByIdOrElseThrowResourceNotFoundException(long idBook) {
+		return  livroRepositorio.findAuthenticatedUserBooksById(idBook, userAuthenticated.userAuthenticated().getId())
+				.orElseThrow(() -> new BadRequestException("livro not found"));
 	}
 	
-	public List<Livro> findByTitulo(String titulo){
-		return livroRepositorio.findByTituloContainingIgnoreCase(titulo);
+	public List<Livro> findByTitulo(String title){
+		return livroRepositorio.findAuthenticatedUserBooksByTitle(title,userAuthenticated.userAuthenticated().getId());
 	}
 
 	@Transactional
-	public Livro save(LivroPostRequestBody livroPostRequestBody, long idUsuario, long idEditora, long idAutor) {
-		Usuario user = UsuarioRepositorio.findById(idUsuario).get();
+	public Livro save(LivroPostRequestBody livroPostRequestBody, long idEditora, long idAutor) {
+		Usuario user = UsuarioRepositorio.findById(userAuthenticated.userAuthenticated().getId()).get();
 		Editora editora = editoraRepositorio.findById(idEditora).get();
 		Autor autor = autorRepositorio.findById(idAutor).get();
 		
@@ -66,21 +71,29 @@ public class serviceLivro {
 		
 		return livroRepositorio.save(livro);
 	}
-
-	public void delete(long id) {
+	
+	@Transactional
+	public void delete(long idBook) {
 		try {
-			livroRepositorio.delete(findByIdOrElseThrowResourceNotFoundException(id));
+			livroRepositorio.deleteAuthenticatedUserBookById(findByIdOrElseThrowResourceNotFoundException(idBook)
+					.getId(),userAuthenticated.userAuthenticated()
+					.getId());
 		} catch (DataIntegrityViolationException e) {
 			throw new BadRequestException(e.getMessage());
 		}
 	}
-
-	public void update(LivroPutRequestBody livroPutRequestBody, long idUsuario, long idEditora, long idAutor) {
-		Usuario user = UsuarioRepositorio.findById(idUsuario).get();
+	
+	@Transactional
+	public void update(LivroPutRequestBody livroPutRequestBody, long idEditora, long idAutor) {
+		Usuario user = UsuarioRepositorio.findById(userAuthenticated.userAuthenticated().getId()).get();
 		Editora editora = editoraRepositorio.findById(idEditora).get();
 		Autor autor = autorRepositorio.findById(idAutor).get();
 		
-		Livro livroSaved = livroRepositorio.findById(livroPutRequestBody.getId()).get();
+		Livro livroSaved = livroRepositorio.findAuthenticatedUserBooksById(livroPutRequestBody.getId(), 
+				userAuthenticated.userAuthenticated()
+				.getId())
+				.orElseThrow(() -> new BadRequestException("livro not found"));
+		
 		Livro livro = LivroMapper.INSTANCE.toLivro(livroPutRequestBody);
 		livro.setId(livroSaved.getId());
 		livro.setUsuario(user);

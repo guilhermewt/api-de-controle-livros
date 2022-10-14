@@ -1,5 +1,6 @@
 package com.biblioteca.resources;
 
+import java.util.Collection;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -9,6 +10,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,18 +29,22 @@ import com.biblioteca.requests.UsuarioPostRequestBody;
 import com.biblioteca.requests.UsuarioPutRequestBody;
 import com.biblioteca.services.serviceUsuario;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 @RestController
-@RequestMapping(value = "/usuarios")
+@RequestMapping(value = "usuarios/admin")
 @RequiredArgsConstructor
+@Log4j2
 public class UsuarioResources {
 
 	private final serviceUsuario serviceUsuario;
-
+	
+	
 	@GetMapping(value = "/all")
 	@Operation(summary = "find all user non pageable")
 	public ResponseEntity<List<Usuario>> findAllNonPageable() {
@@ -59,7 +68,7 @@ public class UsuarioResources {
 		return ResponseEntity.ok(serviceUsuario.findByIdOrElseThrowResourceNotFoundException(id));
 	}
 
-	@PostMapping
+	@PostMapping(value = "/save")
 	public ResponseEntity<Usuario> save(@RequestBody @Valid UsuarioPostRequestBody usuarioPostRequestBody) {
 		return new ResponseEntity<>(serviceUsuario.save(usuarioPostRequestBody),HttpStatus.CREATED);
 	}

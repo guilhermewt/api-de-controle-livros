@@ -62,10 +62,10 @@ public class LivroResources {
 	}
 	
 	//http://localhost:8080/livros/3/1
-	@PostMapping(value = "/{idUser}/{idPublisher}/{idAuthor}")
-	@Operation(description = "for the book to be made, the user Id,the publisher Id and the author Id are required")
-	public ResponseEntity<Livro> save(@PathVariable long idUser,@PathVariable long idPublisher,@PathVariable long idAuthor, @RequestBody @Valid LivroPostRequestBody livroPostRequestBody){
-		return new ResponseEntity<Livro>(serviceLivro.save(livroPostRequestBody,idUser,idPublisher,idAuthor), HttpStatus.CREATED);
+	@PostMapping(value = "/{idPublisher}/{idAuthor}")
+	@Operation(description = "for the book to be made,the publisher Id and the author Id are required")
+	public ResponseEntity<Livro> save(@PathVariable long idPublisher,@PathVariable long idAuthor, @RequestBody @Valid LivroPostRequestBody livroPostRequestBody){
+		return new ResponseEntity<Livro>(serviceLivro.save(livroPostRequestBody,idPublisher,idAuthor), HttpStatus.CREATED);
 	}
 	
 	@DeleteMapping(value = "/{id}")
@@ -78,10 +78,10 @@ public class LivroResources {
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}	
 	
-    @PutMapping(value = "/{idUser}/{idPublisher}/{idAuthor}")
+    @PutMapping(value = "/{idPublisher}/{idAuthor}")
     @Operation(description = "for the book to be made, the user Id,the publisher Id and the author Id are required")
-	public ResponseEntity<Void> update(@PathVariable long idUser,@PathVariable long idPublisher,@PathVariable long idAuthor,@RequestBody @Valid LivroPutRequestBody livroPutRequestBody){
-		serviceLivro.update(livroPutRequestBody,idUser,idPublisher,idAuthor);
+	public ResponseEntity<Void> update(@PathVariable long idPublisher,@PathVariable long idAuthor,@RequestBody @Valid LivroPutRequestBody livroPutRequestBody){
+		serviceLivro.update(livroPutRequestBody,idPublisher,idAuthor);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 }
