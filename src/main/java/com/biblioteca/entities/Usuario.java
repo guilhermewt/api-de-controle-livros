@@ -22,6 +22,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 @Entity
@@ -30,6 +31,7 @@ import lombok.experimental.SuperBuilder;
 @Data
 @EqualsAndHashCode(of= {"id","name"})
 @SuperBuilder
+@ToString
 public class Usuario implements Serializable, UserDetails {
 
 	private static final long serialVersionUID = 1L;

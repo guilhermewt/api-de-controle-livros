@@ -24,9 +24,11 @@ import com.biblioteca.services.exceptions.BadRequestException;
 import com.biblioteca.services.utilService.GetUserDetails;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class serviceLivro {
 
 	private final RepositorioLivro livroRepositorio;
@@ -93,6 +95,7 @@ public class serviceLivro {
 				userAuthenticated.userAuthenticated()
 				.getId())
 				.orElseThrow(() -> new BadRequestException("livro not found"));
+		
 		
 		Livro livro = LivroMapper.INSTANCE.toLivro(livroPutRequestBody);
 		livro.setId(livroSaved.getId());

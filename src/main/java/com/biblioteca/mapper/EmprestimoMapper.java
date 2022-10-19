@@ -1,6 +1,7 @@
 package com.biblioteca.mapper;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
 
 import com.biblioteca.entities.Emprestimo;
@@ -15,4 +16,7 @@ public abstract class EmprestimoMapper {
 	public abstract Emprestimo toEmprestimo(EmprestimosPostRequestBody emprestimosPostRequestBody);
 	
 	public abstract Emprestimo toEmprestimmo(EmprestimosPutRequestBody emprestimosPutRequestBody);
+	
+	public abstract Emprestimo atualizeEmprestimo(EmprestimosPutRequestBody emprestimoPutRequestBody,@MappingTarget Emprestimo emprestimoSaved);
+
 }

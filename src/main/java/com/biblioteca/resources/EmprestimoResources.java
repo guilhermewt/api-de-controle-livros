@@ -54,10 +54,10 @@ public class EmprestimoResources {
 	}
 	
 	//http://localhost:8080/emprestimos/2/2
-	@PostMapping(path = "/{idUsuario}/{idLivro}")
+	@PostMapping(path = "/{idLivro}")
 	@Operation(description = "for the loan to be made, the user id and the book id are required")
-	public ResponseEntity<Emprestimo> save(@PathVariable long idUsuario,  @RequestBody @Valid EmprestimosPostRequestBody emprestimosPostRequestBody, @PathVariable long idLivro){
-		return new ResponseEntity<>(serviceEmprestimo.save(idUsuario,emprestimosPostRequestBody,idLivro), HttpStatus.CREATED);
+	public ResponseEntity<Emprestimo> save(@RequestBody @Valid EmprestimosPostRequestBody emprestimosPostRequestBody, @PathVariable long idLivro){
+		return new ResponseEntity<>(serviceEmprestimo.save(emprestimosPostRequestBody,idLivro), HttpStatus.CREATED);
 	}
 	
 	@DeleteMapping(value = "/{id}")
@@ -70,10 +70,10 @@ public class EmprestimoResources {
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}	
 	
-	@PutMapping(value = "/{idUsuario}/{idLivro}")
+	@PutMapping
 	@Operation(description = "for the loan to be made, the user Id and the book Id are required")
-	public ResponseEntity<Void> update(@PathVariable long idUsuario, @PathVariable long idLivro,@RequestBody @Valid EmprestimosPutRequestBody emprestimosPutRequestBody){
-		serviceEmprestimo.update(emprestimosPutRequestBody,idUsuario,idLivro);
+	public ResponseEntity<Void> update(@RequestBody @Valid EmprestimosPutRequestBody emprestimosPutRequestBody){
+		serviceEmprestimo.update(emprestimosPutRequestBody);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 }

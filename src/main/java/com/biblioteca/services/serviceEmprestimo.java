@@ -19,68 +19,67 @@ import com.biblioteca.repository.RepositorioUsuario;
 import com.biblioteca.requests.EmprestimosPostRequestBody;
 import com.biblioteca.requests.EmprestimosPutRequestBody;
 import com.biblioteca.services.exceptions.BadRequestException;
+import com.biblioteca.services.utilService.GetUserDetails;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class serviceEmprestimo {
+	//testar todos metodos para fazer o commit
 	
 	private final RepositorioEmprestimo emprestimoRepositorio;
 
 	private final RepositorioUsuario userRepositorio;
 
 	private final RepositorioLivro livroRepositorio;
+	
+	private final GetUserDetails userAuthenticated;
+	
 
 	public List<Emprestimo> findAllNonPageable() {
-		return emprestimoRepositorio.findAll();
+		return emprestimoRepositorio.findByUsuarioId(userAuthenticated.userAuthenticated().getId());
 	}
 	
 	public Page<Emprestimo> findAll(Pageable pageable) {
-		return emprestimoRepositorio.findAll(pageable);
+		return emprestimoRepositorio.findByUsuarioId(userAuthenticated.userAuthenticated().getId(), pageable);
 	}
 
 	public Emprestimo findByIdOrElseThrowResourceNotFoundException(long id) {
-		return emprestimoRepositorio.findById(id).orElseThrow(() -> new BadRequestException("emprestimo not found"));	
+		return emprestimoRepositorio.findAuthenticatedUserById(id, userAuthenticated.userAuthenticated().getId()).orElseThrow(() -> new BadRequestException("emprestimo not found"));	
 	}
 
 	@Transactional
-	public Emprestimo save(long idUsuario, EmprestimosPostRequestBody emprestimosPostRequestBody, long idLivro) {
-		Livro livroSaved = livroRepositorio.findById(idLivro).get();
-		Usuario usuarioSaved = userRepositorio.findById(idUsuario).get();
-        Emprestimo emprestimo = EmprestimoMapper.INSTANCE.toEmprestimo(emprestimosPostRequestBody);
+	public Emprestimo save(EmprestimosPostRequestBody emprestimosPostRequestBody, long idLivro) {
+		Livro livroSaved = livroRepositorio.findAuthenticatedUserBooksById(idLivro, userAuthenticated.userAuthenticated().getId())
+				.orElseThrow(() -> new BadRequestException("livro not found"));
 		
-		boolean temLivro = usuarioSaved.getLivro().contains(livroSaved);
-		if (temLivro == true) {
-			emprestimo.setUsuario(usuarioSaved);
-			emprestimo.getLivros().add(livroSaved);
-			return emprestimoRepositorio.save(emprestimo);
-		} else {
-			throw new IllegalAccessError("este livro nao pertence ao usuario");
-		}
-
+		Usuario usuarioSaved = userRepositorio.findById(userAuthenticated.userAuthenticated().getId()).get();
+        
+		Emprestimo emprestimo = EmprestimoMapper.INSTANCE.toEmprestimo(emprestimosPostRequestBody);
+		
+		
+		emprestimo.setUsuario(usuarioSaved);
+		emprestimo.getLivros().add(livroSaved);
+		return emprestimoRepositorio.save(emprestimo);
 	}
 
-	public void delete(long id) {
+	public void delete(long idBook) {
 		try {
-			emprestimoRepositorio.delete(findByIdOrElseThrowResourceNotFoundException(id));
+			emprestimoRepositorio.deleteAuthenticatedUserBookById(findByIdOrElseThrowResourceNotFoundException(idBook).getId(),userAuthenticated.userAuthenticated().getId());
 		} catch (DataIntegrityViolationException e) {
 			throw new BadRequestException(e.getMessage());
 		}
 	}
 
-	public void update(EmprestimosPutRequestBody emprestimosPutRequestBody,long idUsuario,long idLivro) {
-		Emprestimo emprestimoSaved = emprestimoRepositorio.findById(emprestimosPutRequestBody.getId()).get();
-		Emprestimo emprestimo = EmprestimoMapper.INSTANCE.toEmprestimmo(emprestimosPutRequestBody);
+	
+	public void update(EmprestimosPutRequestBody emprestimosPutRequestBody) {
+		Emprestimo emprestimo = emprestimoRepositorio
+				.findAuthenticatedUserById(emprestimosPutRequestBody.getId(),userAuthenticated.userAuthenticated().getId())
+				.orElseThrow(() -> new BadRequestException("livro not found"));
 		
-		emprestimo.setId(emprestimoSaved.getId());		
-		
-		/* entidades associadas a emprestimo */
-		Livro livroSaved = livroRepositorio.findById(idLivro).get();
-		Usuario usuarioSaved = userRepositorio.findById(idUsuario).get();
-		
-		emprestimo.setUsuario(usuarioSaved);
-		emprestimo.getLivros().add(livroSaved);
+		EmprestimoMapper.INSTANCE.atualizeEmprestimo(emprestimosPutRequestBody, emprestimo);
+				
 		emprestimoRepositorio.save(emprestimo);
 	}
 	
