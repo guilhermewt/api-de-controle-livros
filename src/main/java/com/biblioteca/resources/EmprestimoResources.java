@@ -53,7 +53,6 @@ public class EmprestimoResources {
 		return ResponseEntity.ok(serviceEmprestimo.findByIdOrElseThrowResourceNotFoundException(id));
 	}
 	
-	//http://localhost:8080/emprestimos/2/2
 	@PostMapping(path = "/{idLivro}")
 	@Operation(description = "for the loan to be made, the user id and the book id are required")
 	public ResponseEntity<Emprestimo> save(@RequestBody @Valid EmprestimosPostRequestBody emprestimosPostRequestBody, @PathVariable long idLivro){
@@ -78,4 +77,3 @@ public class EmprestimoResources {
 	}
 }
 
-//mecher nos tests

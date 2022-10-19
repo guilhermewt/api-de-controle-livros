@@ -58,7 +58,6 @@ public class serviceEmprestimo {
         
 		Emprestimo emprestimo = EmprestimoMapper.INSTANCE.toEmprestimo(emprestimosPostRequestBody);
 		
-		
 		emprestimo.setUsuario(usuarioSaved);
 		emprestimo.getLivros().add(livroSaved);
 		return emprestimoRepositorio.save(emprestimo);
