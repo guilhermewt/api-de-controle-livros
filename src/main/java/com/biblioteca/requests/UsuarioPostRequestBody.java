@@ -26,19 +26,13 @@ public class UsuarioPostRequestBody{
 	
 	@NotEmpty(message = "the usuario password cannot be empty")
 	private String password;
-	
-	@NotEmpty(message = "the usuario authorities cannot be empty")
-	@Schema(description = "admin user type or common user")
-	private String authorities;
-
-	
-	public UsuarioPostRequestBody( String name, String email, String username, String password,
+		
+	public UsuarioPostRequestBody(String name, String email, String username, String password,
 			String authorities) {
 		super();
 		this.name = name;
 		this.email = email;	
 		this.username = username;
 		this.password = password;
-		this.authorities = authorities;
 	}
 }

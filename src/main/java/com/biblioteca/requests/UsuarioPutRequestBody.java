@@ -18,10 +18,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class UsuarioPutRequestBody{
 	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@NotNull
-	private Long id;
+	
 	
 	@NotEmpty(message = "the usuario name cannot be empty")
 	private String name;
@@ -35,20 +32,13 @@ public class UsuarioPutRequestBody{
 	
 	@NotEmpty(message = "the usuario password cannot be empty")
 	private String password;
-	
-	@NotEmpty(message = "the usuario authorities cannot be empty")
-	@Schema(description = "admin user type or common user")
-	private String authorities;
-
-	
-	public UsuarioPutRequestBody(Long id, String name, String email, String username, String password,
+		
+	public UsuarioPutRequestBody(String name, String email, String username, String password,
 			String authorities) {
 		super();
-		this.id = id;
 		this.name = name;
 		this.email = email;
 		this.username = username;
 		this.password = password;
-		this.authorities = authorities;
 	}
 }

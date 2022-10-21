@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -41,10 +42,14 @@ public class Usuario implements Serializable, UserDetails {
 	private Long id;
 	private String name;
 	private String email;
-	private String username;
-	private String password;
 	private String authorities;
-
+	
+	@Column(nullable = false, unique = true)
+	private String username;
+	
+	@Column(nullable = false)
+	private String password;
+	
 	@OneToMany(mappedBy = "usuario")
 	@Builder.Default
 	private Set<Livro> livro = new HashSet<>();

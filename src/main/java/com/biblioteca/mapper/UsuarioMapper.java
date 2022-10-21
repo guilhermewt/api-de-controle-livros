@@ -1,6 +1,7 @@
 package com.biblioteca.mapper;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
 
 import com.biblioteca.entities.Usuario;
@@ -15,4 +16,6 @@ public abstract class UsuarioMapper {
 	public abstract Usuario toUsuario(UsuarioPostRequestBody usuarioPostRequestBody);
 	
 	public abstract Usuario toUsuario(UsuarioPutRequestBody usuarioPutRequestBody);
+	
+	public abstract Usuario updateUser(UsuarioPutRequestBody usuarioPutRequestBody, @MappingTarget Usuario usuario);
 }

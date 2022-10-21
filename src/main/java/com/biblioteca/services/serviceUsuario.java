@@ -5,15 +5,12 @@ import java.util.Optional;
 
 import javax.transaction.Transactional;
 
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.biblioteca.entities.Usuario;
@@ -22,16 +19,17 @@ import com.biblioteca.repository.RepositorioUsuario;
 import com.biblioteca.requests.UsuarioPostRequestBody;
 import com.biblioteca.requests.UsuarioPutRequestBody;
 import com.biblioteca.services.exceptions.BadRequestException;
+import com.biblioteca.services.utilService.GetUserDetails;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 
 @Service
 @RequiredArgsConstructor
-@Log4j2
 public class serviceUsuario implements UserDetailsService{
-	
+
 	private final RepositorioUsuario userRepository;
+		
+	private final GetUserDetails userAuthenticated;
 	
 	public List<Usuario> findAllNonPageable(){
 		return userRepository.findAll();
@@ -49,34 +47,37 @@ public class serviceUsuario implements UserDetailsService{
 		return userRepository.findById(id).orElseThrow(() -> new BadRequestException("usuario not found"));
 	}
 	
+	public Usuario getMyUser() {
+		return userAuthenticated.userAuthenticated();
+	}
+	
 	@Transactional
-	public Usuario save(UsuarioPostRequestBody usuarioPostRequestBody) {
-		PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-		
+	public Usuario saveUser(UsuarioPostRequestBody usuarioPostRequestBody) {	
 		Usuario usuario = UsuarioMapper.INSTANCE.toUsuario(usuarioPostRequestBody);
-		usuario.setPassword(passwordEncoder.encode(usuarioPostRequestBody.getPassword()));
-		
+		usuario.setPassword(new BCryptPasswordEncoder().encode(usuario.getPassword()));
+		usuario.setAuthorities("ROLE_USER");
+	    return userRepository.save(usuario);		
+	}
+	
+	@Transactional
+	public Usuario saveUserAdmin(UsuarioPostRequestBody usuarioPostRequestBody) {	
+		Usuario usuario = UsuarioMapper.INSTANCE.toUsuario(usuarioPostRequestBody);
+		usuario.setPassword(new BCryptPasswordEncoder().encode(usuario.getPassword()));
+		usuario.setAuthorities("ROLE_ADMIN,ROLE_USER");
 	    return userRepository.save(usuario);
 	}
 	
-	public void delete(long id) {
-		try {
-		userRepository.delete(findByIdOrElseThrowResourceNotFoundException(id));
-		}
-		catch(DataIntegrityViolationException e) {
-			throw new BadRequestException(e.getMessage());
-		}
+	@Transactional
+	public void delete(long id) {	
+		userRepository.delete(findByIdOrElseThrowResourceNotFoundException(id));		
 	}
 	
+	@Transactional
 	public Usuario update(UsuarioPutRequestBody usuarioPutRequestBody) {
-		PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-		Usuario savedUsuario = userRepository.findById(usuarioPutRequestBody.getId()).get();
-		Usuario usuario = UsuarioMapper.INSTANCE.toUsuario(usuarioPutRequestBody);
-		usuario.setId(savedUsuario.getId());
-		usuario.setPassword(passwordEncoder.encode(usuarioPutRequestBody.getPassword()));
-		
+		Usuario savedUsuario = userRepository.findById(userAuthenticated.userAuthenticated().getId()).get();
+		Usuario usuario = UsuarioMapper.INSTANCE.updateUser(usuarioPutRequestBody, savedUsuario);
+		usuario.setPassword(new BCryptPasswordEncoder().encode(usuario.getPassword()));
 		return userRepository.save(usuario);
-		
 	}
 
 

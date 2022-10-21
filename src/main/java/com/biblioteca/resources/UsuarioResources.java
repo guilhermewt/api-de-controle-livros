@@ -1,6 +1,5 @@
 package com.biblioteca.resources;
 
-import java.util.Collection;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -10,10 +9,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,51 +24,66 @@ import com.biblioteca.requests.UsuarioPostRequestBody;
 import com.biblioteca.requests.UsuarioPutRequestBody;
 import com.biblioteca.services.serviceUsuario;
 
-import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 
 @RestController
-@RequestMapping(value = "usuarios/admin")
+@RequestMapping(value = "usuarios")
 @RequiredArgsConstructor
-@Log4j2
 public class UsuarioResources {
 
 	private final serviceUsuario serviceUsuario;
 	
 	
-	@GetMapping(value = "/all")
+	@GetMapping(value = "/admin/all")
 	@Operation(summary = "find all user non pageable")
 	public ResponseEntity<List<Usuario>> findAllNonPageable() {
 		return ResponseEntity.ok(serviceUsuario.findAllNonPageable());
 	}
 	
-	@GetMapping
+	@GetMapping(value = "admin")
 	@Operation(summary = "find all User pageable", description = "the default size is 20, use the parameter to change the default value ")
 	public ResponseEntity<Page<Usuario>> findAll(@ParameterObject Pageable pageable) {
 		return ResponseEntity.ok(serviceUsuario.findAll(pageable));
 	}
 	
-	@GetMapping(value = "/findname")
+	@GetMapping(value = "/admin/findname")
 	@Operation(summary = "find all user by name")
 	public ResponseEntity<List<Usuario>> findByName(@RequestParam String name) {
 		return ResponseEntity.ok(serviceUsuario.findByName(name));
 	}
 
-	@GetMapping(value = "/{id}")
+	@GetMapping(value = "/admin/{id}")
 	public ResponseEntity<Usuario> findById(@PathVariable long id) {
 		return ResponseEntity.ok(serviceUsuario.findByIdOrElseThrowResourceNotFoundException(id));
 	}
-
-	@PostMapping(value = "/save")
-	public ResponseEntity<Usuario> save(@RequestBody @Valid UsuarioPostRequestBody usuarioPostRequestBody) {
-		return new ResponseEntity<>(serviceUsuario.save(usuarioPostRequestBody),HttpStatus.CREATED);
+	
+	@GetMapping(value = "/users-logged")
+	public ResponseEntity<Usuario> getMyUser() {
+		return ResponseEntity.ok(serviceUsuario.getMyUser());
 	}
 
-	@DeleteMapping(path = "/{id}")
+	@PostMapping(value = "/save")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "201", description = "successful operation"),
+			@ApiResponse(responseCode = "409", description = "when user already exists in the database")
+	})
+	public ResponseEntity<Usuario> saveUser(@RequestBody @Valid UsuarioPostRequestBody usuarioPostRequestBody) {
+		return new ResponseEntity<>(serviceUsuario.saveUser(usuarioPostRequestBody),HttpStatus.CREATED);
+	}
+	
+	@PostMapping(value = "/admin/saveAdmin")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "201", description = "successful operation"),
+			@ApiResponse(responseCode = "409", description = "when user already exists in the database")
+	})
+	public ResponseEntity<Usuario> saveUserAdmin(@RequestBody @Valid UsuarioPostRequestBody usuarioPostRequestBody) {
+		return new ResponseEntity<>(serviceUsuario.saveUserAdmin(usuarioPostRequestBody),HttpStatus.CREATED);
+	}
+
+	@DeleteMapping(path = "/admin/{id}")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "204", description = "successful operation"),
 			@ApiResponse(responseCode = "400", description = "when user does not exist in the dataBase")

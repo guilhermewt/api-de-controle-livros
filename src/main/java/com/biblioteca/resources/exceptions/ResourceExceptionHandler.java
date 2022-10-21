@@ -4,10 +4,10 @@ import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.lang.Nullable;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import org.springframework.web.util.WebUtils;
 
 import com.biblioteca.services.exceptions.BadRequestException;
 import com.biblioteca.services.exceptions.BadRequestExceptionDetails;
@@ -67,6 +66,18 @@ public class ResourceExceptionHandler extends ResponseEntityExceptionHandler{
 				.build();
 		
 		return new ResponseEntity<>(standardError, headers, status);
+	}
+	
+	//DataIntegrityViolationException
+	@ExceptionHandler(DataIntegrityViolationException.class)
+	public ResponseEntity<BadRequestExceptionDetails> resourceNotFound(DataIntegrityViolationException bre){
+		return new ResponseEntity<>(BadRequestExceptionDetails.builder()
+				.timestamp(Instant.now())
+				.status(HttpStatus.CONFLICT.value())
+				.title("bad Request Exception, check the documentation")
+				.details(bre.getMessage())
+				.developerMessage(bre.getClass().getName())
+				.build(), HttpStatus.BAD_REQUEST);
 	}
 	
 }
