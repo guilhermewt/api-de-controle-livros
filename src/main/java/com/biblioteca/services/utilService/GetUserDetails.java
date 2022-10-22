@@ -11,11 +11,9 @@ import com.biblioteca.repository.RepositorioUsuario;
 import com.biblioteca.services.exceptions.BadRequestException;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 
 @Service
 @RequiredArgsConstructor
-@Log4j2
 public class GetUserDetails {
 
 	private final RepositorioUsuario usuarioRepositorio;

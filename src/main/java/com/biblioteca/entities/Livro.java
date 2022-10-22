@@ -34,7 +34,7 @@ public class Livro implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
-	
+	//tirado classes editora e autor do sistema falta tira dos testes
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -50,14 +50,6 @@ public class Livro implements Serializable {
 	@ManyToMany(mappedBy = "livros")
 	@Builder.Default
 	private Set<Emprestimo> emprestimos = new HashSet<>();
-
-	@ManyToOne
-	@JoinColumn(name = "editora_id")
-	private Editora editora;
-
-	@ManyToOne
-	@JoinColumn(name = "autor_id")
-	private Autor autor;
 	
 	public Livro(Long id, String titulo, Date anoPublicacao) {
 		super();

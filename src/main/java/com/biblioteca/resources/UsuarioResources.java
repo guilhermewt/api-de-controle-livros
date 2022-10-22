@@ -36,36 +36,38 @@ public class UsuarioResources {
 
 	private final serviceUsuario serviceUsuario;
 	
-	
 	@GetMapping(value = "/admin/all")
-	@Operation(summary = "find all user non pageable")
+	@Operation(summary = "find all user non pageable - only users admin are allowed")
 	public ResponseEntity<List<Usuario>> findAllNonPageable() {
 		return ResponseEntity.ok(serviceUsuario.findAllNonPageable());
 	}
 	
-	@GetMapping(value = "admin")
-	@Operation(summary = "find all User pageable", description = "the default size is 20, use the parameter to change the default value ")
+	@GetMapping(value = "/admin")
+	@Operation(summary = "find all User pageable - only users admin are allowed", description = "the default size is 20, use the parameter to change the default value ")
 	public ResponseEntity<Page<Usuario>> findAll(@ParameterObject Pageable pageable) {
 		return ResponseEntity.ok(serviceUsuario.findAll(pageable));
 	}
 	
 	@GetMapping(value = "/admin/findname")
-	@Operation(summary = "find all user by name")
+	@Operation(summary = "find all user by name - only users admin are allowed")
 	public ResponseEntity<List<Usuario>> findByName(@RequestParam String name) {
 		return ResponseEntity.ok(serviceUsuario.findByName(name));
 	}
 
 	@GetMapping(value = "/admin/{id}")
+	@Operation(summary = "find users by id - only users admin are allowed")
 	public ResponseEntity<Usuario> findById(@PathVariable long id) {
 		return ResponseEntity.ok(serviceUsuario.findByIdOrElseThrowResourceNotFoundException(id));
 	}
 	
 	@GetMapping(value = "/users-logged")
+	@Operation(summary = "logged in user")
 	public ResponseEntity<Usuario> getMyUser() {
 		return ResponseEntity.ok(serviceUsuario.getMyUser());
 	}
 
 	@PostMapping(value = "/save")
+	@Operation(summary = "endpoint to register and have access to other methods")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "201", description = "successful operation"),
 			@ApiResponse(responseCode = "409", description = "when user already exists in the database")
@@ -75,6 +77,7 @@ public class UsuarioResources {
 	}
 	
 	@PostMapping(value = "/admin/saveAdmin")
+	@Operation(summary = "only users admin are allowed")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "201", description = "successful operation"),
 			@ApiResponse(responseCode = "409", description = "when user already exists in the database")
@@ -84,6 +87,7 @@ public class UsuarioResources {
 	}
 
 	@DeleteMapping(path = "/admin/{id}")
+	@Operation(summary = "only users admin are allowed")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "204", description = "successful operation"),
 			@ApiResponse(responseCode = "400", description = "when user does not exist in the dataBase")
@@ -94,6 +98,7 @@ public class UsuarioResources {
 	}
 
 	@PutMapping
+	@Operation(summary = "update my user", description = "only your username will be updated")
 	public ResponseEntity<Usuario> update(@RequestBody UsuarioPutRequestBody usuarioPutRequestBody) {
 		serviceUsuario.update(usuarioPutRequestBody);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);

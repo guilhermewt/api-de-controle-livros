@@ -62,10 +62,10 @@ public class LivroResources {
 	}
 	
 	//http://localhost:8080/livros/3/1
-	@PostMapping(value = "/{idPublisher}/{idAuthor}")
+	@PostMapping()
 	@Operation(description = "for the book to be made,the publisher Id and the author Id are required")
-	public ResponseEntity<Livro> save(@PathVariable long idPublisher,@PathVariable long idAuthor, @RequestBody @Valid LivroPostRequestBody livroPostRequestBody){
-		return new ResponseEntity<Livro>(serviceLivro.save(livroPostRequestBody,idPublisher,idAuthor), HttpStatus.CREATED);
+	public ResponseEntity<Livro> save(@RequestBody @Valid LivroPostRequestBody livroPostRequestBody){
+		return new ResponseEntity<Livro>(serviceLivro.save(livroPostRequestBody), HttpStatus.CREATED);
 	}
 	
 	@DeleteMapping(value = "/{id}")
@@ -78,10 +78,10 @@ public class LivroResources {
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}	
 	
-    @PutMapping(value = "/{idPublisher}/{idAuthor}")
+    @PutMapping
     @Operation(description = "for the book to be made, the user Id,the publisher Id and the author Id are required")
-	public ResponseEntity<Void> update(@PathVariable long idPublisher,@PathVariable long idAuthor,@RequestBody @Valid LivroPutRequestBody livroPutRequestBody){
-		serviceLivro.update(livroPutRequestBody,idPublisher,idAuthor);
+	public ResponseEntity<Void> update(@RequestBody @Valid LivroPutRequestBody livroPutRequestBody){
+		serviceLivro.update(livroPutRequestBody);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 }
