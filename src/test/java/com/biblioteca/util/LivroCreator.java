@@ -9,6 +9,7 @@ public class LivroCreator {
 				.id(1l)
 				.titulo("o poder da acao")
 				.anoPublicacao(DateConvert.convertData("2022/09/15"))
+				.usuario(UsuarioCreator.createUserUsuario())
 				.build();
 	}
 	

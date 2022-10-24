@@ -24,13 +24,9 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import com.biblioteca.entities.Livro;
 import com.biblioteca.entities.Usuario;
-import com.biblioteca.repository.RepositorioAutor;
-import com.biblioteca.repository.RepositorioEditora;
 import com.biblioteca.repository.RepositorioLivro;
 import com.biblioteca.repository.RepositorioUsuario;
 import com.biblioteca.requests.LivroPostRequestBody;
-import com.biblioteca.util.AutorCreator;
-import com.biblioteca.util.EditoraCreator;
 import com.biblioteca.util.LivroCreator;
 import com.biblioteca.util.LivroPostRequestBodyCreator;
 import com.biblioteca.util.UsuarioCreator;
@@ -54,12 +50,6 @@ public class LivroResourceIT {
 	
 	@Autowired
 	private RepositorioUsuario repositoryUser;
-	
-	@Autowired
-	private RepositorioEditora repositoryEditora;
-	
-	@Autowired
-	private RepositorioAutor repositoryAutor;
 	
 	
 	private static Usuario USER = UsuarioCreator.createUserUsuario();
@@ -88,7 +78,7 @@ public class LivroResourceIT {
 	void findAll_ReturnListOfObjectInsidePage_whenSuccessful() {
 		repositoryUser.save(USER);
 		
-		Livro livroSaved = repositoryLivro.save(LivroCreator.createLivroToBeSaved());
+		Livro livroSaved = repositoryLivro.save(LivroCreator.createValidLivro());
 		
 		PageableResponse<Livro> livroPage = testRestTemplateRoleUser.exchange("/livros", HttpMethod.GET, null, 
 				new ParameterizedTypeReference<PageableResponse<Livro>>() {
@@ -104,7 +94,7 @@ public class LivroResourceIT {
 	void findAll_ReturnListLivro_whenSuccessful() {
 		repositoryUser.save(USER);
 		
-		Livro livroSaved = repositoryLivro.save(LivroCreator.createLivroToBeSaved());
+		Livro livroSaved = repositoryLivro.save(LivroCreator.createValidLivro());
 		
 		List<Livro> livro = testRestTemplateRoleUser.exchange("/livros/all", HttpMethod.GET, null, 
 				 new ParameterizedTypeReference<List<Livro>>() {
@@ -120,7 +110,7 @@ public class LivroResourceIT {
 	void findByName_ReturnListOfLivro_whenSuccessful() {
 		repositoryUser.save(USER);
 		
-		Livro livroSaved = repositoryLivro.save(LivroCreator.createLivroToBeSaved());
+		Livro livroSaved = repositoryLivro.save(LivroCreator.createValidLivro());
 			
 		String url = String.format("/livros/findbytitulo?titulo=%s",livroSaved.getTitulo());
 		
@@ -150,7 +140,7 @@ public class LivroResourceIT {
 	void findById_ReturnLivro_whenSuccessful() {
 		repositoryUser.save(USER);
 		
-		Livro livroSaved = repositoryLivro.save(LivroCreator.createLivroToBeSaved());
+		Livro livroSaved = repositoryLivro.save(LivroCreator.createValidLivro());
 			
 		Livro livro = testRestTemplateRoleUser.getForObject("/livros/{id}", Livro.class, livroSaved.getId());
 		
@@ -163,12 +153,11 @@ public class LivroResourceIT {
 	@DisplayName("save Return Livro whenSuccessful")
 	void save_ReturnLivro_whenSuccessful() {
 		repositoryUser.save(USER);
-		repositoryEditora.save(EditoraCreator.createEditoraToBeSaved());
-		repositoryAutor.save(AutorCreator.createAutorToBeSaved());
+	
 		
 		LivroPostRequestBody livroPostRequestBody = LivroPostRequestBodyCreator.createLivroPostRequestBodyCreator();
 			
-		ResponseEntity<Livro> entityLivro = testRestTemplateRoleUser.postForEntity("/livros/{idUsuario}/{idEditora}/{idAutor}", livroPostRequestBody, Livro.class,1l,1l,1l);
+		ResponseEntity<Livro> entityLivro = testRestTemplateRoleUser.postForEntity("/livros", livroPostRequestBody, Livro.class);
 		
 		Assertions.assertThat(entityLivro).isNotNull();
 		Assertions.assertThat(entityLivro.getBody()).isNotNull();
@@ -181,7 +170,7 @@ public class LivroResourceIT {
 	void delete_RemovesLivro_whenSuccessful() {
 		repositoryUser.save(USER);
 		
-		Livro livroSaved = repositoryLivro.save(LivroCreator.createLivroToBeSaved());
+		Livro livroSaved = repositoryLivro.save(LivroCreator.createValidLivro());
 			
 		ResponseEntity<Void> entityLivro = testRestTemplateRoleUser.exchange("/livros/{id}", HttpMethod.DELETE, null, Void.class,livroSaved.getId());		
 		Assertions.assertThat(entityLivro).isNotNull();
@@ -193,7 +182,7 @@ public class LivroResourceIT {
 	void update_ReplaceLivro_whenSuccessful() {
 		repositoryUser.save(USER);
 		
-		Livro livroSaved = repositoryLivro.save(LivroCreator.createLivroToBeSaved());
+		Livro livroSaved = repositoryLivro.save(LivroCreator.createValidLivro());
 		livroSaved.setTitulo("gabriel dias");
 			
 		ResponseEntity<Void> entityLivro = testRestTemplateRoleUser.exchange("/livros", HttpMethod.PUT, 

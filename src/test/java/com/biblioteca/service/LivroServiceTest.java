@@ -19,14 +19,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.biblioteca.entities.Livro;
-import com.biblioteca.repository.RepositorioAutor;
-import com.biblioteca.repository.RepositorioEditora;
 import com.biblioteca.repository.RepositorioLivro;
 import com.biblioteca.repository.RepositorioUsuario;
 import com.biblioteca.services.serviceLivro;
 import com.biblioteca.services.exceptions.BadRequestException;
-import com.biblioteca.util.AutorCreator;
-import com.biblioteca.util.EditoraCreator;
+import com.biblioteca.services.utilService.GetUserDetails;
 import com.biblioteca.util.LivroCreator;
 import com.biblioteca.util.LivroPostRequestBodyCreator;
 import com.biblioteca.util.LivroPutRequestBodyCreator;
@@ -34,43 +31,42 @@ import com.biblioteca.util.UsuarioCreator;
 
 @ExtendWith(SpringExtension.class)
 public class LivroServiceTest {
+	//todos metodos de repository e service ok
 	
 	@InjectMocks
 	private serviceLivro livroService;
 	
 	@Mock
 	private RepositorioLivro livroRepositoryMock;
-	
-	@Mock
-	private RepositorioAutor autorRepositoryMock;
-	
-	@Mock
-	private RepositorioEditora editoraRepositoryMock;
-	
-	
+		
 	@Mock
 	private RepositorioUsuario usuarioRepositoryMock;
+	
+	@Mock
+	private GetUserDetails userAuthenticated;
 	
 	@BeforeEach
 	void setUp() {
 		PageImpl<Livro> livroPage = new PageImpl<>(List.of(LivroCreator.createValidLivro()));
-		BDDMockito.when(livroRepositoryMock.findAll(ArgumentMatchers.any(PageRequest.class))).thenReturn(livroPage);
+		BDDMockito.when(livroRepositoryMock.findByUsuarioId(ArgumentMatchers.anyLong(), ArgumentMatchers.any(PageRequest.class))).thenReturn(livroPage);
 		
-		BDDMockito.when(livroRepositoryMock.findAll()).thenReturn(List.of(LivroCreator.createValidLivro()));
+		BDDMockito.when(livroRepositoryMock.findByUsuarioId(ArgumentMatchers.anyLong())).thenReturn(List.of(LivroCreator.createValidLivro()));
 		
-		BDDMockito.when(livroRepositoryMock.findById(ArgumentMatchers.anyLong()))
+		BDDMockito.when(livroRepositoryMock.findAuthenticatedUserBooksById(ArgumentMatchers.anyLong(),ArgumentMatchers.anyLong()))
 		.thenReturn(Optional.of(LivroCreator.createValidLivro()));
 		
-		BDDMockito.when(livroRepositoryMock.findByTituloContainingIgnoreCase(ArgumentMatchers.anyString()))
+		BDDMockito.when(livroRepositoryMock.findAuthenticatedUserBooksByTitle(ArgumentMatchers.anyString(),ArgumentMatchers.anyLong()))
 		.thenReturn(List.of(LivroCreator.createValidLivro()));
 		
 		BDDMockito.when(livroRepositoryMock.save(ArgumentMatchers.any(Livro.class))).thenReturn(LivroCreator.createValidLivro());
 		
 		BDDMockito.doNothing().when(livroRepositoryMock).delete(ArgumentMatchers.any(Livro.class));
+		
+		BDDMockito.when(userAuthenticated.userAuthenticated()).thenReturn(UsuarioCreator.createUserUsuario());
 	}
 	
 	@Test
-	@DisplayName("findAll Return List Of Object Inside Page whenSuccessful")
+	@DisplayName("find all user books by id Return List Of Object Inside Page whenSuccessful")
 	void findAll_ReturnListOfObjectInsidePage_whenSuccessful() {
 		Livro livro = LivroCreator.createValidLivro();
 		
@@ -82,7 +78,7 @@ public class LivroServiceTest {
 	}
 	
 	@Test
-	@DisplayName("findAll Return List Of Livro whenSuccessful")
+	@DisplayName("find all user books by id Return List Of Livro whenSuccessful")
 	void findAll_ReturnListOfLivro_whenSuccessful() {
 		Livro livroSaved = LivroCreator.createValidLivro();
 		
@@ -98,7 +94,7 @@ public class LivroServiceTest {
 	void findById_ReturnLivro_whenSuccessful() {
 		Livro livroSaved = LivroCreator.createValidLivro();
 		
-		Livro livro = this.livroService.findByIdOrElseThrowResourceNotFoundException(1);
+		Livro livro = this.livroService.findByIdOrElseThrowResourceNotFoundException(livroSaved.getId());
 		
 		Assertions.assertThat(livro).isNotNull();
 		Assertions.assertThat(livro.getId()).isNotNull();
@@ -108,7 +104,7 @@ public class LivroServiceTest {
 	@Test
 	@DisplayName("findById Return Bad Request Exception When Livro Is Not Found")
 	void findById_ReturnBadRequestExceptionWhenLivroIsNotFound() {
-		BDDMockito.when(livroRepositoryMock.findById(ArgumentMatchers.anyLong()))
+		BDDMockito.when(livroRepositoryMock.findAuthenticatedUserBooksById(ArgumentMatchers.anyLong(),ArgumentMatchers.anyLong()))
 		.thenReturn(Optional.empty());
 		
 		Assertions.assertThatCode(() -> this.livroService.findByIdOrElseThrowResourceNotFoundException(1))
@@ -130,7 +126,7 @@ public class LivroServiceTest {
 	@Test
 	@DisplayName("findByName Return Empty List when no Livro is found")
 	void findByName_ReturnEmptyListWhenNoLivroIsFound() {
-		BDDMockito.when(livroRepositoryMock.findByTituloContainingIgnoreCase(ArgumentMatchers.anyString()))
+		BDDMockito.when(livroRepositoryMock.findAuthenticatedUserBooksByTitle(ArgumentMatchers.anyString(),ArgumentMatchers.anyLong()))
 		.thenReturn(Collections.emptyList());
 		
 		List<Livro> livro = this.livroService.findByTitulo("xaxa");
@@ -142,17 +138,11 @@ public class LivroServiceTest {
 	@DisplayName("save Return Livro whenSuccessful")
 	void save_ReturnLivro_whenSuccessful() {
 		BDDMockito.when(usuarioRepositoryMock.findById(ArgumentMatchers.anyLong()))
-		.thenReturn(Optional.of(UsuarioCreator.createAdminUsuario()));
-		
-		BDDMockito.when(autorRepositoryMock.findById(ArgumentMatchers.anyLong()))
-		.thenReturn(Optional.of(AutorCreator.createValidAutor()));
-		
-		BDDMockito.when(editoraRepositoryMock.findById(ArgumentMatchers.anyLong()))
-		.thenReturn(Optional.of(EditoraCreator.createValidEditora()));
+		.thenReturn(Optional.of(UsuarioCreator.createUserUsuario()));
 		
 		Livro livroSaved = LivroCreator.createValidLivro();
 		
-		Livro livro = this.livroService.save(LivroPostRequestBodyCreator.createLivroPostRequestBodyCreator(),1l,1l,1l);
+		Livro livro = this.livroService.save(LivroPostRequestBodyCreator.createLivroPostRequestBodyCreator());
 		
 		Assertions.assertThat(livro).isNotNull();
 		Assertions.assertThat(livro.getId()).isNotNull();
@@ -171,13 +161,8 @@ public class LivroServiceTest {
 		BDDMockito.when(usuarioRepositoryMock.findById(ArgumentMatchers.anyLong()))
 		.thenReturn(Optional.of(UsuarioCreator.createAdminUsuario()));
 		
-		BDDMockito.when(autorRepositoryMock.findById(ArgumentMatchers.anyLong()))
-		.thenReturn(Optional.of(AutorCreator.createValidAutor()));
 		
-		BDDMockito.when(editoraRepositoryMock.findById(ArgumentMatchers.anyLong()))
-		.thenReturn(Optional.of(EditoraCreator.createValidEditora()));
-		
-		Assertions.assertThatCode(() -> this.livroService.update(LivroPutRequestBodyCreator.createLivroPutRequestBodyCreator(),1l,1l,1l)).doesNotThrowAnyException();
+		Assertions.assertThatCode(() -> this.livroService.update(LivroPutRequestBodyCreator.createLivroPutRequestBodyCreator())).doesNotThrowAnyException();
 	}
 	
 }

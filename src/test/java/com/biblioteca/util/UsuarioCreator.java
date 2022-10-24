@@ -10,7 +10,7 @@ public class UsuarioCreator {
 				.name("guilhermeSilva")
 				.username("guilherme")
 				.email("guilherme@gmail.com")
-				.password("{bcrypt}$2a$10$gUqmuiSjMuhIRW6T8IQWAOy/IcyNPj0yMyWBBd3g1HWQRa3FQkFeW")
+				.password("$2a$10$2n9REGGbEqSHj7fcEEg2heGAzkwcwTnnyKIlQaW21P5QVpwiQOrk6")
 				.authorities("ROLE_ADMIN")
 				.build();
 	}
@@ -19,9 +19,9 @@ public class UsuarioCreator {
 		return Usuario.builder()
 				.id(1l)
 				.name("joao")
-				.username("UserBiblioteca")
+				.username("userBiblioteca")
 				.email("joao@gmail.com")
-				.password("{bcrypt}$2a$10$gUqmuiSjMuhIRW6T8IQWAOy/IcyNPj0yMyWBBd3g1HWQRa3FQkFeW")
+				.password("$2a$10$2n9REGGbEqSHj7fcEEg2heGAzkwcwTnnyKIlQaW21P5QVpwiQOrk6")
 				.authorities("ROLE_USER")
 				.build();
 	}

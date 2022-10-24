@@ -21,9 +21,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import com.biblioteca.entities.Livro;
 import com.biblioteca.requests.LivroPostRequestBody;
 import com.biblioteca.services.serviceLivro;
+import com.biblioteca.services.utilService.GetUserDetails;
 import com.biblioteca.util.LivroCreator;
 import com.biblioteca.util.LivroPostRequestBodyCreator;
 import com.biblioteca.util.LivroPutRequestBodyCreator;
+import com.biblioteca.util.UsuarioCreator;
 
 @ExtendWith(SpringExtension.class)
 public class LivroResourceTest {
@@ -33,6 +35,9 @@ public class LivroResourceTest {
 	
 	@Mock
 	private serviceLivro livroServiceMock;
+	
+	@Mock
+	private GetUserDetails userAuthenticated;
 	
 	@BeforeEach
 	void setUp() {
@@ -47,15 +52,17 @@ public class LivroResourceTest {
 		BDDMockito.when(livroServiceMock.findByIdOrElseThrowResourceNotFoundException(ArgumentMatchers.anyLong()))
 		.thenReturn(LivroCreator.createValidLivro());
 		
-		BDDMockito.when(livroServiceMock.save(ArgumentMatchers.any(LivroPostRequestBody.class),ArgumentMatchers.anyLong(),ArgumentMatchers.anyLong(),ArgumentMatchers.anyLong()))
+		BDDMockito.when(livroServiceMock.save(ArgumentMatchers.any(LivroPostRequestBody.class)))
 		.thenReturn(LivroCreator.createValidLivro());
 		
 		BDDMockito.doNothing().when(livroServiceMock).delete(ArgumentMatchers.anyLong());
 		
+		BDDMockito.when(userAuthenticated.userAuthenticated()).thenReturn(UsuarioCreator.createUserUsuario());
+		
 	}
 	
 	@Test
-	@DisplayName("findAll_Return List Of Object Inside Page whenSuccessful")
+	@DisplayName("find all user books Return List Of Object Inside Page whenSuccessful")
 	void findAll_ReturnListOfObjectInsidePage_whenSuccessful() {
 		Livro livroSaved = LivroCreator.createValidLivro();
 		
@@ -118,7 +125,7 @@ public class LivroResourceTest {
 	void save_ReturnLivro_whenSuccessful() {
 		Livro livroSaved = LivroCreator.createValidLivro();
 		
-		Livro livro = this.livroResource.save(1l,1l,1l,LivroPostRequestBodyCreator.createLivroPostRequestBodyCreator()).getBody();
+		Livro livro = this.livroResource.save(LivroPostRequestBodyCreator.createLivroPostRequestBodyCreator()).getBody();
 		
 		Assertions.assertThat(livro).isNotNull();
 		Assertions.assertThat(livro.getId()).isNotNull();
@@ -136,9 +143,9 @@ public class LivroResourceTest {
 	@Test
 	@DisplayName("update replace livro whenSuccessful")
 	void update_replaceLivro_whenSuccessful() {		
-	    this.livroResource.save(1l,1l,1l,LivroPostRequestBodyCreator.createLivroPostRequestBodyCreator()).getBody();
+	    this.livroResource.save(LivroPostRequestBodyCreator.createLivroPostRequestBodyCreator()).getBody();
 		
-		ResponseEntity<Void> livro = this.livroResource.update(1l,1l,1l,LivroPutRequestBodyCreator.createLivroPutRequestBodyCreator());
+		ResponseEntity<Void> livro = this.livroResource.update(LivroPutRequestBodyCreator.createLivroPutRequestBodyCreator());
 		
 		Assertions.assertThat(livro.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);					
 	}

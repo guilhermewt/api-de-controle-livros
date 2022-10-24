@@ -61,8 +61,7 @@ public class LivroResources {
 		return ResponseEntity.ok(serviceLivro.findByTitulo(titulo));
 	}
 	
-	//http://localhost:8080/livros/3/1
-	@PostMapping()
+	@PostMapping
 	@Operation(description = "for the book to be made,the publisher Id and the author Id are required")
 	public ResponseEntity<Livro> save(@RequestBody @Valid LivroPostRequestBody livroPostRequestBody){
 		return new ResponseEntity<Livro>(serviceLivro.save(livroPostRequestBody), HttpStatus.CREATED);

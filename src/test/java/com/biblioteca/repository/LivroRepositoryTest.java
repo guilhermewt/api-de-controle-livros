@@ -15,33 +15,41 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.annotation.DirtiesContext;
 
 import com.biblioteca.entities.Livro;
+import com.biblioteca.entities.Usuario;
 import com.biblioteca.util.LivroCreator;
+import com.biblioteca.util.UsuarioCreator;
 
 @DataJpaTest
 @DisplayName("test for livro repository")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+
 public class LivroRepositoryTest {
 	
 	@Autowired
 	private RepositorioLivro repositoryLivro;
 	
+	@Autowired
+	private RepositorioUsuario userRepository;
+	
 	@Test
-	@DisplayName("find all return list of object inside page whensuccessful")
+	@DisplayName("find all user books return list of object inside page whensuccessful")
 	void findAll_returnListOfObjectInsidePage_whenSuccessful() {
+		Usuario usuario = this.userRepository.save(UsuarioCreator.createUserUsuario());
 		
-		Livro livroToBeSaved = this.repositoryLivro.save(LivroCreator.createLivroToBeSaved());
-		Page<Livro> livroSaved = this.repositoryLivro.findAll(PageRequest.of(0, 5));
+		Livro livroToBeSaved = this.repositoryLivro.save(LivroCreator.createValidLivro());
+		Page<Livro> livroSaved = this.repositoryLivro.findByUsuarioId(usuario.getId(), PageRequest.of(0, 5));
 		
 		Assertions.assertThat(livroSaved).isNotNull().isNotEmpty();
 		Assertions.assertThat(livroSaved.toList().get(0)).isEqualTo(livroToBeSaved);
 	}
 	
 	@Test
-	@DisplayName("find all return list of livro whensuccessful")
+	@DisplayName("find all user books by id return list of livro whensuccessful")
 	void findAll_returnListOfLivro_whenSuccessful() {
+		Usuario usuario = this.userRepository.save(UsuarioCreator.createUserUsuario());
 		
-		Livro livroToBeSaved = this.repositoryLivro.save(LivroCreator.createLivroToBeSaved());
-		List<Livro> livroSaved = this.repositoryLivro.findAll();
+		Livro livroToBeSaved = this.repositoryLivro.save(LivroCreator.createValidLivro());
+		List<Livro> livroSaved = this.repositoryLivro.findByUsuarioId(usuario.getId());
 		
 		Assertions.assertThat(livroSaved).isNotNull().isNotEmpty();
 		Assertions.assertThat(livroSaved.get(0)).isEqualTo(livroToBeSaved);
@@ -50,8 +58,10 @@ public class LivroRepositoryTest {
 	@Test
 	@DisplayName("findById return livro whenSuccessful")
 	void findByid_returnLivro_whenSuccessful() {
+		Usuario usuario = this.userRepository.save(UsuarioCreator.createUserUsuario());
+		
 		Livro livroToBeSaved = this.repositoryLivro.save(LivroCreator.createValidLivro());
-		Livro livroSaved = this.repositoryLivro.findById(livroToBeSaved.getId()).get();
+		Livro livroSaved = this.repositoryLivro.findAuthenticatedUserBooksById(livroToBeSaved.getId(), usuario.getId()).get();
 		
 		Assertions.assertThat(livroSaved).isNotNull();
 		Assertions.assertThat(livroSaved.getId()).isNotNull();
@@ -59,12 +69,15 @@ public class LivroRepositoryTest {
 	}
 	
 	@Test
-	@DisplayName("findByName Return List Of Livro whenSuccessful")
-	void findByName_ReturnListOfLivro_whenSuccessful() {
+	@DisplayName("findAuthenticatedUserBooksByTitle Return List Of Livro whenSuccessful")
+	void findAuthenticatedUserBooksByTitle_ReturnListOfLivro_whenSuccessful() {
+	    this.userRepository.save(UsuarioCreator.createUserUsuario());
+		
 		Livro livroToBeSaved = this.repositoryLivro.save(LivroCreator.createValidLivro());
+		
 		String titulo = livroToBeSaved.getTitulo();
 		
-		List<Livro> livroSaved = this.repositoryLivro.findByTituloContainingIgnoreCase(titulo);
+		List<Livro> livroSaved = this.repositoryLivro.findAuthenticatedUserBooksByTitle(titulo, LivroCreator.createValidLivro().getUsuario().getId());
 		
 		Assertions.assertThat(livroSaved).isNotNull().isNotEmpty();
 		Assertions.assertThat(livroSaved.get(0).getId()).isNotNull();
@@ -74,7 +87,9 @@ public class LivroRepositoryTest {
 	@Test
 	@DisplayName("save return livro whenSuccessful")
 	void save_returnLivro_whenSuccessful() {
-		Livro livroToBeSaved = LivroCreator.createLivroToBeSaved();
+		this.userRepository.save(UsuarioCreator.createUserUsuario());
+		
+		Livro livroToBeSaved = LivroCreator.createValidLivro();
 		Livro livroSaved = this.repositoryLivro.save(livroToBeSaved);
 		
 		Assertions.assertThat(livroSaved).isNotNull();
@@ -85,11 +100,12 @@ public class LivroRepositoryTest {
 	@Test
 	@DisplayName("delete removes livro whenSuccessful")
 	void delete_removesLivro_whenSuccessful() {
-		Livro livroSaved = this.repositoryLivro.save(LivroCreator.createLivroToBeSaved());
+		Usuario usuario = this.userRepository.save(UsuarioCreator.createUserUsuario());
+		Livro livroSaved = this.repositoryLivro.save(LivroCreator.createValidLivro());
 		
-	    this.repositoryLivro.deleteById(livroSaved.getId());
+	    this.repositoryLivro.deleteAuthenticatedUserBookById(livroSaved.getId(),livroSaved.getUsuario().getId());
 	    
-	    Optional<Livro> livroDeleted = this.repositoryLivro.findById(livroSaved.getId());
+	    Optional<Livro> livroDeleted = this.repositoryLivro.findAuthenticatedUserBooksById(livroSaved.getId(), usuario.getId());
 	    
 	    Assertions.assertThat(livroDeleted).isEmpty();
 	}
@@ -97,7 +113,9 @@ public class LivroRepositoryTest {
 	@Test
 	@DisplayName("update replace livro whenSuccessful")
 	void update_replaceLivro_whenSuccessful() {
-		this.repositoryLivro.save(LivroCreator.createLivroToBeSaved());
+	    this.userRepository.save(UsuarioCreator.createUserUsuario());
+		
+		this.repositoryLivro.save(LivroCreator.createValidLivro());
 		
 		Livro livroToBeUpdate = LivroCreator.createUpdatedLivro();
 		
