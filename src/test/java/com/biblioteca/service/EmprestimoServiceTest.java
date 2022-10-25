@@ -18,13 +18,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.biblioteca.entities.Emprestimo;
-import com.biblioteca.entities.Livro;
-import com.biblioteca.entities.Usuario;
 import com.biblioteca.repository.RepositorioEmprestimo;
 import com.biblioteca.repository.RepositorioLivro;
 import com.biblioteca.repository.RepositorioUsuario;
 import com.biblioteca.services.serviceEmprestimo;
 import com.biblioteca.services.exceptions.BadRequestException;
+import com.biblioteca.services.utilService.GetUserDetails;
 import com.biblioteca.util.EmprestimoCreator;
 import com.biblioteca.util.EmprestimoPostRequestBodyCreator;
 import com.biblioteca.util.EmprestimoPutRequestBodyCreator;
@@ -46,26 +45,34 @@ public class EmprestimoServiceTest {
 	@Mock
 	private RepositorioUsuario usuarioRepositoryMock;
 	
+	@Mock
+	private GetUserDetails userAuthenticated;
+	
 	@BeforeEach
 	void setUp() {
 		PageImpl<Emprestimo> emprestimoPage = new PageImpl<>(List.of(EmprestimoCreator.createValidEmprestimo()));
-		BDDMockito.when(emprestimoRepositoryMock.findAll(ArgumentMatchers.any(PageRequest.class))).thenReturn(emprestimoPage);
+		BDDMockito.when(emprestimoRepositoryMock.findByUsuarioId(ArgumentMatchers.anyLong(),ArgumentMatchers.any(PageRequest.class)))
+		.thenReturn(emprestimoPage);
 		
-		BDDMockito.when(emprestimoRepositoryMock.findAll()).thenReturn(List.of(EmprestimoCreator.createValidEmprestimo()));
+		BDDMockito.when(emprestimoRepositoryMock.findByUsuarioId(ArgumentMatchers.anyLong())).thenReturn(List.of(EmprestimoCreator.createValidEmprestimo()));
 		
-		BDDMockito.when(emprestimoRepositoryMock.findById(ArgumentMatchers.anyLong()))
+		BDDMockito.when(emprestimoRepositoryMock.findAuthenticatedUserById(ArgumentMatchers.anyLong(),ArgumentMatchers.anyLong()))
 		.thenReturn(Optional.of(EmprestimoCreator.createValidEmprestimo()));
 		
 		BDDMockito.when(emprestimoRepositoryMock.save(ArgumentMatchers.any(Emprestimo.class))).thenReturn(EmprestimoCreator.createValidEmprestimo());
 		
-		BDDMockito.doNothing().when(emprestimoRepositoryMock).delete(ArgumentMatchers.any(Emprestimo.class));
+		BDDMockito.doNothing().when(emprestimoRepositoryMock).deleteAuthenticatedUserLoanById(ArgumentMatchers.anyLong(), ArgumentMatchers.anyLong());
 		
-		BDDMockito.when(livroRepositoryMock.findById(ArgumentMatchers.anyLong())).thenReturn(Optional.of(LivroCreator.createValidLivro()));
+		BDDMockito.when(livroRepositoryMock.findAuthenticatedUserBooksById(ArgumentMatchers.anyLong(),ArgumentMatchers.anyLong()))
+		.thenReturn(Optional.of(LivroCreator.createValidLivro()));
 		
+		BDDMockito.when(userAuthenticated.userAuthenticated()).thenReturn(UsuarioCreator.createUserUsuario());
+		
+		BDDMockito.when(usuarioRepositoryMock.findById(ArgumentMatchers.anyLong())).thenReturn(Optional.of(UsuarioCreator.createUserUsuario()));
 	}
 	
 	@Test
-	@DisplayName("findAll Return List Of Object Inside Page whenSuccessful")
+	@DisplayName("find all user books by id Return List Of Object Inside Page whenSuccessful")
 	void findAll_ReturnListOfObjectInsidePage_whenSuccessful() {
 		Emprestimo emprestimo = EmprestimoCreator.createValidEmprestimo();
 		
@@ -77,7 +84,7 @@ public class EmprestimoServiceTest {
 	}
 	
 	@Test
-	@DisplayName("findAll Return List Of Emprestimo whenSuccessful")
+	@DisplayName("find all user books by id Return List Of Emprestimo whenSuccessful")
 	void findAll_ReturnListOfEmprestimo_whenSuccessful() {
 		Emprestimo emprestimoSaved = EmprestimoCreator.createValidEmprestimo();
 		
@@ -103,7 +110,7 @@ public class EmprestimoServiceTest {
 	@Test
 	@DisplayName("findById Return Bad Request Exception When Emprestimo Is Not Found")
 	void findById_ReturnBadRequestExceptionWhenEmprestimoIsNotFound() {
-		BDDMockito.when(emprestimoRepositoryMock.findById(ArgumentMatchers.anyLong()))
+		BDDMockito.when(emprestimoRepositoryMock.findAuthenticatedUserById(ArgumentMatchers.anyLong(),ArgumentMatchers.anyLong()))
 		.thenReturn(Optional.empty());
 		
 		Assertions.assertThatCode(() -> this.emprestimoService.findByIdOrElseThrowResourceNotFoundException(1))
@@ -115,17 +122,9 @@ public class EmprestimoServiceTest {
 	@Test
 	@DisplayName("save Return Emprestimo whenSuccessful")
 	void save_ReturnEmprestimo_whenSuccessful() {
-		
-		Usuario usuario = UsuarioCreator.createAdminUsuario();
-		Livro livro = LivroCreator.createValidLivro();
-		
-		usuario.getLivro().add(livro);
-		
-		BDDMockito.when(usuarioRepositoryMock.findById(ArgumentMatchers.anyLong())).thenReturn(Optional.of(usuario));
-		
 		Emprestimo emprestimoSaved = EmprestimoCreator.createValidEmprestimo();
 		
-		Emprestimo emprestimo = this.emprestimoService.save(1l,EmprestimoPostRequestBodyCreator.createEmprestimoPostRequestBodyCreator(),1l);
+		Emprestimo emprestimo = this.emprestimoService.save(EmprestimoPostRequestBodyCreator.createEmprestimoPostRequestBodyCreator(),1l);
 		
 		Assertions.assertThat(emprestimo).isNotNull();
 		Assertions.assertThat(emprestimo.getId()).isNotNull();
@@ -140,15 +139,8 @@ public class EmprestimoServiceTest {
 	
 	@Test
 	@DisplayName("update Replace Emprestimo whenSuccessful")
-	void update_ReplaveEmprestimo_whenSuccessful() {	
-		Usuario usuario = UsuarioCreator.createAdminUsuario();
-		Livro livro = LivroCreator.createValidLivro();
-		
-		usuario.getLivro().add(livro);
-		
-		BDDMockito.when(usuarioRepositoryMock.findById(ArgumentMatchers.anyLong())).thenReturn(Optional.of(usuario));
-		
-		Assertions.assertThatCode(() -> this.emprestimoService.update(EmprestimoPutRequestBodyCreator.createEmprestimoPutRequestBodyCreator(),1l,1l)).doesNotThrowAnyException();
+	void update_ReplaveEmprestimo_whenSuccessful() {			
+		Assertions.assertThatCode(() -> this.emprestimoService.update(EmprestimoPutRequestBodyCreator.createEmprestimoPutRequestBodyCreator())).doesNotThrowAnyException();
 	}
 	
 }

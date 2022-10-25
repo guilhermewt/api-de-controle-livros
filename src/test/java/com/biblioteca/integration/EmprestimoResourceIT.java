@@ -23,7 +23,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 
 import com.biblioteca.entities.Emprestimo;
-import com.biblioteca.entities.Livro;
 import com.biblioteca.entities.Usuario;
 import com.biblioteca.repository.RepositorioEmprestimo;
 import com.biblioteca.repository.RepositorioLivro;
@@ -81,11 +80,11 @@ public class EmprestimoResourceIT {
 	}
 	
 	@Test
-	@DisplayName("findAll Return List Of Object Inside Page whenSuccessful")
+	@DisplayName("find all user books by id Return List Of Object Inside Page whenSuccessful")
 	void findAll_ReturnListOfObjectInsidePage_whenSuccessful() {
 		repositoryUser.save(USER);
 		
-		Emprestimo emprestimoSaved = repositoryEmprestimo.save(EmprestimoCreator.createEmprestimoToBeSaved());
+		Emprestimo emprestimoSaved = repositoryEmprestimo.save(EmprestimoCreator.createValidEmprestimo());
 		
 		PageableResponse<Emprestimo> emprestimoPage = testRestTemplateRoleUser.exchange("/emprestimos", HttpMethod.GET, null, 
 				new ParameterizedTypeReference<PageableResponse<Emprestimo>>() {
@@ -97,11 +96,11 @@ public class EmprestimoResourceIT {
 	}
 	
 	@Test
-	@DisplayName("findAll Return List Of Emprestimo whenSuccessful")
+	@DisplayName("find all user books by id Return List Of Emprestimo whenSuccessful")
 	void findAll_ReturnListEmprestimo_whenSuccessful() {
 		repositoryUser.save(USER);
 		
-		Emprestimo emprestimoSaved = repositoryEmprestimo.save(EmprestimoCreator.createEmprestimoToBeSaved());
+		Emprestimo emprestimoSaved = repositoryEmprestimo.save(EmprestimoCreator.createValidEmprestimo());
 		
 		List<Emprestimo> emprestimo = testRestTemplateRoleUser.exchange("/emprestimos/all", HttpMethod.GET, null, 
 				 new ParameterizedTypeReference<List<Emprestimo>>() {
@@ -117,7 +116,7 @@ public class EmprestimoResourceIT {
 	void findById_ReturnEmprestimo_whenSuccessful() {
 		repositoryUser.save(USER);
 		
-		Emprestimo emprestimoSaved = repositoryEmprestimo.save(EmprestimoCreator.createEmprestimoToBeSaved());
+		Emprestimo emprestimoSaved = repositoryEmprestimo.save(EmprestimoCreator.createValidEmprestimo());
 			
 		Emprestimo emprestimo = testRestTemplateRoleUser.getForObject("/emprestimos/{id}", Emprestimo.class, emprestimoSaved.getId());
 		
@@ -129,15 +128,13 @@ public class EmprestimoResourceIT {
 	@Test
 	@DisplayName("save Return Emprestimo whenSuccessful")
 	void save_ReturnEmprestimo_whenSuccessful() {
-		Usuario usuario = repositoryUser.save(USER);
-		Livro livro = LivroCreator.createValidLivro();
-		livro.setUsuario(usuario);
+	    repositoryUser.save(USER);
 		
-		repositoryLivro.save(livro);
+		repositoryLivro.save(LivroCreator.createValidLivro());
 		
 		EmprestimosPostRequestBody emprestimoPostRequestBody = EmprestimoPostRequestBodyCreator.createEmprestimoPostRequestBodyCreator();
 			
-		ResponseEntity<Emprestimo> entityEmprestimo = testRestTemplateRoleUser.postForEntity("/emprestimos/{id}/{id}", emprestimoPostRequestBody, Emprestimo.class,1,1);
+		ResponseEntity<Emprestimo> entityEmprestimo = testRestTemplateRoleUser.postForEntity("/emprestimos/{id}", emprestimoPostRequestBody, Emprestimo.class,1);
 		
 		Assertions.assertThat(entityEmprestimo).isNotNull();
 		Assertions.assertThat(entityEmprestimo.getBody()).isNotNull();
@@ -150,7 +147,7 @@ public class EmprestimoResourceIT {
 	void delete_RemovesEmprestimo_whenSuccessful() {
 		repositoryUser.save(USER);
 		
-		Emprestimo emprestimoSaved = repositoryEmprestimo.save(EmprestimoCreator.createEmprestimoToBeSaved());
+		Emprestimo emprestimoSaved = repositoryEmprestimo.save(EmprestimoCreator.createValidEmprestimo());
 			
 		ResponseEntity<Void> entityEmprestimo = testRestTemplateRoleUser.exchange("/emprestimos/{id}", HttpMethod.DELETE, null, Void.class,emprestimoSaved.getId());		
 		Assertions.assertThat(entityEmprestimo).isNotNull();
@@ -162,7 +159,7 @@ public class EmprestimoResourceIT {
 	void update_ReplaceEmprestimo_whenSuccessful() {
 		repositoryUser.save(USER);
 		
-		Emprestimo emprestimoSaved = repositoryEmprestimo.save(EmprestimoCreator.createEmprestimoToBeSaved());
+		Emprestimo emprestimoSaved = repositoryEmprestimo.save(EmprestimoCreator.createValidEmprestimo());
 		emprestimoSaved.setDataDevolucao(DateConvert.convertData("2023/09/01"));
 			
 		ResponseEntity<Void> entityEmprestimo = testRestTemplateRoleUser.exchange("/emprestimos", HttpMethod.PUT, 

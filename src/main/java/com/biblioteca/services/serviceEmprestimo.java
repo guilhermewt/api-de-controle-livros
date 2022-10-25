@@ -35,7 +35,6 @@ public class serviceEmprestimo {
 	private final RepositorioLivro livroRepositorio;
 	
 	private final GetUserDetails userAuthenticated;
-	
 
 	public List<Emprestimo> findAllNonPageable() {
 		return emprestimoRepositorio.findByUsuarioId(userAuthenticated.userAuthenticated().getId());
@@ -65,7 +64,7 @@ public class serviceEmprestimo {
 
 	public void delete(long idBook) {
 		try {
-			emprestimoRepositorio.deleteAuthenticatedUserBookById(findByIdOrElseThrowResourceNotFoundException(idBook).getId(),userAuthenticated.userAuthenticated().getId());
+			emprestimoRepositorio.deleteAuthenticatedUserLoanById(findByIdOrElseThrowResourceNotFoundException(idBook).getId(),userAuthenticated.userAuthenticated().getId());
 		} catch (DataIntegrityViolationException e) {
 			throw new BadRequestException(e.getMessage());
 		}

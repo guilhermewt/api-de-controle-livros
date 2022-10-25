@@ -31,7 +31,6 @@ import com.biblioteca.util.UsuarioCreator;
 
 @ExtendWith(SpringExtension.class)
 public class LivroServiceTest {
-	//todos metodos de repository e service ok
 	
 	@InjectMocks
 	private serviceLivro livroService;
@@ -60,7 +59,7 @@ public class LivroServiceTest {
 		
 		BDDMockito.when(livroRepositoryMock.save(ArgumentMatchers.any(Livro.class))).thenReturn(LivroCreator.createValidLivro());
 		
-		BDDMockito.doNothing().when(livroRepositoryMock).delete(ArgumentMatchers.any(Livro.class));
+		BDDMockito.doNothing().when(livroRepositoryMock).deleteAuthenticatedUserBookById(ArgumentMatchers.anyLong(), ArgumentMatchers.anyLong());
 		
 		BDDMockito.when(userAuthenticated.userAuthenticated()).thenReturn(UsuarioCreator.createUserUsuario());
 	}

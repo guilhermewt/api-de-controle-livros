@@ -27,5 +27,5 @@ public interface RepositorioEmprestimo extends JpaRepository<Emprestimo, Long>{
 	@Modifying
 	@Transactional
 	@Query("DELETE from Emprestimo u where u.id = ?1 and u.usuario.id = ?2")
-	void deleteAuthenticatedUserBookById(long idBook,long idUser);
+	void deleteAuthenticatedUserLoanById(long idBook,long idUser);
 }

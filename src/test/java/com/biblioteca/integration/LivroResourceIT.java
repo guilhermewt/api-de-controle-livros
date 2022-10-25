@@ -51,7 +51,6 @@ public class LivroResourceIT {
 	@Autowired
 	private RepositorioUsuario repositoryUser;
 	
-	
 	private static Usuario USER = UsuarioCreator.createUserUsuario();
 	
 	@TestConfiguration

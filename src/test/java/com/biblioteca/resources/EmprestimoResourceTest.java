@@ -20,9 +20,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import com.biblioteca.entities.Emprestimo;
 import com.biblioteca.requests.EmprestimosPostRequestBody;
 import com.biblioteca.services.serviceEmprestimo;
+import com.biblioteca.services.utilService.GetUserDetails;
 import com.biblioteca.util.EmprestimoCreator;
 import com.biblioteca.util.EmprestimoPostRequestBodyCreator;
 import com.biblioteca.util.EmprestimoPutRequestBodyCreator;
+import com.biblioteca.util.UsuarioCreator;
 
 @ExtendWith(SpringExtension.class)
 public class EmprestimoResourceTest {
@@ -32,6 +34,9 @@ public class EmprestimoResourceTest {
 	
 	@Mock
 	private serviceEmprestimo emprestimoServiceMock;
+	
+	@Mock
+	private GetUserDetails userAuthenticated;
 	
 	@BeforeEach
 	void setUp() {
@@ -44,15 +49,17 @@ public class EmprestimoResourceTest {
 		BDDMockito.when(emprestimoServiceMock.findByIdOrElseThrowResourceNotFoundException(ArgumentMatchers.anyLong()))
 		.thenReturn(EmprestimoCreator.createValidEmprestimo());
 		
-		BDDMockito.when(emprestimoServiceMock.save(ArgumentMatchers.anyLong(), ArgumentMatchers.any(EmprestimosPostRequestBody.class), ArgumentMatchers.anyLong()))
+		BDDMockito.when(emprestimoServiceMock.save(ArgumentMatchers.any(EmprestimosPostRequestBody.class), ArgumentMatchers.anyLong()))
 		.thenReturn(EmprestimoCreator.createValidEmprestimo());
 		
 		BDDMockito.doNothing().when(emprestimoServiceMock).delete(ArgumentMatchers.anyLong());
 		
+		BDDMockito.when(userAuthenticated.userAuthenticated()).thenReturn(UsuarioCreator.createUserUsuario());
+		
 	}
 	
 	@Test
-	@DisplayName("findAll_Return List Of Object Inside Page whenSuccessful")
+	@DisplayName("find all user books by id Return List Of Object Inside Page whenSuccessful")
 	void findAll_ReturnListOfObjectInsidePage_whenSuccessful() {
 		Emprestimo emprestimoSaved = EmprestimoCreator.createValidEmprestimo();
 		
@@ -64,7 +71,7 @@ public class EmprestimoResourceTest {
 	}
 	
 	@Test
-	@DisplayName("findAll_Return List of emprestimo whenSuccessful")
+	@DisplayName("find all user books by id Return List of emprestimo whenSuccessful")
 	void findAll_ReturnListOfEmprestimo_whenSuccessful() {
 		Emprestimo emprestimoSaved = EmprestimoCreator.createValidEmprestimo();
 		
@@ -92,7 +99,7 @@ public class EmprestimoResourceTest {
 	void save_ReturnEmprestimo_whenSuccessful() {
 		Emprestimo emprestimoSaved = EmprestimoCreator.createValidEmprestimo();
 		
-		Emprestimo emprestimo = this.emprestimoResource.save(1l,EmprestimoPostRequestBodyCreator.createEmprestimoPostRequestBodyCreator(),1l)
+		Emprestimo emprestimo = this.emprestimoResource.save(EmprestimoPostRequestBodyCreator.createEmprestimoPostRequestBodyCreator(),1l)
 				.getBody();
 		
 		Assertions.assertThat(emprestimo).isNotNull();
@@ -111,9 +118,9 @@ public class EmprestimoResourceTest {
 	@Test
 	@DisplayName("update replace emprestimo whenSuccessful")
 	void update_replaceEmprestimo_whenSuccessful() {		
-	    this.emprestimoResource.save(1l,EmprestimoPostRequestBodyCreator.createEmprestimoPostRequestBodyCreator(),1l).getBody();
+	    this.emprestimoResource.save(EmprestimoPostRequestBodyCreator.createEmprestimoPostRequestBodyCreator(),1l).getBody();
 		
-		ResponseEntity<Void> emprestimo = this.emprestimoResource.update(1l,1l,EmprestimoPutRequestBodyCreator.createEmprestimoPutRequestBodyCreator());
+		ResponseEntity<Void> emprestimo = this.emprestimoResource.update(EmprestimoPutRequestBodyCreator.createEmprestimoPutRequestBodyCreator());
 		
 		Assertions.assertThat(emprestimo.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);					
 	}

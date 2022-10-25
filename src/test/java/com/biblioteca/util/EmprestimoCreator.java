@@ -9,6 +9,7 @@ public class EmprestimoCreator {
 				.id(1l)
 				.dataEmprestimo(DateConvert.convertData("2022/09/15"))
 				.dataDevolucao(DateConvert.convertData("2022/09/20"))
+				.usuario(UsuarioCreator.createUserUsuario())
 				.build();
 	}
 	

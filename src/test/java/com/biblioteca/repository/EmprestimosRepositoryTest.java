@@ -15,7 +15,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.annotation.DirtiesContext;
 
 import com.biblioteca.entities.Emprestimo;
+import com.biblioteca.entities.Livro;
+import com.biblioteca.entities.Usuario;
 import com.biblioteca.util.EmprestimoCreator;
+import com.biblioteca.util.LivroCreator;
+import com.biblioteca.util.UsuarioCreator;
 
 @DataJpaTest
 @DisplayName("test for emprestimo repository")
@@ -25,22 +29,30 @@ public class EmprestimosRepositoryTest {
 	@Autowired
 	private RepositorioEmprestimo repositoryEmprestimo;
 	
+	@Autowired
+	private RepositorioUsuario userRepository;
+	
+	@Autowired
+	private RepositorioLivro livroRepository;
+	
 	@Test
-	@DisplayName("find all return list of object inside page whensuccessful")
+	@DisplayName("find all user books by id return list of object inside page whensuccessful")
 	void findAll_returnListOfObjectInsidePage_whenSuccessful() {
+		Usuario usuario = this.userRepository.save(UsuarioCreator.createUserUsuario());
 		
-		Emprestimo emprestimoToBeSaved = this.repositoryEmprestimo.save(EmprestimoCreator.createEmprestimoToBeSaved());
-		Page<Emprestimo> emprestimoSaved = this.repositoryEmprestimo.findAll(PageRequest.of(0, 5));
+		Emprestimo emprestimoToBeSaved = this.repositoryEmprestimo.save(EmprestimoCreator.createValidEmprestimo());
+		Page<Emprestimo> emprestimoSaved = this.repositoryEmprestimo.findByUsuarioId(usuario.getId(), PageRequest.of(0, 5));
 		
 		Assertions.assertThat(emprestimoSaved).isNotNull().isNotEmpty();
 		Assertions.assertThat(emprestimoSaved.toList().get(0)).isEqualTo(emprestimoToBeSaved);
 	}
 	
 	@Test
-	@DisplayName("find all return list of emprestimo whensuccessful")
+	@DisplayName("find all user books by id return list of emprestimo whensuccessful")
 	void findAll_returnListOfEmprestimo_whenSuccessful() {
+		this.userRepository.save(UsuarioCreator.createUserUsuario());
 		
-		Emprestimo emprestimoToBeSaved = this.repositoryEmprestimo.save(EmprestimoCreator.createEmprestimoToBeSaved());
+		Emprestimo emprestimoToBeSaved = this.repositoryEmprestimo.save(EmprestimoCreator.createValidEmprestimo());
 		List<Emprestimo> emprestimoSaved = this.repositoryEmprestimo.findAll();
 		
 		Assertions.assertThat(emprestimoSaved).isNotNull().isNotEmpty();
@@ -50,8 +62,10 @@ public class EmprestimosRepositoryTest {
 	@Test
 	@DisplayName("findById return emprestimo whenSuccessful")
 	void findByid_returnEmprestimo_whenSuccessful() {
+		Usuario usuario = this.userRepository.save(UsuarioCreator.createUserUsuario());
+		
 		Emprestimo emprestimoToBeSaved = this.repositoryEmprestimo.save(EmprestimoCreator.createValidEmprestimo());
-		Emprestimo emprestimoSaved = this.repositoryEmprestimo.findById(emprestimoToBeSaved.getId()).get();
+		Emprestimo emprestimoSaved = this.repositoryEmprestimo.findAuthenticatedUserById(emprestimoToBeSaved.getId(),usuario.getId()).get();
 		
 		Assertions.assertThat(emprestimoSaved).isNotNull();
 		Assertions.assertThat(emprestimoSaved.getId()).isNotNull();
@@ -63,22 +77,33 @@ public class EmprestimosRepositoryTest {
 	@Test
 	@DisplayName("save return emprestimo whenSuccessful")
 	void save_returnEmprestimo_whenSuccessful() {
-		Emprestimo emprestimoToBeSaved = EmprestimoCreator.createEmprestimoToBeSaved();
+		this.userRepository.save(UsuarioCreator.createUserUsuario());
+		Livro livro = this.livroRepository.save(LivroCreator.createValidLivro());
+		
+		Emprestimo emprestimoToBeSaved = EmprestimoCreator.createValidEmprestimo();
+		emprestimoToBeSaved.getLivros().add(livro);
+		
 		Emprestimo emprestimoSaved = this.repositoryEmprestimo.save(emprestimoToBeSaved);
 		
 		Assertions.assertThat(emprestimoSaved).isNotNull();
 		Assertions.assertThat(emprestimoSaved.getId()).isNotNull();
-		Assertions.assertThat(emprestimoSaved).isEqualTo(emprestimoSaved);
+		Assertions.assertThat(emprestimoSaved).isEqualTo(emprestimoToBeSaved);
 	}
 	
 	@Test
 	@DisplayName("delete removes emprestimo whenSuccessful")
 	void delete_removesEmprestimo_whenSuccessful() {
-		Emprestimo emprestimoSaved = this.repositoryEmprestimo.save(EmprestimoCreator.createEmprestimoToBeSaved());
+		Usuario usuario = this.userRepository.save(UsuarioCreator.createUserUsuario());
+		Livro livro = this.livroRepository.save(LivroCreator.createValidLivro());
 		
-	    this.repositoryEmprestimo.deleteById(emprestimoSaved.getId());
+		Emprestimo emprestimoToBeSaved = EmprestimoCreator.createValidEmprestimo();
+		emprestimoToBeSaved.getLivros().add(livro);
+		
+		Emprestimo emprestimoSaved = this.repositoryEmprestimo.save(emprestimoToBeSaved);
+		
+	    this.repositoryEmprestimo.deleteAuthenticatedUserLoanById(livro.getId(), usuario.getId());;
 	    
-	    Optional<Emprestimo> emprestimoDeleted = this.repositoryEmprestimo.findById(emprestimoSaved.getId());
+	    Optional<Emprestimo> emprestimoDeleted = this.repositoryEmprestimo.findAuthenticatedUserById(emprestimoSaved.getId(),usuario.getId());
 	    
 	    Assertions.assertThat(emprestimoDeleted).isEmpty();
 	}
@@ -86,7 +111,9 @@ public class EmprestimosRepositoryTest {
 	@Test
 	@DisplayName("update replace emprestimo whenSuccessful")
 	void update_replaceEmprestimo_whenSuccessful() {
-		this.repositoryEmprestimo.save(EmprestimoCreator.createEmprestimoToBeSaved());
+		this.userRepository.save(UsuarioCreator.createUserUsuario());
+		
+		this.repositoryEmprestimo.save(EmprestimoCreator.createValidEmprestimo());
 		
 		Emprestimo emprestimoToBeUpdate = EmprestimoCreator.createUpdatedEmprestimo();
 		
