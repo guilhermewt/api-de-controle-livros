@@ -1,22 +1,25 @@
 package com.biblioteca.entities;
 
 import java.io.Serializable;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotEmpty;
 
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import lombok.Builder;
@@ -40,15 +43,24 @@ public class Usuario implements Serializable, UserDetails {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	@NotEmpty(message = "the usuario name cannot be empty")
 	private String name;
 	private String email;
-	private String authorities;
 	
+	@NotEmpty(message = "the usuario username cannot be empty")
 	@Column(nullable = false, unique = true)
 	private String username;
 	
+	@NotEmpty(message = "the usuario password cannot be empty")
 	@Column(nullable = false)
 	private String password;
+	
+	@ManyToMany
+	@JoinTable(name = "TB_USERS_ROLES",
+			joinColumns = @JoinColumn(name = "user_id"),
+			inverseJoinColumns = @JoinColumn(name = "role_id"))
+	@Builder.Default
+	private List<RoleModel> roles = new ArrayList<>();
 	
 	@OneToMany(mappedBy = "usuario")
 	@Builder.Default
@@ -58,20 +70,19 @@ public class Usuario implements Serializable, UserDetails {
 	@Builder.Default
 	private Set<Emprestimo> emprestimos = new HashSet<>();
 	
-	public Usuario(Long id, String name, String email, String username, String password,
-			String authorities) {
+	public Usuario(Long id, String name, String email, String username, String password) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.email = email;
 		this.username = username;
 		this.password = password;
-		this.authorities = authorities;
 	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return Arrays.stream(authorities.split(",")).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+//		return Arrays.stream(authorities.split(",")).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+		return this.roles;
 	}
 
 	@Override

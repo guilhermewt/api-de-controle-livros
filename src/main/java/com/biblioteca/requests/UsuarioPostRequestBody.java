@@ -27,8 +27,7 @@ public class UsuarioPostRequestBody{
 	@NotEmpty(message = "the usuario password cannot be empty")
 	private String password;
 		
-	public UsuarioPostRequestBody(String name, String email, String username, String password,
-			String authorities) {
+	public UsuarioPostRequestBody(String name, String email, String username, String password) {
 		super();
 		this.name = name;
 		this.email = email;	

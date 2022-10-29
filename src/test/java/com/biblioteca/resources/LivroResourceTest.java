@@ -14,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -42,7 +43,7 @@ public class LivroResourceTest {
 	@BeforeEach
 	void setUp() {
 		PageImpl<Livro> livroPage = new PageImpl<>(List.of(LivroCreator.createValidLivro()));
-		BDDMockito.when(livroServiceMock.findAll(ArgumentMatchers.any())).thenReturn(livroPage);	
+		BDDMockito.when(livroServiceMock.findAll(ArgumentMatchers.any(PageRequest.class))).thenReturn(livroPage);	
 		
 		BDDMockito.when(livroServiceMock.findAllNonPageable())
 		.thenReturn(List.of(LivroCreator.createValidLivro()));
@@ -66,7 +67,7 @@ public class LivroResourceTest {
 	void findAll_ReturnListOfObjectInsidePage_whenSuccessful() {
 		Livro livroSaved = LivroCreator.createValidLivro();
 		
-		Page<Livro> livro = this.livroResource.findAll(null).getBody();
+		Page<Livro> livro = this.livroResource.findAll(PageRequest.of(0, 1)).getBody();
 		
 		Assertions.assertThat(livro).isNotNull().isNotEmpty();
 		Assertions.assertThat(livro.toList().get(0).getId()).isNotNull();

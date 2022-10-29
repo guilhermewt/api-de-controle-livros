@@ -23,7 +23,10 @@ public class GetUserDetails {
 
 	public Usuario userAuthenticated() {
 		Authentication authentication = authenticationFacade.getAuthentication();
-		return Optional.ofNullable(usuarioRepositorio.findByUsername(authentication.getName()))
+//		return Optional.ofNullable(usuarioRepositorio.findByUsername(authentication.getName()))
+//				.orElseThrow(() -> new BadRequestException("user not found"));
+		
+		return usuarioRepositorio.findByUsername(authentication.getName())
 				.orElseThrow(() -> new BadRequestException("user not found"));
 	}
 }

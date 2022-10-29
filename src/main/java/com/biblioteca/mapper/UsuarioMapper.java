@@ -17,5 +17,6 @@ public abstract class UsuarioMapper {
 	
 	public abstract Usuario toUsuario(UsuarioPutRequestBody usuarioPutRequestBody);
 	
+	
 	public abstract Usuario updateUser(UsuarioPutRequestBody usuarioPutRequestBody, @MappingTarget Usuario usuario);
 }

@@ -61,7 +61,7 @@ public class MapeamentoParaAtualizacao {
 		  
 		  
 	    Emprestimo emprestimoSaved = new Emprestimo(1l, sdf.parse("2022/05/22"), sdf.parse("2022/06/26"));
-	    emprestimoSaved.setUsuario(new Usuario(1l, "gui",null, null, null, null));
+	    emprestimoSaved.setUsuario(new Usuario(1l, "gui",null, null, null));
 	    Livro livro = new Livro(1l, "angular", null);
 	    emprestimoSaved.getLivros().add(livro);
 	    

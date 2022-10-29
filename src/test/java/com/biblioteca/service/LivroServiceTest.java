@@ -111,8 +111,8 @@ public class LivroServiceTest {
 	}
 	
 	@Test
-	@DisplayName("findByName Return List Of Livro whenSuccessful")
-	void findByName_ReturnListOfLivro_whenSuccessful() {
+	@DisplayName("findByTitulo Return List Of Livro whenSuccessful")
+	void findByTitulo_ReturnListOfLivro_whenSuccessful() {
 		Livro livroSaved = LivroCreator.createValidLivro();
 		
 		List<Livro> livro = this.livroService.findByTitulo(livroSaved.getTitulo());
