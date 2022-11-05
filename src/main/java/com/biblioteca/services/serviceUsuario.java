@@ -33,9 +33,6 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class serviceUsuario implements UserDetailsService{
 	
-	//as roles estao funcionando, colocamos que na hora de salvar sera salvo uma lista de roles
-	//o raciocinio parou quando estava tentando achar as roles pelo nome e nao pelo id
-
 	private final RepositorioUsuario userRepository;
 		
 	private final GetUserDetails userAuthenticated;
@@ -62,17 +59,16 @@ public class serviceUsuario implements UserDetailsService{
 		return userAuthenticated.userAuthenticated();
 	}
 	
-	@Transactional
+
 	public Usuario saveUser(UsuarioPostRequestBody usuarioPostRequestBody) {	
 	   	log.info(roleModelRepository.findById(2l).get());
 
 		Usuario usuario = UsuarioMapper.INSTANCE.toUsuario(usuarioPostRequestBody);
 		usuario.setPassword(new BCryptPasswordEncoder().encode(usuario.getPassword()));		
-		usuario.getRoles().add(roleModelRepository.findById(2l).get());
-	    return userRepository.save(usuario);		
+		usuario.getRoles().add(roleModelRepository.findById(2l).get());	    
+		return userRepository.save(usuario);		
 	}
 	
-	@Transactional
 	public Usuario saveUserAdmin(UsuarioPostRequestBody usuarioPostRequestBody) {	
 		Usuario usuario = UsuarioMapper.INSTANCE.toUsuario(usuarioPostRequestBody);
 		usuario.setPassword(new BCryptPasswordEncoder().encode(usuario.getPassword()));
@@ -80,12 +76,10 @@ public class serviceUsuario implements UserDetailsService{
 	    return userRepository.save(usuario);
 	}
 	
-	@Transactional
 	public void delete(long id) {	
 		userRepository.delete(findByIdOrElseThrowResourceNotFoundException(id));		
 	}
 	
-	@Transactional
 	public Usuario update(UsuarioPutRequestBody usuarioPutRequestBody) {
 		Usuario savedUsuario = userRepository.findById(userAuthenticated.userAuthenticated().getId()).get();
 		Usuario usuario = UsuarioMapper.INSTANCE.updateUser(usuarioPutRequestBody, savedUsuario);
@@ -96,8 +90,6 @@ public class serviceUsuario implements UserDetailsService{
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-//		return Optional.ofNullable(userRepository.findByUsername(username))
-//				.orElseThrow(() -> new UsernameNotFoundException("usuario not found"));
 		
 		Usuario usuario = userRepository.findByUsername(username)
 				.orElseThrow(() -> new UsernameNotFoundException("usuario not found"));

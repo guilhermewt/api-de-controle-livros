@@ -22,11 +22,12 @@ import javax.validation.constraints.NotEmpty;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 @Entity
@@ -35,11 +36,10 @@ import lombok.experimental.SuperBuilder;
 @Data
 @EqualsAndHashCode(of= {"id","name"})
 @SuperBuilder
-@ToString
 public class Usuario implements Serializable, UserDetails {
 
 	private static final long serialVersionUID = 1L;
-	
+	 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -61,6 +61,7 @@ public class Usuario implements Serializable, UserDetails {
 			inverseJoinColumns = @JoinColumn(name = "role_id"))
 	@Builder.Default
 	private List<RoleModel> roles = new ArrayList<>();
+
 	
 	@OneToMany(mappedBy = "usuario")
 	@Builder.Default
@@ -80,6 +81,7 @@ public class Usuario implements Serializable, UserDetails {
 	}
 
 	@Override
+	@JsonProperty("roles")
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 //		return Arrays.stream(authorities.split(",")).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
 		return this.roles;

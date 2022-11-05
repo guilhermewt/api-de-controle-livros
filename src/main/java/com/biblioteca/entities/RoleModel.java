@@ -16,6 +16,7 @@ import javax.persistence.Table;
 import org.springframework.security.core.GrantedAuthority;
 
 import com.biblioteca.enums.RoleName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -27,9 +28,9 @@ import lombok.experimental.SuperBuilder;
 @Table(name = "TB_ROLE")
 @NoArgsConstructor
 @Data
-@EqualsAndHashCode(of= {"roleId","roleName"})
+@EqualsAndHashCode
 @SuperBuilder
-@ToString
+@ToString(exclude = "usuario")
 public class RoleModel implements GrantedAuthority, Serializable {
     private static final long serialVersionUID = 1L;
     
@@ -48,10 +49,17 @@ public class RoleModel implements GrantedAuthority, Serializable {
 		this.roleId = roleId;
 		this.roleName = roleName;
 	}
-    
+     
 	@Override
     public String getAuthority() {
         return this.roleName.toString();
     }
-    
+
+	@JsonIgnore
+	public List<Usuario> getUsuario() {
+		return usuario;
+	}
+	
+	
+	
 }

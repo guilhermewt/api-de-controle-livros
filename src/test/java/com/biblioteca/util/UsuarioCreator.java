@@ -1,5 +1,7 @@
 package com.biblioteca.util;
 
+import java.util.List;
+
 import com.biblioteca.entities.Usuario;
 
 public class UsuarioCreator {
@@ -11,7 +13,7 @@ public class UsuarioCreator {
 				.username("guilherme")
 				.email("guilherme@gmail.com")
 				.password("$2a$10$2n9REGGbEqSHj7fcEEg2heGAzkwcwTnnyKIlQaW21P5QVpwiQOrk6")
-				.authorities("ROLE_ADMIN,ROLE_USER")
+				.roles(List.of(RolesCreator.createAdminRoleModel(),RolesCreator.createUserRoleModel()))
 				.build();
 	}
 	
@@ -22,7 +24,7 @@ public class UsuarioCreator {
 				.username("userBiblioteca")
 				.email("joao@gmail.com")
 				.password("$2a$10$2n9REGGbEqSHj7fcEEg2heGAzkwcwTnnyKIlQaW21P5QVpwiQOrk6")
-				.authorities("ROLE_USER")
+				.roles(List.of(RolesCreator.createUserRoleModel()))
 				.build();
 	}
 	
@@ -33,7 +35,7 @@ public class UsuarioCreator {
 				.username("userBiblioteca 2 ")
 				.email("joao2@gmail.com")
 				.password("$2a$10$2n9REGGbEqSHj7fcEEg2heGAzkwcwTnnyKIlQaW21P5QVpwiQOrk6")
-				.authorities("ROLE_USER")
+				.roles(List.of(RolesCreator.createUserRoleModel()))
 				.build();
 	}
 }
