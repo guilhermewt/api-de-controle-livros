@@ -19,8 +19,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.biblioteca.entities.Usuario;
 import com.biblioteca.repository.RepositorioUsuario;
+import com.biblioteca.repository.RoleModelRepository;
 import com.biblioteca.services.serviceUsuario;
 import com.biblioteca.services.utilService.GetUserDetails;
+import com.biblioteca.util.RolesCreator;
 import com.biblioteca.util.UsuarioCreator;
 import com.biblioteca.util.UsuarioPostRequestBodyCreator;
 import com.biblioteca.util.UsuarioPutRequestBodyCreator;
@@ -33,6 +35,9 @@ public class UsuarioServiceTest {
 
 	@Mock
 	private RepositorioUsuario userRepositoryMock;
+	
+	@Mock
+	private RoleModelRepository roleModelRepository;
 
 	@Mock
 	private GetUserDetails userAuthenticated;
@@ -55,6 +60,9 @@ public class UsuarioServiceTest {
 		BDDMockito.doNothing().when(userRepositoryMock).delete(ArgumentMatchers.any(Usuario.class));
 
 		BDDMockito.when(userAuthenticated.userAuthenticated()).thenReturn(UsuarioCreator.createAdminUsuario());
+		
+		BDDMockito.when(roleModelRepository.findById(ArgumentMatchers.eq(1l))).thenReturn(Optional.of(RolesCreator.createAdminRoleModel()));
+		BDDMockito.when(roleModelRepository.findById(ArgumentMatchers.eq(2l))).thenReturn(Optional.of(RolesCreator.createUserRoleModel()));
 
 	}
 

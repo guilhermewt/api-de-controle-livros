@@ -21,12 +21,14 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import com.biblioteca.entities.Livro;
 import com.biblioteca.repository.RepositorioLivro;
 import com.biblioteca.repository.RepositorioUsuario;
+import com.biblioteca.repository.RoleModelRepository;
 import com.biblioteca.services.serviceLivro;
 import com.biblioteca.services.exceptions.BadRequestException;
 import com.biblioteca.services.utilService.GetUserDetails;
 import com.biblioteca.util.LivroCreator;
 import com.biblioteca.util.LivroPostRequestBodyCreator;
 import com.biblioteca.util.LivroPutRequestBodyCreator;
+import com.biblioteca.util.RolesCreator;
 import com.biblioteca.util.UsuarioCreator;
 
 @ExtendWith(SpringExtension.class)
@@ -43,6 +45,9 @@ public class LivroServiceTest {
 	
 	@Mock
 	private GetUserDetails userAuthenticated;
+	
+	@Mock
+	private RoleModelRepository roleModelRepository;
 	
 	@BeforeEach
 	void setUp() {
@@ -62,6 +67,9 @@ public class LivroServiceTest {
 		BDDMockito.doNothing().when(livroRepositoryMock).deleteAuthenticatedUserBookById(ArgumentMatchers.anyLong(), ArgumentMatchers.anyLong());
 		
 		BDDMockito.when(userAuthenticated.userAuthenticated()).thenReturn(UsuarioCreator.createUserUsuario());
+		
+		BDDMockito.when(roleModelRepository.findById(ArgumentMatchers.eq(1l))).thenReturn(Optional.of(RolesCreator.createAdminRoleModel()));
+		BDDMockito.when(roleModelRepository.findById(ArgumentMatchers.eq(2l))).thenReturn(Optional.of(RolesCreator.createUserRoleModel()));
 	}
 	
 	@Test

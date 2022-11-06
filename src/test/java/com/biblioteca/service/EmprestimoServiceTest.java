@@ -21,6 +21,7 @@ import com.biblioteca.entities.Emprestimo;
 import com.biblioteca.repository.RepositorioEmprestimo;
 import com.biblioteca.repository.RepositorioLivro;
 import com.biblioteca.repository.RepositorioUsuario;
+import com.biblioteca.repository.RoleModelRepository;
 import com.biblioteca.services.serviceEmprestimo;
 import com.biblioteca.services.exceptions.BadRequestException;
 import com.biblioteca.services.utilService.GetUserDetails;
@@ -28,6 +29,7 @@ import com.biblioteca.util.EmprestimoCreator;
 import com.biblioteca.util.EmprestimoPostRequestBodyCreator;
 import com.biblioteca.util.EmprestimoPutRequestBodyCreator;
 import com.biblioteca.util.LivroCreator;
+import com.biblioteca.util.RolesCreator;
 import com.biblioteca.util.UsuarioCreator;
 
 @ExtendWith(SpringExtension.class)
@@ -47,6 +49,9 @@ public class EmprestimoServiceTest {
 	
 	@Mock
 	private GetUserDetails userAuthenticated;
+	
+	@Mock
+	private RoleModelRepository roleModelRepository;
 	
 	@BeforeEach
 	void setUp() {
@@ -69,6 +74,9 @@ public class EmprestimoServiceTest {
 		BDDMockito.when(userAuthenticated.userAuthenticated()).thenReturn(UsuarioCreator.createUserUsuario());
 		
 		BDDMockito.when(usuarioRepositoryMock.findById(ArgumentMatchers.anyLong())).thenReturn(Optional.of(UsuarioCreator.createUserUsuario()));
+		
+		BDDMockito.when(roleModelRepository.findById(ArgumentMatchers.eq(1l))).thenReturn(Optional.of(RolesCreator.createAdminRoleModel()));
+		BDDMockito.when(roleModelRepository.findById(ArgumentMatchers.eq(2l))).thenReturn(Optional.of(RolesCreator.createUserRoleModel()));
 	}
 	
 	@Test
