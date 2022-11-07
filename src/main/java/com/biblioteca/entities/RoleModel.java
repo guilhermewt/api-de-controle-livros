@@ -3,6 +3,7 @@ package com.biblioteca.entities;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -41,7 +42,7 @@ public class RoleModel implements GrantedAuthority, Serializable {
     @Column(nullable = false, unique = true)
     private RoleName roleName;
     
-    @ManyToMany(mappedBy = "roles")
+    @ManyToMany(mappedBy = "roles",cascade = CascadeType.PERSIST)
     private List<Usuario> usuario;
     
     public RoleModel(long roleId, RoleName roleName) {

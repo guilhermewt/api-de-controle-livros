@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -55,7 +56,7 @@ public class Usuario implements Serializable, UserDetails {
 	@Column(nullable = false)
 	private String password;
 	
-	@ManyToMany
+	@ManyToMany(cascade = CascadeType.PERSIST)
 	@JoinTable(name = "TB_USERS_ROLES",
 			joinColumns = @JoinColumn(name = "user_id"),
 			inverseJoinColumns = @JoinColumn(name = "role_id"))
@@ -63,11 +64,11 @@ public class Usuario implements Serializable, UserDetails {
 	private List<RoleModel> roles = new ArrayList<>();
 
 	
-	@OneToMany(mappedBy = "usuario")
+	@OneToMany(mappedBy = "usuario",cascade = CascadeType.REMOVE)
 	@Builder.Default
 	private Set<Livro> livro = new HashSet<>();
 
-	@OneToMany(mappedBy = "usuario")
+	@OneToMany(mappedBy = "usuario",cascade = CascadeType.REMOVE)
 	@Builder.Default
 	private Set<Emprestimo> emprestimos = new HashSet<>();
 	

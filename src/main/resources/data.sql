@@ -1,5 +1,5 @@
 INSERT INTO tb_usuario(id,email,name,password,username)
-values(1,'rafa@gmall.com', 'rafael silva', '$2a$10$2n9REGGbEqSHj7fcEEg2heGAzkwcwTnnyKIlQaW21P5QVpwiQOrk6', 'rafasilva');
+values(default,'rafa@gmall.com', 'rafael silva', '$2a$10$2n9REGGbEqSHj7fcEEg2heGAzkwcwTnnyKIlQaW21P5QVpwiQOrk6', 'rafasilva');
 
 INSERT INTO tb_role(role_id,role_name)
 values(1,'ROLE_ADMIN'),(2,'ROLE_USER');
@@ -17,7 +17,7 @@ INSERT INTO tb_emprestimo_livro(emprestimo_id,livro_id)
 values(1,1);
 
 INSERT INTO tb_usuario(id,email,name,password,username)
-values(2,'marcos@gmall.com', 'marcos pereira souza', '$2a$10$2n9REGGbEqSHj7fcEEg2heGAzkwcwTnnyKIlQaW21P5QVpwiQOrk6', 'marcospereira');
+values(default,'marcos@gmall.com', 'marcos pereira souza', '$2a$10$2n9REGGbEqSHj7fcEEg2heGAzkwcwTnnyKIlQaW21P5QVpwiQOrk6', 'marcospereira');
 
 
 INSERT INTO tb_users_roles(user_id,role_id)
