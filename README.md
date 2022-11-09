@@ -1,6 +1,6 @@
 # Webservice de emprestimo de livros
 
-sistema de emprestimo que faz o controler de livros, adicionando livros e fazendo emprestimos do mesmo.É uma api publica onde cada usuário pode adicionar seus livros e quando necessário fazer o emprestimo desses livros.O sistema é construído em Restfull. Os testes são feitos com Junit, contendo teste de jpa para armazenamento de dados, teste unitarios com BDDMockito e teste de integracao tentando simula o maximo possível um ambiente real com RestTemplate. A segurança é feita com spring securiry. Para documentar a Api foi usado a openAPI 3 com Swagger. O banco de dados para armazenamento foi o postgreeSQL
+sistema de emprestimo que faz o controler de livros, adicionando livros e fazendo emprestimos do mesmo.É uma Api publica onde cada usuário pode adicionar seus livros e quando necessário fazer o emprestimo desses livros.O sistema é construído em Restfull. Os testes são feitos com Junit, contendo teste de jpa para armazenamento de dados, teste unitarios com BDDMockito e teste de integracao tentando simula o maximo possível um ambiente real em produção com RestTemplate. A segurança é feita com spring securiry. Para documentar a Api foi usado a openAPI 3 com Swagger. O banco de dados para armazenamento foi o postgreeSQL
 
 - para usar a api o usuario tem que está autenticado. Se for a primeira vez do usuario no sistema existe um endPoint para ele se cadastrar e assim poder usar o sistema
 
