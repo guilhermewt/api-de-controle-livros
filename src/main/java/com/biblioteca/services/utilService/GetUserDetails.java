@@ -1,13 +1,11 @@
 package com.biblioteca.services.utilService;
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import com.biblioteca.entities.Usuario;
-import com.biblioteca.repository.RepositorioUsuario;
+import com.biblioteca.entities.UserDomain;
+import com.biblioteca.repository.UserDomainRepository;
 import com.biblioteca.services.exceptions.BadRequestException;
 
 import lombok.RequiredArgsConstructor;
@@ -16,16 +14,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class GetUserDetails {
 
-	private final RepositorioUsuario usuarioRepositorio;
+	private final UserDomainRepository usuarioRepositorio;
 
 	@Autowired
 	private IAuthenticationFacade authenticationFacade;
 
-	public Usuario userAuthenticated() {
+	public UserDomain userAuthenticated() {
 		Authentication authentication = authenticationFacade.getAuthentication();
-//		return Optional.ofNullable(usuarioRepositorio.findByUsername(authentication.getName()))
-//				.orElseThrow(() -> new BadRequestException("user not found"));
-		
 		return usuarioRepositorio.findByUsername(authentication.getName())
 				.orElseThrow(() -> new BadRequestException("user not found"));
 	}

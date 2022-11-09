@@ -11,7 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.biblioteca.services.serviceUsuario;
+import com.biblioteca.services.UserDomainService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	
-	private final serviceUsuario usuarioService;
+	private final UserDomainService usuarioService;
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {

@@ -26,12 +26,12 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 @Entity
-@Table(name = "TB_ROLE")
+@Table(name = "tb_role")
 @NoArgsConstructor
 @Data
 @EqualsAndHashCode
 @SuperBuilder
-@ToString(exclude = "usuario")
+@ToString(exclude = "userDomain")
 public class RoleModel implements GrantedAuthority, Serializable {
     private static final long serialVersionUID = 1L;
     
@@ -43,7 +43,7 @@ public class RoleModel implements GrantedAuthority, Serializable {
     private RoleName roleName;
     
     @ManyToMany(mappedBy = "roles",cascade = CascadeType.PERSIST)
-    private List<Usuario> usuario;
+    private List<UserDomain> userDomain;
     
     public RoleModel(long roleId, RoleName roleName) {
 		super();
@@ -57,8 +57,8 @@ public class RoleModel implements GrantedAuthority, Serializable {
     }
 
 	@JsonIgnore
-	public List<Usuario> getUsuario() {
-		return usuario;
+	public List<UserDomain> getUserDomain() {
+		return userDomain;
 	}
 	
 	
