@@ -1,7 +1,6 @@
-# Webservice de uma biblioteca
+# Webservice de emprestimo de livros
 
-sistema de uma biblioteca que faz o controler de livros de uma livraria, adicionando livros e fazendo emprestimos do mesmo e associando-os as suas respectivas
-editoras. O sistema é construído em Restfull. Os testes são feitos com Junit, contendo teste de jpa para armazenamento de dados, teste unitarios com BDDMockito e teste de integracao tentando simula o maximo possível um ambiente real com RestTemplate. A segurança é feita com spring securiry. Para documentar a Api foi usado a openAPI 3 com Swagger. O banco de dados para armazenamento foi o postgreeSQL
+sistema de emprestimo que faz o controler de livros, adicionando livros e fazendo emprestimos do mesmo.É uma api publica onde cada usuário pode adicionar seus livros e quando necessário fazer o emprestimo desses livros.O sistema é construído em Restfull. Os testes são feitos com Junit, contendo teste de jpa para armazenamento de dados, teste unitarios com BDDMockito e teste de integracao tentando simula o maximo possível um ambiente real com RestTemplate. A segurança é feita com spring securiry. Para documentar a Api foi usado a openAPI 3 com Swagger. O banco de dados para armazenamento foi o postgreeSQL
 
 - para usar a api o usuario tem que está autenticado. Se for a primeira vez do usuario no sistema existe um endPoint para ele se cadastrar e assim poder usar o sistema
 
@@ -11,6 +10,9 @@ editoras. O sistema é construído em Restfull. Os testes são feitos com Junit,
   - Tests de jpa
   - Tests unitários
   - Tests de integração com RestTemplate
+  
+  - Para rodar os testes Unitários na linha de comando basta adicionar -> mvn test
+  - Para rodar os testes de Integração na linha de comando basta adicionar -> mvn test -Pintegration-tests
   
 # Security
   - spring security
