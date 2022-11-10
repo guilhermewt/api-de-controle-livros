@@ -35,3 +35,17 @@ sistema de emprestimo que faz o controler de livros, adicionando livros e fazend
 # Diagrama de de memoria da biblioteca
 <img src="https://github.com/guilhermewt/assets/blob/main/IMAGE-%20diagrama%20de%20memoria.png">
 
+# Como executar o sistema?
+Pré-requisitos: java 11
+
+```bash
+# clona repositorio
+git clone ..
+
+# Entrar na pasta do projeto backEnd
+cd webservices_livros
+
+# executar o projeto
+./mvn spring-boot:run
+
+
