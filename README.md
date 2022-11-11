@@ -25,15 +25,50 @@ sistema de emprestimo que faz o controler de livros, adicionando livros e fazend
   - postgreSQL
   - JPQL
   - swagger
-  
-## Modelo conceitual
-
-# Diagrama de classe da biblioteca
-<img src="https://github.com/guilhermewt/assets/blob/main/IMAGE%20-%20diagrama%20de%20classe%20da%20biblioteca.png">
 
 
-# Diagrama de de memoria da biblioteca
-<img src="https://github.com/guilhermewt/assets/blob/main/IMAGE-%20diagrama%20de%20memoria.png">
+
+# Diagrama de classe do webservice de livros
+<div>
+	  <img src="https://github.com/guilhermewt/assets/blob/main/webservices%20de%20livros/diagrama%20de%20classe.png" style="background:#FFFFFF;
+    		width: 500px;
+      height:600px
+    		padding: 5px;
+    		margin: 5px;
+    		float: left; ">
+	</div>
+ 
+ <br><br>
+
+
+# Documentação swagger
+<div>
+	  <img src="https://github.com/guilhermewt/assets/blob/main/webservices%20de%20livros/userDomainResources.png" style="background:#FFFFFF;
+    		width: 700px;
+      height:800px
+    		padding: 5px;
+    		margin: 5px;
+    		float: left; ">
+	</div>
+ 
+ <div>
+	  <img src="https://github.com/guilhermewt/assets/blob/main/webservices%20de%20livros/loanResources.png" style="background:#FFFFFF;
+    		width: 700px;
+      height:800px
+    		padding: 5px;
+    		margin: 5px;
+    		float: left; ">
+	</div>
+ <div>
+	  <img src="https://github.com/guilhermewt/assets/blob/main/webservices%20de%20livros/bookResource.png" style="background:#FFFFFF;
+    		width: 700px;
+      height:800px
+    		padding: 5px;
+    		margin: 5px;
+    		float: left; ">
+	</div>
+
+	
 
 # Como executar o sistema?
 Pré-requisitos: java 11
