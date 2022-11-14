@@ -13,6 +13,10 @@ sistema de emprestimo que faz o controler de livros, adicionando livros e fazend
   
   - Para rodar os testes Unitários na linha de comando basta adicionar -> mvn test
   - Para rodar os testes de Integração na linha de comando basta adicionar -> mvn test -Pintegration-tests
+  - se o sistema estiver rodando sem banco de dados, com apenas o H2 então comente as anotaçoẽs (@SpringBootTest,@Test) da classe ProjetoBibliotecaApplicationTests
+     
+  
+   
   
 # Security
   - spring security
@@ -75,12 +79,19 @@ Pré-requisitos: java 11
 
 ```bash
 # clona repositorio
-git clone ..
+git clone git@github.com:guilhermewt/webservices_livros.git
+
+# se não quiser instalar o banco de dados PostgreSQL basta mudar o arquivo 'application.properties' para test, nisso será usado o banco de dados para testes H2
+- spring.profiles.active=test
+- (usuario admin: rafasilva, senha: biblioteca), (usuario comum: marcospereira,senha:biblioteca)
+
+# Para configurar o banco de dados que desejar, já existe um arquivo pre-configurado, basta colocar as informaçoẽs do seu banco como (url,username,password):
+- application-dev.properties -> para desenvolver com banco de dados
 
 # Entrar na pasta do projeto backEnd
 cd webservices_livros
 
-# executar o projeto
+# executar o projeto na linha de comando
 ./mvn spring-boot:run
 
 
