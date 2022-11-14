@@ -52,6 +52,10 @@ public class LoanService {
 		Book bookSaved = bookRepository.findAuthenticatedUserBooksById(idbook, userAuthenticated.userAuthenticated().getId())
 				.orElseThrow(() -> new BadRequestException("book not found"));
 		
+		if(bookSaved.getloans().size() > 0) {
+			throw new BadRequestException("this book is already on loan");
+		}
+		
 		UserDomain usuarioSaved = userDomainRepository.findById(userAuthenticated.userAuthenticated().getId()).get();
         
 		Loan loan = LoanMapper.INSTANCE.toLoan(loansPostRequestBody);
