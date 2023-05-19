@@ -3,9 +3,13 @@ package com.biblioteca.requests;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.validation.constraints.NotEmpty;
 
 import org.springframework.lang.NonNull;
+
+import com.biblioteca.enums.StatusBook;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -29,11 +33,15 @@ public class BookPutRequestBody implements Serializable{
 	@Schema(description =  "year the book was publication")
 	private Date yearPublication;
 	
-	public BookPutRequestBody(Long id, String title,Date yearPublication) {
+	@Enumerated(EnumType.STRING)
+	private StatusBook statusBook;
+	
+	public BookPutRequestBody(Long id, String title,Date yearPublication,StatusBook statusBook) {
 		super();
 		this.id = id;
 		this.title = title;
 		this.yearPublication = yearPublication;
+		this.statusBook = statusBook;
 	} 
 	
 	

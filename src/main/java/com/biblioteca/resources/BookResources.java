@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.biblioteca.entities.Book;
+import com.biblioteca.enums.StatusBook;
 import com.biblioteca.requests.BookPostRequestBody;
 import com.biblioteca.requests.BookPutRequestBody;
 import com.biblioteca.services.BookService;
@@ -58,6 +59,12 @@ public class BookResources {
 	@Operation(summary = "find book by title")
 	public ResponseEntity<List<Book>> findByTitle(@RequestParam String title){
 		return ResponseEntity.ok(serviceBook.findByTitle(title));
+	}
+	
+	@GetMapping(value = "/findbookByStatus")
+	@Operation(summary = "find book by title")
+	public ResponseEntity<List<Book>> findBookByStatus(@RequestParam String statusBook){
+		return ResponseEntity.ok(serviceBook.findAllBooksByStatusNonPageable(StatusBook.valueOf(statusBook)));
 	}
 	
 	@PostMapping

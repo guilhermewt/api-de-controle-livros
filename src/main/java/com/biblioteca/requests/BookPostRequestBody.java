@@ -3,9 +3,13 @@ package com.biblioteca.requests;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.validation.constraints.NotEmpty;
 
 import org.springframework.lang.NonNull;
+
+import com.biblioteca.enums.StatusBook;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -25,12 +29,16 @@ public class BookPostRequestBody implements Serializable{
 	@NonNull
 	@Schema(description =  "year the book was publication")
 	private Date yearPublication;
+	
+
+	private StatusBook statusBook;
 
 	public BookPostRequestBody(@NotEmpty(message = "the book title cannot be empty") String title,
-			Date yearPublication) {
+			Date yearPublication,StatusBook statusBook) {
 		super();
 		this.title = title;
 		this.yearPublication = yearPublication;
+		this.statusBook = statusBook;
 	} 
 	
 }

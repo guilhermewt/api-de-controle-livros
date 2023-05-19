@@ -1,6 +1,7 @@
 package com.biblioteca.services;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.biblioteca.entities.Book;
 import com.biblioteca.entities.UserDomain;
+import com.biblioteca.enums.StatusBook;
 import com.biblioteca.mapper.BookMapper;
 import com.biblioteca.repository.BookRepository;
 import com.biblioteca.repository.UserDomainRepository;
@@ -37,6 +39,12 @@ public class BookService {
 	
 	public Page<Book> findAll(Pageable pageable) {
 		return bookRepository.findByUserDomainId(userAuthenticated.userAuthenticated().getId(), pageable);
+	}
+	
+	public List<Book> findAllBooksByStatusNonPageable(StatusBook statusBook) {
+		List<Book> books = bookRepository.findByUserDomainId(userAuthenticated.userAuthenticated().getId());
+		
+		return books.stream().filter(x -> x.getStatusBook() == statusBook).collect(Collectors.toList());
 	}
 
 	public Book findByIdOrElseThrowResourceNotFoundException(long idBook) {

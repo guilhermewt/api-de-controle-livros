@@ -103,4 +103,11 @@ public class UserDomainResources {
 		serviceUserDomain.update(userDomainPutRequestBody);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
+	
+	@PutMapping(value = "/update-password")
+	@Operation(summary = "update user password")
+	public ResponseEntity<Void> updatePassword(@RequestParam  String oldPassword, String newPassword){
+		serviceUserDomain.updatePassword(oldPassword, newPassword);
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	}
 }

@@ -16,6 +16,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+import com.biblioteca.enums.StatusBook;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Builder;
@@ -50,11 +51,14 @@ public class Book implements Serializable {
 	@Builder.Default
 	private Set<Loan> loans = new HashSet<>();
 	
-	public Book(Long id, String title, Date yearPublication) {
+	private StatusBook statusBook;
+	
+	public Book(Long id, String title, Date yearPublication,StatusBook statusBook) {
 		super();
 		this.id = id;
 		this.title = title;
 		this.yearPublication = yearPublication;
+		this.statusBook = statusBook;
 	}
 
 	@JsonIgnore

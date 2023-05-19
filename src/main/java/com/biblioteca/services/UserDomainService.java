@@ -11,7 +11,9 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder.BCryptVersion;
 import org.springframework.stereotype.Service;
 
 import com.biblioteca.entities.UserDomain;
@@ -85,6 +87,22 @@ public class UserDomainService implements UserDetailsService{
 		UserDomain UserDomain = UserDomainMapper.INSTANCE.updateUserDomain(userDomainPutRequestBody, savedUserDomain);
 		UserDomain.setPassword(new BCryptPasswordEncoder().encode(UserDomain.getPassword()));
 		return userRepository.save(UserDomain);
+	}
+	
+	public void updatePassword(String oldPassword,String newPassword) {		
+		UserDomain userDomain = userRepository.findById(userAuthenticated.userAuthenticated().getId()).get();
+		String encryptPassword = new BCryptPasswordEncoder().encode(oldPassword);
+		
+		
+		log.info("spring password = " + encryptPassword);
+		log.info("database password = " + userDomain.getPassword());
+		
+		if(BCrypt.checkpw(oldPassword,userDomain.getPassword())  == false) {
+			throw new BadRequestException("the password is wrong");
+		}
+		
+		userDomain.setPassword(new BCryptPasswordEncoder().encode(newPassword));
+		userRepository.save(userDomain);		
 	}
 
 	@Override
