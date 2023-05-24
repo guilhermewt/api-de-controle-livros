@@ -151,6 +151,27 @@ public class BookResourceIT {
 	}
 	
 	@Test
+	@DisplayName("findByStatus Return List Of Book whenSuccessful")
+	void findByStatus_ReturnListOfBook_whenSuccessful() {
+		roleModelRepository.saveAll(Arrays.asList(RoleADMIN,RoleUSER));
+		userDomainRepository.save(USER);
+		
+		Book BookSaved = bookRepository.save(BookCreator.createValidBook());
+			
+		String url = String.format("/books/findbookByStatus?statusBook=%s",BookSaved.getStatusBook());
+		
+		List<Book> Book = testRestTemplateRoleUser.exchange(url, HttpMethod.GET,null,
+				new ParameterizedTypeReference<List<Book>>() {
+				}).getBody();		
+		
+		Assertions.assertThat(Book).isNotNull().isNotEmpty();
+		Assertions.assertThat(Book.get(0).getId()).isNotNull();
+		Assertions.assertThat(Book.get(0)).isEqualTo(BookSaved);
+	}
+	
+	
+	
+	@Test
 	@DisplayName("findById Return Book whenSuccessful")
 	void findById_ReturnBook_whenSuccessful() {
 		roleModelRepository.saveAll(Arrays.asList(RoleADMIN,RoleUSER));

@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.biblioteca.entities.Book;
+import com.biblioteca.enums.StatusBook;
 import com.biblioteca.requests.BookPostRequestBody;
 import com.biblioteca.services.BookService;
 import com.biblioteca.services.utilService.GetUserDetails;
@@ -49,6 +50,8 @@ public class BookResourceTest {
 		.thenReturn(List.of(BookCreator.createValidBook()));
 		
 		BDDMockito.when(bookServiceMock.findByTitle(ArgumentMatchers.anyString())).thenReturn(List.of(BookCreator.createValidBook()));
+		
+		BDDMockito.when(bookServiceMock.findAllBooksByStatusNonPageable(ArgumentMatchers.any())).thenReturn(List.of(BookCreator.createValidBook()));
 		
 		BDDMockito.when(bookServiceMock.findByIdOrElseThrowResourceNotFoundException(ArgumentMatchers.anyLong()))
 		.thenReturn(BookCreator.createValidBook());
@@ -119,6 +122,26 @@ public class BookResourceTest {
 		Assertions.assertThat(book).isNotNull();
 		Assertions.assertThat(book.getId()).isNotNull();
 		Assertions.assertThat(book).isEqualTo(bookSaved);		
+	}
+	
+	@Test
+	@DisplayName("findByStatus Return List Of book whenSuccessful")
+	void findByStatus_ReturnListOfbook_whenSuccessful() {	
+		List<Book> book = this.bookResource.findBookByStatus("LER").getBody();
+		
+		Assertions.assertThat(book).isNotNull().isNotEmpty();
+		Assertions.assertThat(book.get(0).getId()).isNotNull();
+		Assertions.assertThat(book.get(0)).isEqualTo(BookCreator.createValidBook());	
+	}
+	
+	@Test
+	@DisplayName("findByStatus Return Empty List when no book is found")
+	void findByStatus_ReturnEmptyListWhenNobookIsFound() {		
+		BDDMockito.when(bookServiceMock.findAllBooksByStatusNonPageable(StatusBook.EMPRESTADO))
+		.thenReturn(Collections.emptyList());
+		List<Book> book = this.bookResource.findBookByStatus("EMPRESTADO").getBody();
+		
+		Assertions.assertThat(book).isNotNull().isEmpty();
 	}
 	
 	@Test

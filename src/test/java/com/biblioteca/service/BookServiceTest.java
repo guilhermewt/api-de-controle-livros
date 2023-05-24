@@ -19,6 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.biblioteca.entities.Book;
+import com.biblioteca.enums.StatusBook;
 import com.biblioteca.repository.BookRepository;
 import com.biblioteca.repository.UserDomainRepository;
 import com.biblioteca.repository.RoleModelRepository;
@@ -131,6 +132,25 @@ public class BookServiceTest {
 	}
 	
 	@Test
+	@DisplayName("findByStatus Return List Of book whenSuccessful")
+	void findByStatus_ReturnListOfbook_whenSuccessful() {	
+		List<Book> book = this.bookService.findAllBooksByStatusNonPageable(StatusBook.LER);
+		
+		Assertions.assertThat(book).isNotNull().isNotEmpty();
+		Assertions.assertThat(book.get(0).getId()).isNotNull();
+		Assertions.assertThat(book.get(0)).isEqualTo(BookCreator.createValidBook());	
+	}
+	
+	@Test
+	@DisplayName("findByStatus Return Empty List when no book is found")
+	void findByStatus_ReturnEmptyListWhenNobookIsFound() {		
+		List<Book> book = this.bookService.findAllBooksByStatusNonPageable(StatusBook.LENDO);
+		
+		Assertions.assertThat(book).isNotNull().isEmpty();
+	}
+	
+	
+	@Test
 	@DisplayName("findByName Return Empty List when no book is found")
 	void findByName_ReturnEmptyListWhenNobookIsFound() {
 		BDDMockito.when(bookRepositoryMock.findAuthenticatedUserBooksByTitle(ArgumentMatchers.anyString(),ArgumentMatchers.anyLong()))
@@ -167,8 +187,7 @@ public class BookServiceTest {
 	void update_Replavebook_whenSuccessful() {		
 		BDDMockito.when(userDomainRepositoryMock.findById(ArgumentMatchers.anyLong()))
 		.thenReturn(Optional.of(UserDomainCreator.createUserDomainWithRoleADMIN()));
-		
-		
+			
 		Assertions.assertThatCode(() -> this.bookService.update(BookPutRequestBodyCreator.createBookPutRequestBodyCreator())).doesNotThrowAnyException();
 	}
 	

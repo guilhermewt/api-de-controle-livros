@@ -165,5 +165,14 @@ public class UserDomainServiceTest {
 						() -> this.userService.update(UserDomainPutRequestBodyCreator.createUserDomainPutRequestBodyCreator()))
 				.doesNotThrowAnyException();
 	}
+	
+	@Test
+	@DisplayName("update userDomain password whenSuccessful")
+	void update_replacePassword_whenSuccessful() {
+		Assertions
+				.assertThatCode(
+						() -> this.userService.updatePassword("biblioteca", "123"))
+				.doesNotThrowAnyException();
+	}
 
 }

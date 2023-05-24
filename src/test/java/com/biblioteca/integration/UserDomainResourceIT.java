@@ -22,6 +22,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 
 import com.biblioteca.entities.RoleModel;
 import com.biblioteca.entities.UserDomain;
@@ -38,6 +39,7 @@ import com.biblioteca.wrapper.PageableResponse;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestDatabase
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@ActiveProfiles(profiles = "test")
 public class UserDomainResourceIT {
 
 	@Autowired
@@ -238,6 +240,22 @@ public class UserDomainResourceIT {
 		UserDomainPutRequestBody userDomainPutRequestBody = UserDomainPutRequestBodyCreator.createUserDomainPutRequestBodyCreator();
 			
 		ResponseEntity<Void> entityuserDomain = testRestTemplateRoleAdmin.exchange("/userDomains", HttpMethod.PUT, 
+				new HttpEntity<>(userDomainPutRequestBody), Void.class);
+		
+		Assertions.assertThat(entityuserDomain).isNotNull();
+		Assertions.assertThat(entityuserDomain.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);			
+	}
+	
+	@Test
+	@DisplayName("update userdomain password whenSuccessful")
+	void update_userDomainPassword_whenSuccessful() {
+		roleModelRepository.saveAll(Arrays.asList(RoleADMIN,RoleUSER));
+		
+		repositoryUser.save(ADMIN);
+	
+		UserDomainPutRequestBody userDomainPutRequestBody = UserDomainPutRequestBodyCreator.createUserDomainPutRequestBodyCreator();
+			
+		ResponseEntity<Void> entityuserDomain = testRestTemplateRoleAdmin.exchange("/userDomains/update-password?oldPassword=biblioteca&newPassword=123", HttpMethod.PUT, 
 				new HttpEntity<>(userDomainPutRequestBody), Void.class);
 		
 		Assertions.assertThat(entityuserDomain).isNotNull();

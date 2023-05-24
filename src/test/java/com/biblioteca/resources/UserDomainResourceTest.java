@@ -159,5 +159,14 @@ public class UserDomainResourceTest {
 						() -> this.userResource.update(UserDomainPutRequestBodyCreator.createUserDomainPutRequestBodyCreator()))
 				.doesNotThrowAnyException();
 	}
+	
+	@Test
+	@DisplayName("update userDomain password whenSuccessful")
+	void update_replacePassword_whenSuccessful() {
+		Assertions
+				.assertThatCode(
+						() -> this.userResource.updatePassword("biblioteca", "123"))
+				.doesNotThrowAnyException();
+	}
 }
 
