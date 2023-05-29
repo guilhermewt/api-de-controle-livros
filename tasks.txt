@@ -4,8 +4,18 @@ tarefas:
 
 - campo status em livro e endpoint para pegar livro pelo status ok
 
-- criar end point para trocar senhar
+- criar end point para trocar senhar ok
 
 - endpoint para pegar as estatistica dos livros
 
-- atualizacao de novos atributos
+- atualizacao de novos atributos (descricao:string,imageLink:string,salvar livro pelo usbn,authors:objeto
+
+- no front vamos criar um objeto igual o do back para salvar e buscar e na hora de salvar converter do api do google para a do back
+
+- para gerar o id se for null ou empty eu vou criar uma chave de 6 posicoes e depois vejo se esta chave ja se encontrar no bd
+org.apache.commons.lang3.RandomStringUtils;
+ this.id = RandomStringUtils.randomAlphabetic(6).toUpperCase();
+ 
+ 
+ tarefas concuidas
+ adicionamos os novos atributos e modificamos o put e post

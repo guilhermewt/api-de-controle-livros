@@ -14,7 +14,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 
 import com.biblioteca.enums.StatusBook;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -36,12 +35,17 @@ public class Book implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private String id;
 	@NotEmpty(message = "the book title cannot be empty")
-	private String title;
-	@NotNull(message = "the book year publication cannot be null")
-	private Date yearPublication; 
+	private String title;	
+	private Date yearPublication; 	
+	private String description;
+	private String imageLink;
+	
+	@ManyToMany(mappedBy = "books")
+	@Builder.Default
+	private Set<Author> authors = new HashSet<>();
 
 	@ManyToOne
 	@JoinColumn(name = "userDomain_id")
@@ -53,7 +57,7 @@ public class Book implements Serializable {
 	
 	private StatusBook statusBook;
 	
-	public Book(Long id, String title, Date yearPublication,StatusBook statusBook) {
+	public Book(String id, String title, Date yearPublication,String description, String imageLink,StatusBook statusBook) {
 		super();
 		this.id = id;
 		this.title = title;

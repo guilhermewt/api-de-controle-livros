@@ -25,11 +25,11 @@ public interface BookRepository extends JpaRepository<Book, Long>{
     List<Book> findAuthenticatedUserBooksByTitle(String name,long userDomainId);
 	
 	@Query("select u from Book u where u.id = ?1 and u.userDomain.id = ?2")
-	Optional<Book> findAuthenticatedUserBooksById(long idBook,long UserDomainId);
+	Optional<Book> findAuthenticatedUserBooksById(String idBook,long UserDomainId);
 	
 	@Modifying
 	@Transactional
 	@Query("DELETE FROM Book u where u.id = ?1 and u.userDomain.id = ?2")
-    void deleteAuthenticatedUserBookById(long idBook,long userDomainId);
+    void deleteAuthenticatedUserBookById(String idBook,long userDomainId);
 	
 }

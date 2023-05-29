@@ -48,7 +48,7 @@ public class LoanService {
 	}
 
 	@Transactional
-	public Loan save(LoanPostRequestBody loansPostRequestBody, long idbook) {
+	public Loan save(LoanPostRequestBody loansPostRequestBody, String idbook) {
 		Book bookSaved = bookRepository.findAuthenticatedUserBooksById(idbook, userAuthenticated.userAuthenticated().getId())
 				.orElseThrow(() -> new BadRequestException("book not found"));
 		

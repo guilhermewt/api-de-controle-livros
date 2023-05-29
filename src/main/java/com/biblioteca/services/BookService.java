@@ -47,7 +47,7 @@ public class BookService {
 		return books.stream().filter(x -> x.getStatusBook() == statusBook).collect(Collectors.toList());
 	}
 
-	public Book findByIdOrElseThrowResourceNotFoundException(long idBook) {
+	public Book findByIdOrElseThrowResourceNotFoundException(String idBook) {
 		return  bookRepository.findAuthenticatedUserBooksById(idBook, userAuthenticated.userAuthenticated().getId())
 				.orElseThrow(() -> new BadRequestException("book not found"));
 	}
@@ -66,7 +66,7 @@ public class BookService {
 	}
 	
 	@Transactional
-	public void delete(long idBook) {
+	public void delete(String idBook) {
 		try {
 			bookRepository.deleteAuthenticatedUserBookById(findByIdOrElseThrowResourceNotFoundException(idBook)
 					.getId(),userAuthenticated.userAuthenticated()
