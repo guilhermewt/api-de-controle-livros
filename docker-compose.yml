@@ -1,0 +1,17 @@
+version: '3.6'
+
+services:
+  database:
+    image: postgres
+    container_name: "database_book"
+    environment:
+      - POSTGRES_DB=database_book
+      - POSTGRES_USER=gui
+      - POSTGRES_PASSWORD=123456
+    ports:
+      - "5432:5432"
+    networks:
+      - db
+
+networks:
+  db:

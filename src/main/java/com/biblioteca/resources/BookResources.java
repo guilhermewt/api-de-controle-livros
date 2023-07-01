@@ -51,7 +51,7 @@ public class BookResources {
 	
 	@GetMapping(value = "/{id}")
 	@Operation(summary = "find book by id")
-	public ResponseEntity<Book> findById(@PathVariable String id){
+	public ResponseEntity<Book> findById(@PathVariable Long id){
 		return ResponseEntity.ok(serviceBook.findByIdOrElseThrowResourceNotFoundException(id));
 	}
 	
@@ -78,7 +78,7 @@ public class BookResources {
 			@ApiResponse(responseCode = "204", description = "successful operation"),
 			@ApiResponse(responseCode = "400", description = "when publisher does not exist in the dataBase")
 	})
-	public ResponseEntity<Void> delete(@PathVariable String id){
+	public ResponseEntity<Void> delete(@PathVariable Long id){
 		serviceBook.delete(id);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}	

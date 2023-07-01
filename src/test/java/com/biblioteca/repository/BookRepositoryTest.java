@@ -7,6 +7,8 @@ import java.util.Optional;
 import javax.validation.ConstraintViolationException;
 
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +16,15 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 
 import com.biblioteca.entities.Book;
 import com.biblioteca.entities.UserDomain;
 import com.biblioteca.util.BookCreator;
+import com.biblioteca.util.GenrerCreator;
 import com.biblioteca.util.RolesCreator;
 import com.biblioteca.util.UserDomainCreator;
+
 
 @DataJpaTest
 @DisplayName("test for book repository")
@@ -35,15 +40,23 @@ public class BookRepositoryTest {
 	@Autowired
 	private RoleModelRepository roleModelRepository;
 	
+	@Autowired
+	private GenrerRepository genrerRepository;
+	
+	@BeforeEach
+	public void setUp() {
+		this.roleModelRepository.saveAll(Arrays.asList(RolesCreator.createAdminRoleModel(),RolesCreator.createUserRoleModel()));
+		
+		this.userRepository.save(UserDomainCreator.createUserDomainWithRoleADMIN());
+		
+		this.genrerRepository.saveAll(GenrerCreator.createValidGenrer());
+	}
+	
 	@Test
 	@DisplayName("find all user books return list of object inside page whensuccessful")
 	void findAll_returnListOfObjectInsidePage_whenSuccessful() {
-		roleModelRepository.saveAll(Arrays.asList(RolesCreator.createAdminRoleModel(),RolesCreator.createUserRoleModel()));
-		
-		UserDomain userDomain = this.userRepository.save(UserDomainCreator.createUserDomainWithRoleADMIN());
-		
 		Book bookToBeSaved = this.bookRepository.save(BookCreator.createValidBook());
-		Page<Book> bookSaved = this.bookRepository.findByUserDomainId(userDomain.getId(), PageRequest.of(0, 5));
+		Page<Book> bookSaved = this.bookRepository.findByUserDomainId(UserDomainCreator.createUserDomainWithRoleADMIN().getId(), PageRequest.of(0, 5));
 		
 		Assertions.assertThat(bookSaved).isNotNull().isNotEmpty();
 		Assertions.assertThat(bookSaved.toList().get(0)).isEqualTo(bookToBeSaved);
@@ -98,11 +111,7 @@ public class BookRepositoryTest {
 	
 	@Test
 	@DisplayName("save return book whenSuccessful")
-	void save_returnbook_whenSuccessful() {
-		roleModelRepository.saveAll(Arrays.asList(RolesCreator.createAdminRoleModel(),RolesCreator.createUserRoleModel()));
-		
-		this.userRepository.save(UserDomainCreator.createUserDomainWithRoleADMIN());
-		
+	void save_returnbook_whenSuccessful() {	
 		Book bookToBeSaved = BookCreator.createValidBook();
 		Book bookSaved = this.bookRepository.save(bookToBeSaved);
 		
@@ -129,12 +138,6 @@ public class BookRepositoryTest {
 	@Test
 	@DisplayName("update replace book whenSuccessful")
 	void update_replacebook_whenSuccessful() {
-		roleModelRepository.saveAll(Arrays.asList(RolesCreator.createAdminRoleModel(),RolesCreator.createUserRoleModel()));
-		
-	    this.userRepository.save(UserDomainCreator.createUserDomainWithRoleADMIN());
-		
-		this.bookRepository.save(BookCreator.createValidBook());
-		
 		Book bookToBeUpdate = BookCreator.createUpdatedBook();
 		
 	    Book bookUpdate = this.bookRepository.save(bookToBeUpdate);
@@ -147,8 +150,6 @@ public class BookRepositoryTest {
 	@Test
 	@DisplayName("save  throw Contration Violation Exception when book name is empty")
 	void save_throwConstrationViolationException_whenbookNameIsEmpty() {
-		roleModelRepository.saveAll(Arrays.asList(RolesCreator.createAdminRoleModel(),RolesCreator.createUserRoleModel()));
-		
 		Book book = new Book();
 		
 		Assertions.assertThatThrownBy(() -> this.bookRepository.save(book))

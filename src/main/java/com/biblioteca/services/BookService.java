@@ -15,6 +15,7 @@ import com.biblioteca.entities.UserDomain;
 import com.biblioteca.enums.StatusBook;
 import com.biblioteca.mapper.BookMapper;
 import com.biblioteca.repository.BookRepository;
+import com.biblioteca.repository.GenrerRepository;
 import com.biblioteca.repository.UserDomainRepository;
 import com.biblioteca.requests.BookPostRequestBody;
 import com.biblioteca.requests.BookPutRequestBody;
@@ -22,17 +23,21 @@ import com.biblioteca.services.exceptions.BadRequestException;
 import com.biblioteca.services.utilService.GetUserDetails;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class BookService {
 
 	private final BookRepository bookRepository;
 
 	private final UserDomainRepository userDomainRepository;
+	
+	private final GenrerRepository genrerRepository;
  
 	private final GetUserDetails userAuthenticated;
-	
+
 	public List<Book> findAllNonPageable() {
 		return bookRepository.findByUserDomainId(userAuthenticated.userAuthenticated().getId());
 	}
@@ -47,7 +52,7 @@ public class BookService {
 		return books.stream().filter(x -> x.getStatusBook() == statusBook).collect(Collectors.toList());
 	}
 
-	public Book findByIdOrElseThrowResourceNotFoundException(String idBook) {
+	public Book findByIdOrElseThrowResourceNotFoundException(Long idBook) {
 		return  bookRepository.findAuthenticatedUserBooksById(idBook, userAuthenticated.userAuthenticated().getId())
 				.orElseThrow(() -> new BadRequestException("book not found"));
 	}
@@ -58,15 +63,33 @@ public class BookService {
 
 	@Transactional
 	public Book save(BookPostRequestBody bookPostRequestBody) {
-		UserDomain userDomain = userDomainRepository.findById(userAuthenticated.userAuthenticated().getId()).get();
-		
+		UserDomain userDomain = userDomainRepository.findById(userAuthenticated.userAuthenticated().getId()).get();	
 		Book book = BookMapper.INSTANCE.toBook(bookPostRequestBody);
-		book.setUserDomain(userDomain);		
+		
+		book.setUserDomain(userDomain);	
+
+		validationBook(book);
+		
 		return bookRepository.save(book);
 	}
 	
+	public void validationBook(Book book) {
+		boolean bookExist = bookRepository.findAll()
+				    .stream()
+					.anyMatch((x) -> x.getExternalCode().equals(book.getExternalCode()) && x.getUserDomain() == book.getUserDomain() || x.equals(book));
+	
+		if(bookExist) {
+				throw new BadRequestException("the book already exist");
+		}
+		
+		if(!genrerRepository.findAll().containsAll(book.getGenrers())) {
+			throw new BadRequestException("Genrer not found");
+	    }
+
+	}
+	
 	@Transactional
-	public void delete(String idBook) {
+	public void delete(Long idBook) {
 		try {
 			bookRepository.deleteAuthenticatedUserBookById(findByIdOrElseThrowResourceNotFoundException(idBook)
 					.getId(),userAuthenticated.userAuthenticated()

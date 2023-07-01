@@ -1,5 +1,6 @@
 package com.biblioteca.util;
 
+import com.biblioteca.enums.StatusBook;
 import com.biblioteca.requests.BookPutRequestBody;
 
 public class BookPutRequestBodyCreator {
@@ -8,7 +9,10 @@ public class BookPutRequestBodyCreator {
 		return BookPutRequestBody.builder()
 				.id(1l)
 				.title("o poder da acao 2")
-				.yearPublication(DateConvert.convertData("2022/09/15"))
+				.authors("author name")
+				.externalCode("123")
+				.genrers(GenrerCreator.createValidGenrer())
+				.statusBook(StatusBook.LER)
 				.build();
 	}
 }

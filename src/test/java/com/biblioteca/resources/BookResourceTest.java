@@ -31,7 +31,7 @@ import com.biblioteca.util.UserDomainCreator;
 
 @ExtendWith(SpringExtension.class)
 public class BookResourceTest {
-	//test integration,repository,test
+
 	@InjectMocks
 	private BookResources bookResource;
 	
@@ -117,7 +117,7 @@ public class BookResourceTest {
 	void findById_Returnbook_whenSuccessful() {
 		Book bookSaved = BookCreator.createValidBook();
 		
-		Book book = this.bookResource.findById(1).getBody();
+		Book book = this.bookResource.findById(1l).getBody();
 		
 		Assertions.assertThat(book).isNotNull();
 		Assertions.assertThat(book.getId()).isNotNull();

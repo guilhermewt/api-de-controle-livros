@@ -21,6 +21,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import com.biblioteca.entities.Book;
 import com.biblioteca.enums.StatusBook;
 import com.biblioteca.repository.BookRepository;
+import com.biblioteca.repository.GenrerRepository;
 import com.biblioteca.repository.UserDomainRepository;
 import com.biblioteca.repository.RoleModelRepository;
 import com.biblioteca.services.BookService;
@@ -29,6 +30,7 @@ import com.biblioteca.services.utilService.GetUserDetails;
 import com.biblioteca.util.BookCreator;
 import com.biblioteca.util.BookPostRequestBodyCreator;
 import com.biblioteca.util.BookPutRequestBodyCreator;
+import com.biblioteca.util.GenrerCreator;
 import com.biblioteca.util.RolesCreator;
 import com.biblioteca.util.UserDomainCreator;
 
@@ -49,6 +51,9 @@ public class BookServiceTest {
 	
 	@Mock
 	private RoleModelRepository roleModelRepository;
+	
+	@Mock
+	private GenrerRepository genrerRepository;
 	
 	@BeforeEach
 	void setUp() {
@@ -71,6 +76,8 @@ public class BookServiceTest {
 		
 		BDDMockito.when(roleModelRepository.findById(ArgumentMatchers.eq(1l))).thenReturn(Optional.of(RolesCreator.createAdminRoleModel()));
 		BDDMockito.when(roleModelRepository.findById(ArgumentMatchers.eq(2l))).thenReturn(Optional.of(RolesCreator.createUserRoleModel()));
+	
+		BDDMockito.when(genrerRepository.findAll()).thenReturn(GenrerCreator.createValidGenrer());
 	}
 	
 	@Test
@@ -115,7 +122,7 @@ public class BookServiceTest {
 		BDDMockito.when(bookRepositoryMock.findAuthenticatedUserBooksById(ArgumentMatchers.anyLong(),ArgumentMatchers.anyLong()))
 		.thenReturn(Optional.empty());
 		
-		Assertions.assertThatCode(() -> this.bookService.findByIdOrElseThrowResourceNotFoundException(1))
+		Assertions.assertThatCode(() -> this.bookService.findByIdOrElseThrowResourceNotFoundException(1l))
 		.isInstanceOf(BadRequestException.class);
 	}
 	

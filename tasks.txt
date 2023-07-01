@@ -1,20 +1,21 @@
 tarefas:
 
 - nova seguranca com jwt token
+- endpoint para pegar as estatistica dos livros
 
 - campo status em livro e endpoint para pegar livro pelo status ok
 
 - criar end point para trocar senhar ok
 
-- endpoint para pegar as estatistica dos livros
+- atualizacao de novos atributos (descricao:string,imageLink:string,salvar livro pelo usbn,authors:objeto ok
 
-- atualizacao de novos atributos (descricao:string,imageLink:string,salvar livro pelo usbn,authors:objeto
-
-- no front vamos criar um objeto igual o do back para salvar e buscar e na hora de salvar converter do api do google para a do back
-
-- para gerar o id se for null ou empty eu vou criar uma chave de 6 posicoes e depois vejo se esta chave ja se encontrar no bd
-org.apache.commons.lang3.RandomStringUtils;
- this.id = RandomStringUtils.randomAlphabetic(6).toUpperCase();
+ - antes de salvar vamos fazer a comparacao dos livros entre os atributos title e authors ok
+ 
+ - solucao id: novo atributo com codigo externo (codigo da api do gooogle), genero tera uma tabela,fazer logica para ver se book codigo esta no bd ok
+ 
+ - fazer o testes de generos inserindo o livro com os generos ok
+ 
+ - conseguimos fazer o recebimento do livro e junto dele uma lista de generos ok
  
  
  tarefas concuidas

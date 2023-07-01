@@ -22,6 +22,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 
 import com.biblioteca.entities.Book;
 import com.biblioteca.entities.RoleModel;
@@ -39,6 +40,7 @@ import com.biblioteca.wrapper.PageableResponse;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestDatabase
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@ActiveProfiles("test")
 public class BookResourceIT {
 
 	@Autowired
@@ -48,7 +50,6 @@ public class BookResourceIT {
 	@Autowired
 	@Qualifier(value = "testRestTemplateRoleUser")
 	private TestRestTemplate testRestTemplateRoleUser;
-	
 	
 	@Autowired
 	private BookRepository bookRepository;

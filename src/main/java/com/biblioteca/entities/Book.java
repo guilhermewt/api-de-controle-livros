@@ -1,15 +1,18 @@
 package com.biblioteca.entities;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -28,44 +31,47 @@ import lombok.experimental.SuperBuilder;
 @Table(name = "tb_book")
 @NoArgsConstructor
 @Data
-@EqualsAndHashCode(of={"id","title"})
+@EqualsAndHashCode(of={"title","authors","userDomain"})
 @SuperBuilder
 public class Book implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private String id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 	@NotEmpty(message = "the book title cannot be empty")
-	private String title;	
-	private Date yearPublication; 	
+	private String title;
 	private String description;
 	private String imageLink;
+	private StatusBook statusBook;
+	private String authors;
+	private String externalCode;
 	
-	@ManyToMany(mappedBy = "books")
-	@Builder.Default
-	private Set<Author> authors = new HashSet<>();
-
 	@ManyToOne
 	@JoinColumn(name = "userDomain_id")
 	private UserDomain userDomain;
 
-	@ManyToMany(mappedBy = "books")
+	@ManyToMany(mappedBy = "books", fetch = FetchType.EAGER)
 	@Builder.Default
 	private Set<Loan> loans = new HashSet<>();
 	
-	private StatusBook statusBook;
+	@ManyToMany
+	@JoinTable(name = "tb_book_genrer", joinColumns = @JoinColumn(name = "book_id"), inverseJoinColumns = @JoinColumn(name = "genrer_id"))
+	@Builder.Default
+	private List<Genrer> genrers = new ArrayList<>();
 	
-	public Book(String id, String title, Date yearPublication,String description, String imageLink,StatusBook statusBook) {
+	public Book(Long id, String title,String description, String imageLink,StatusBook statusBook, String author,String externalCode,List<Genrer> genrers) {
 		super();
 		this.id = id;
 		this.title = title;
-		this.yearPublication = yearPublication;
 		this.statusBook = statusBook;
-	}
+		this.authors = author;
+		this.externalCode = externalCode;
+		this.genrers = genrers;
+    }
 
-	@JsonIgnore
+	
 	public UserDomain getUserDomain() {
 		return userDomain;
 	}

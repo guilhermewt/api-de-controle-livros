@@ -10,6 +10,7 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -23,12 +24,14 @@ import javax.validation.constraints.NotEmpty;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 @Entity
@@ -37,9 +40,9 @@ import lombok.experimental.SuperBuilder;
 @Data
 @EqualsAndHashCode(of= {"id","name"})
 @SuperBuilder
+@ToString(exclude = {"books"})
 public class UserDomain implements Serializable, UserDetails {
 
-	//tentar rodar o projeto e tentar o rodar os test
 	private static final long serialVersionUID = 1L; 
 	 
 	@Id
@@ -57,7 +60,7 @@ public class UserDomain implements Serializable, UserDetails {
 	@Column(nullable = false)
 	private String password;
 	
-	@ManyToMany(cascade = CascadeType.PERSIST)
+	@ManyToMany(cascade = CascadeType.PERSIST,fetch = FetchType.EAGER)
 	@JoinTable(name = "TB_USERS_ROLES",
 			joinColumns = @JoinColumn(name = "user_domain_id"),
 			inverseJoinColumns = @JoinColumn(name = "role_id"))
@@ -67,9 +70,10 @@ public class UserDomain implements Serializable, UserDetails {
 	
 	@OneToMany(mappedBy = "userDomain",cascade = CascadeType.REMOVE)
 	@Builder.Default
+	@JsonIgnore
 	private Set<Book> books = new HashSet<>();
 
-	@OneToMany(mappedBy = "userDomain",cascade = CascadeType.REMOVE)
+	@OneToMany(mappedBy = "userDomain",cascade = CascadeType.REMOVE,fetch = FetchType.EAGER)
 	@Builder.Default
 	private Set<Loan> loans = new HashSet<>();
 	

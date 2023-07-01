@@ -1,31 +1,33 @@
 package com.biblioteca.entities;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 @Entity
-@Table(name = "tb_author")
+@Table(name = "tb_genrer")
 @NoArgsConstructor
 @Data
-@EqualsAndHashCode(of={"id","name"})
+@EqualsAndHashCode(of = {"id","name"})
+@ToString(exclude = {"books"})
 @SuperBuilder
-public class Author implements Serializable{
+public class Genrer implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -34,9 +36,15 @@ public class Author implements Serializable{
 	private Long id;
 	private String name;
 	
-	@ManyToMany
+	@JsonIgnore
+	@ManyToMany(mappedBy = "genrers")
 	@Builder.Default
-	@JoinTable(name = "tb_author_book", joinColumns = @JoinColumn(name = "tb_author_id"),
-													inverseJoinColumns = @JoinColumn(name = "tb_book_id"))
-	private Set<Book> books = new HashSet<>();
+	private List<Book> books = new ArrayList<>();
+	
+	public Genrer(Long id, String name) {
+		super();
+		this.id = id;
+		this.name = name;
+	}
+	
 }

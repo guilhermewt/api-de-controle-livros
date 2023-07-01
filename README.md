@@ -1,6 +1,21 @@
-# Webservice de emprestimo de livros
 
-sistema de emprestimo que faz o controler de livros, adicionando livros e fazendo emprestimos do mesmo.É uma Api publica onde cada usuário pode adicionar seus livros e quando necessário fazer o emprestimo desses livros.O sistema é construído em Restfull. Os testes são feitos com Junit, contendo teste de jpa para armazenamento de dados, teste unitarios com BDDMockito e teste de integracao tentando simula o maximo possível um ambiente real em produção com RestTemplate. A segurança é feita com spring securiry. Para documentar a Api foi usado a openAPI 3 com Swagger. O banco de dados para armazenamento foi o postgreeSQL
+
+### projeto Em construção <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0fm1v4G3YfyGZ5fOEJtQjYIDM3D_kU5ld8w&usqp=CAU">
+
+# Webservice de emprestimo de livros
+ Este projeto consiste em um sistema de gerenciamento de livros que permite o controle e organização eficientes da biblioteca pessoal de um usuário. O sistema possui as seguintes funcionalidades:
+
+1. Adição de livros: Os usuários podem adicionar livros à sua biblioteca, fornecendo informações como título, autor, gênero, ano de publicação e qualquer outra informação relevante.
+
+2. Acompanhamento do status de leitura: O sistema permite que os usuários rastreiem o status de leitura de cada livro. Eles podem indicar se já leram o livro, se estão lendo no momento ou se ainda não começaram a leitura.
+
+3. Estatísticas de leitura: O sistema gera estatísticas sobre os livros lidos pelos usuários. Ele calcula o número total de livros lidos, o número de livros que ainda não foram lidos e o número de livros que estão sendo lidos no momento.
+
+4. Funcionalidade de empréstimo: Os usuários têm a opção de marcar livros como emprestados, indicando o nome da pessoa para quem o livro foi emprestado e a data prevista para a devolução. Isso ajuda a manter o controle dos livros emprestados e a gerenciar os prazos de devolução.
+
+5. Consulta de livros: O sistema permite que os usuários realizem consultas na biblioteca. Eles podem pesquisar livros por nome, gênero ou status de leitura (lidos, não lidos, lendo). Isso facilita a localização de livros específicos ou a visualização de uma lista de livros com determinadas características.
+
+Essas funcionalidades fornecem aos usuários um sistema completo para gerenciar sua biblioteca pessoal de forma organizada. Eles podem adicionar novos livros, acompanhar seu progresso de leitura, estabelecer empréstimos e consultar facilmente sua coleção com base em diferentes critérios. Isso permite que os usuários tenham um controle maior sobre sua leitura e promove uma experiência aprimorada de gerenciamento de livros.
 
 - para usar a api o usuario tem que está autenticado. Se for a primeira vez do usuario no sistema existe um endPoint para ele se cadastrar e assim poder usar o sistema
 

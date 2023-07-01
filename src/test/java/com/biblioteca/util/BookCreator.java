@@ -9,17 +9,21 @@ public class BookCreator {
 		return Book.builder()
 				.id(1l)
 				.title("o poder da acao")
-				.yearPublication(DateConvert.convertData("2022/09/15"))
-				.userDomain(UserDomainCreator.createUserDomainWithRoleADMIN())
+				.authors("author name")
+				.externalCode("123")
+				.userDomain(UserDomainCreator.createUserDomainWithRoleUSER())
 				.statusBook(StatusBook.LER)
+				.genrers(GenrerCreator.createValidGenrer())
 				.build();
 	}
 	
 	public static Book createBookToBeSaved() {
 		return Book.builder()
 				.title("o poder da acao")
-				.yearPublication(DateConvert.convertData("2022/09/15"))
+				.authors("author name")
+				.externalCode("123")
 				.statusBook(StatusBook.LER)
+				.genrers(GenrerCreator.createValidGenrer())
 				.build();
 	}
 	
@@ -27,7 +31,8 @@ public class BookCreator {
 		return Book.builder()
 				.id(1l)
 				.title("o poder da acao 2")
-				.yearPublication(DateConvert.convertData("2024/04/14"))
+				.authors("author name")
+				.externalCode("123")
 				.statusBook(StatusBook.LIDO)
 				.build();
 	}

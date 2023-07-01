@@ -55,7 +55,7 @@ public class LoanResources {
 	
 	@PostMapping(path = "/{idBook}")
 	@Operation(description = "for the loan to be made, the user id and the book id are required")
-	public ResponseEntity<Loan> save(@RequestBody @Valid LoanPostRequestBody loansPostRequestBody, @PathVariable String idBook){
+	public ResponseEntity<Loan> save(@RequestBody @Valid LoanPostRequestBody loansPostRequestBody, @PathVariable Long idBook){
 		return new ResponseEntity<>(serviceLoan.save(loansPostRequestBody,idBook), HttpStatus.CREATED);
 	}
 	
