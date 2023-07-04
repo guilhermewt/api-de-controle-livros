@@ -18,11 +18,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 
+import com.biblioteca.data.JwtObject;
 import com.biblioteca.entities.Loan;
 import com.biblioteca.entities.RoleModel;
 import com.biblioteca.entities.UserDomain;
@@ -31,6 +33,7 @@ import com.biblioteca.repository.LoanRepository;
 import com.biblioteca.repository.RoleModelRepository;
 import com.biblioteca.repository.UserDomainRepository;
 import com.biblioteca.requests.LoanPostRequestBody;
+import com.biblioteca.requests.LoginGetRequestBody;
 import com.biblioteca.util.BookCreator;
 import com.biblioteca.util.DateConvert;
 import com.biblioteca.util.LoanCreator;
@@ -75,17 +78,27 @@ public class LoanResourceIT {
 		@Bean(name = "testRestTemplateRoleAdmin")
 		public TestRestTemplate testRestTemplateRoleAdmin(@Value("${local.server.port}") int port) {
 			RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder()
-					.rootUri("http://localhost:" + port)
-					.basicAuthentication("guilherme", "biblioteca");
+					.rootUri("http://localhost:" + port);
 			return new TestRestTemplate(restTemplateBuilder);
 		}
 		@Bean(name = "testRestTemplateRoleUser")
 		public TestRestTemplate testRestTemplateRoleUser(@Value("${local.server.port}") int port) {
 			RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder()
-					.rootUri("http://localhost:" + port)
-					.basicAuthentication("userBiblioteca", "biblioteca");
+					.rootUri("http://localhost:" + port);
 			return new TestRestTemplate(restTemplateBuilder);
 		}
+	}
+	
+	public HttpHeaders httpHeaders() {
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.add("Authorization", "Bearer " + login().getToken());
+		return httpHeaders;
+	}
+	
+	public JwtObject login() {
+		LoginGetRequestBody login = new LoginGetRequestBody("userBiblioteca", "biblioteca");
+		ResponseEntity<JwtObject> jwt = testRestTemplateRoleUser.postForEntity("/login", login, JwtObject.class);
+		return jwt.getBody();
 	}
 	
 	@Test
@@ -96,7 +109,7 @@ public class LoanResourceIT {
 		
 		Loan loanSaved = loanRepository.save(LoanCreator.createValidLoan());
 		
-		PageableResponse<Loan> loanPage = testRestTemplateRoleUser.exchange("/loans", HttpMethod.GET, null, 
+		PageableResponse<Loan> loanPage = testRestTemplateRoleUser.exchange("/loans", HttpMethod.GET, new HttpEntity<>(httpHeaders()), 
 				new ParameterizedTypeReference<PageableResponse<Loan>>() {
 		}).getBody();
 		
@@ -113,7 +126,7 @@ public class LoanResourceIT {
 		
 		Loan loanSaved = loanRepository.save(LoanCreator.createValidLoan());
 		
-		List<Loan> loan = testRestTemplateRoleUser.exchange("/loans/all", HttpMethod.GET, null, 
+		List<Loan> loan = testRestTemplateRoleUser.exchange("/loans/all", HttpMethod.GET, new HttpEntity<>(httpHeaders()), 
 				 new ParameterizedTypeReference<List<Loan>>() {
 				}).getBody();
 		
@@ -130,7 +143,8 @@ public class LoanResourceIT {
 		
 		Loan loanSaved = loanRepository.save(LoanCreator.createValidLoan());
 			
-		Loan loan = testRestTemplateRoleUser.getForObject("/loans/{id}", Loan.class, loanSaved.getId());
+		Loan loan = testRestTemplateRoleUser.exchange("/loans/{id}", HttpMethod.GET
+				,new HttpEntity<>(httpHeaders()),Loan.class, loanSaved.getId()).getBody();
 		
 		Assertions.assertThat(loan).isNotNull();
 		Assertions.assertThat(loan.getId()).isNotNull();
@@ -147,7 +161,7 @@ public class LoanResourceIT {
 		
 		LoanPostRequestBody loanPostRequestBody = LoanPostRequestBodyCreator.createLoanPostRequestBodyCreator();
 			
-		ResponseEntity<Loan> entityloan = testRestTemplateRoleUser.postForEntity("/loans/{idBook}", loanPostRequestBody, Loan.class,1);
+		ResponseEntity<Loan> entityloan = testRestTemplateRoleUser.exchange("/loans/{idBook}", HttpMethod.POST,new HttpEntity<>(loanPostRequestBody,httpHeaders()), Loan.class,1);
 		
 		Assertions.assertThat(entityloan).isNotNull();
 		Assertions.assertThat(entityloan.getBody()).isNotNull();
@@ -163,7 +177,7 @@ public class LoanResourceIT {
 		
 		Loan loanSaved = loanRepository.save(LoanCreator.createValidLoan());
 			
-		ResponseEntity<Void> entityloan = testRestTemplateRoleUser.exchange("/loans/{id}", HttpMethod.DELETE, null, Void.class,loanSaved.getId());		
+		ResponseEntity<Void> entityloan = testRestTemplateRoleUser.exchange("/loans/{id}", HttpMethod.DELETE, new HttpEntity<>(httpHeaders()), Void.class,loanSaved.getId());		
 		
 		Assertions.assertThat(entityloan).isNotNull();
 		Assertions.assertThat(entityloan.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);			
@@ -179,7 +193,7 @@ public class LoanResourceIT {
 		loanSaved.setEndOfLoan(DateConvert.convertData("2023/09/01"));
 			
 		ResponseEntity<Void> entityloan = testRestTemplateRoleUser.exchange("/loans", HttpMethod.PUT, 
-				new HttpEntity<>(loanSaved), Void.class);
+				new HttpEntity<>(loanSaved,httpHeaders()), Void.class);
 		
 		Assertions.assertThat(entityloan).isNotNull();
 		Assertions.assertThat(entityloan.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);			

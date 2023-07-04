@@ -1,5 +1,6 @@
 package com.biblioteca.integration;
 
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,16 +19,19 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
+import com.biblioteca.data.JwtObject;
 import com.biblioteca.entities.RoleModel;
 import com.biblioteca.entities.UserDomain;
-import com.biblioteca.repository.UserDomainRepository;
 import com.biblioteca.repository.RoleModelRepository;
+import com.biblioteca.repository.UserDomainRepository;
+import com.biblioteca.requests.LoginGetRequestBody;
 import com.biblioteca.requests.UserDomainPostRequestBody;
 import com.biblioteca.requests.UserDomainPutRequestBody;
 import com.biblioteca.util.RolesCreator;
@@ -90,6 +94,21 @@ public class UserDomainResourceIT {
 		}
 	}
 	
+	//tentar colocar user/admin e fazer uma condicional e escolher o jwtobject
+	
+	public  HttpHeaders httpHeaders() {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("Authorization", "Bearer " + jwtObject().getToken());
+        return httpHeaders;
+    }
+	
+
+	public JwtObject jwtObject() {		
+		LoginGetRequestBody login = new LoginGetRequestBody("guilherme","biblioteca");		
+		ResponseEntity<JwtObject> jwt = testRestTemplateRoleAdmin.postForEntity("/login", login, JwtObject.class);		
+        return jwt.getBody();
+	}
+	
 	@Test
 	@DisplayName("findAll Return List Of userDomain Object Inside Page whenSuccessful")
 	void findAll_ReturnListOfUserDomainObjectInsidePage_whenSuccessful() {
@@ -97,7 +116,7 @@ public class UserDomainResourceIT {
 		
 		UserDomain userDomainSaved = repositoryUser.save(ADMIN);
 		
-		PageableResponse<UserDomain> userDomainPage = testRestTemplateRoleAdmin.exchange("/userDomains/admin", HttpMethod.GET, null, 
+		PageableResponse<UserDomain> userDomainPage = testRestTemplateRoleAdmin.exchange("/userDomains/admin", HttpMethod.GET, new HttpEntity<>(httpHeaders()), 
 				new ParameterizedTypeReference<PageableResponse<UserDomain>>() {
 		}).getBody();
 		
@@ -113,7 +132,7 @@ public class UserDomainResourceIT {
 		
 		UserDomain userDomainSaved = repositoryUser.save(ADMIN);
 		
-		List<UserDomain> userDomain = testRestTemplateRoleAdmin.exchange("/userDomains/admin/all", HttpMethod.GET, null, 
+		List<UserDomain> userDomain = testRestTemplateRoleAdmin.exchange("/userDomains/admin/all", HttpMethod.GET, new HttpEntity<>(httpHeaders()), 
 				 new ParameterizedTypeReference<List<UserDomain>>() {
 				}).getBody();
 		
@@ -131,7 +150,7 @@ public class UserDomainResourceIT {
 			
 		String url = String.format("/userDomains/admin/findname?name=%s",userDomainSaved.getName());
 		
-		List<UserDomain> userDomain = testRestTemplateRoleAdmin.exchange(url, HttpMethod.GET,null,
+		List<UserDomain> userDomain = testRestTemplateRoleAdmin.exchange(url, HttpMethod.GET,new HttpEntity<>(httpHeaders()),
 				new ParameterizedTypeReference<List<UserDomain>>() {
 				}).getBody();		
 		
@@ -147,7 +166,7 @@ public class UserDomainResourceIT {
 		
 		repositoryUser.save(ADMIN);
 		
-		List<UserDomain> userDomain = testRestTemplateRoleAdmin.exchange("/userDomains/admin/findname?name=test", HttpMethod.GET,null,
+		List<UserDomain> userDomain = testRestTemplateRoleAdmin.exchange("/userDomains/admin/findname?name=test", HttpMethod.GET,new HttpEntity<>(httpHeaders()),
 				new ParameterizedTypeReference<List<UserDomain>>() {
 				}).getBody();		
 		
@@ -161,7 +180,7 @@ public class UserDomainResourceIT {
 		
 		UserDomain userDomainSaved = repositoryUser.save(ADMIN);
 			
-		UserDomain userDomain = testRestTemplateRoleAdmin.getForObject("/userDomains/admin/{id}", UserDomain.class, userDomainSaved.getId());
+		UserDomain userDomain = testRestTemplateRoleAdmin.exchange("/userDomains/admin/{id}", HttpMethod.GET, new HttpEntity<>(httpHeaders()),UserDomain.class,userDomainSaved.getId()).getBody();
 		
 		Assertions.assertThat(userDomain).isNotNull();
 		Assertions.assertThat(userDomain.getId()).isNotNull();
@@ -175,8 +194,7 @@ public class UserDomainResourceIT {
 		
 		UserDomain userDomainSaved = repositoryUser.save(ADMIN);
 			
-		UserDomain userDomain = testRestTemplateRoleAdmin.getForObject("/userDomains/users-logged", UserDomain.class);
-		
+		UserDomain userDomain = testRestTemplateRoleAdmin.exchange("/userDomains/users-logged",HttpMethod.GET,new HttpEntity<>(httpHeaders()),UserDomain.class).getBody();	
 		Assertions.assertThat(userDomain).isNotNull();
 		Assertions.assertThat(userDomain.getId()).isNotNull();
 		Assertions.assertThat(userDomain).isEqualTo(userDomainSaved);
@@ -191,7 +209,7 @@ public class UserDomainResourceIT {
 	
 		UserDomainPostRequestBody userDomainPostRequestBody = UserDomainPostRequestBodyCreator.createUserPostRequestBodyCreator();
 			
-		ResponseEntity<UserDomain> entityuserDomain = testRestTemplateRoleAdmin.postForEntity("/userDomains/admin/saveAdmin", userDomainPostRequestBody, UserDomain.class);
+		ResponseEntity<UserDomain> entityuserDomain = testRestTemplateRoleAdmin.exchange("/userDomains/admin/saveAdmin", HttpMethod.POST , new HttpEntity<>(userDomainPostRequestBody,httpHeaders()),UserDomain.class);
 		
 		Assertions.assertThat(entityuserDomain).isNotNull();
 		Assertions.assertThat(entityuserDomain.getBody()).isNotNull();
@@ -209,7 +227,7 @@ public class UserDomainResourceIT {
 		
 		UserDomainPostRequestBody userDomainPostRequestBody = UserDomainPostRequestBodyCreator.createUserPostRequestBodyCreator();
 			
-		ResponseEntity<UserDomain> entityuserDomain = testRestTemplateRoleAdmin.postForEntity("/userDomains/save", userDomainPostRequestBody, UserDomain.class);
+		ResponseEntity<UserDomain> entityuserDomain = testRestTemplateRoleAdmin.exchange("/userDomains/save", HttpMethod.POST, new HttpEntity<>(userDomainPostRequestBody,httpHeaders()),UserDomain.class);
 		
 		Assertions.assertThat(entityuserDomain).isNotNull();
 		Assertions.assertThat(entityuserDomain.getBody()).isNotNull();
@@ -240,7 +258,7 @@ public class UserDomainResourceIT {
 		UserDomainPutRequestBody userDomainPutRequestBody = UserDomainPutRequestBodyCreator.createUserDomainPutRequestBodyCreator();
 			
 		ResponseEntity<Void> entityuserDomain = testRestTemplateRoleAdmin.exchange("/userDomains", HttpMethod.PUT, 
-				new HttpEntity<>(userDomainPutRequestBody), Void.class);
+				new HttpEntity<>(userDomainPutRequestBody,httpHeaders()), Void.class);
 		
 		Assertions.assertThat(entityuserDomain).isNotNull();
 		Assertions.assertThat(entityuserDomain.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);			
@@ -256,7 +274,7 @@ public class UserDomainResourceIT {
 		UserDomainPutRequestBody userDomainPutRequestBody = UserDomainPutRequestBodyCreator.createUserDomainPutRequestBodyCreator();
 			
 		ResponseEntity<Void> entityuserDomain = testRestTemplateRoleAdmin.exchange("/userDomains/update-password?oldPassword=biblioteca&newPassword=123", HttpMethod.PUT, 
-				new HttpEntity<>(userDomainPutRequestBody), Void.class);
+				new HttpEntity<>(userDomainPutRequestBody,httpHeaders()), Void.class);
 		
 		Assertions.assertThat(entityuserDomain).isNotNull();
 		Assertions.assertThat(entityuserDomain.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);			

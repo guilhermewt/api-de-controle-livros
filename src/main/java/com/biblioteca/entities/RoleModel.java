@@ -36,8 +36,8 @@ public class RoleModel implements GrantedAuthority, Serializable {
     private static final long serialVersionUID = 1L;
     
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long roleId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long roleId;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, unique = true)
     private RoleName roleName;
@@ -45,7 +45,7 @@ public class RoleModel implements GrantedAuthority, Serializable {
     @ManyToMany(mappedBy = "roles",cascade = CascadeType.PERSIST)
     private List<UserDomain> userDomain;
     
-    public RoleModel(long roleId, RoleName roleName) {
+    public RoleModel(Long roleId, RoleName roleName) {
 		super();
 		this.roleId = roleId;
 		this.roleName = roleName;

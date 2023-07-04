@@ -1,22 +1,14 @@
 tarefas:
 
-- nova seguranca com jwt token
+- seguranca com jwt
 - endpoint para pegar as estatistica dos livros
+- buscar livros por autor
+- buscar livros por generos
+- corrigir o atualizacao dos dados do usuario tirar a senha do put
 
-- campo status em livro e endpoint para pegar livro pelo status ok
 
-- criar end point para trocar senhar ok
+ =========o que fizemos====
+ 
+- atualizacao de novos atributos (descricao:string,imageLink:string,salvar livro pelo usbn,genero,authors:objeto ok
 
-- atualizacao de novos atributos (descricao:string,imageLink:string,salvar livro pelo usbn,authors:objeto ok
-
- - antes de salvar vamos fazer a comparacao dos livros entre os atributos title e authors ok
- 
- - solucao id: novo atributo com codigo externo (codigo da api do gooogle), genero tera uma tabela,fazer logica para ver se book codigo esta no bd ok
- 
- - fazer o testes de generos inserindo o livro com os generos ok
- 
- - conseguimos fazer o recebimento do livro e junto dele uma lista de generos ok
- 
- 
- tarefas concuidas
- adicionamos os novos atributos e modificamos o put e post
+ - antes de salvar vamos fazer a comparacao dos livros entre os atributos title e authors ok 

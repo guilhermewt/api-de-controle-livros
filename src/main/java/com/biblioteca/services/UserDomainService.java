@@ -2,24 +2,24 @@ package com.biblioteca.services;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder.BCryptVersion;
 import org.springframework.stereotype.Service;
 
+import com.biblioteca.data.UserDomainDetails;
 import com.biblioteca.entities.UserDomain;
 import com.biblioteca.mapper.UserDomainMapper;
-import com.biblioteca.repository.UserDomainRepository;
 import com.biblioteca.repository.RoleModelRepository;
+import com.biblioteca.repository.UserDomainRepository;
 import com.biblioteca.requests.UserDomainPostRequestBody;
 import com.biblioteca.requests.UserDomainPutRequestBody;
 import com.biblioteca.services.exceptions.BadRequestException;
@@ -91,11 +91,6 @@ public class UserDomainService implements UserDetailsService{
 	
 	public void updatePassword(String oldPassword,String newPassword) {		
 		UserDomain userDomain = userRepository.findById(userAuthenticated.userAuthenticated().getId()).get();
-		String encryptPassword = new BCryptPasswordEncoder().encode(oldPassword);
-		
-		
-		log.info("spring password = " + encryptPassword);
-		log.info("database password = " + userDomain.getPassword());
 		
 		if(BCrypt.checkpw(oldPassword,userDomain.getPassword())  == false) {
 			throw new BadRequestException("the password is wrong");
@@ -106,11 +101,9 @@ public class UserDomainService implements UserDetailsService{
 	}
 
 	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		
-		UserDomain userDomain = userRepository.findByUsername(username)
-				.orElseThrow(() -> new UsernameNotFoundException("userDomain not found"));
-		
-		return new User(userDomain.getUsername(), userDomain.getPassword(), true, true, true, true, userDomain.getAuthorities());
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {		
+		Optional<UserDomain> userDomain = userRepository.findByUsername(username);
+
+		return new UserDomainDetails(userDomain);
 	}
 }

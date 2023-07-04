@@ -18,12 +18,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
+import com.biblioteca.data.JwtObject;
 import com.biblioteca.entities.Book;
 import com.biblioteca.entities.RoleModel;
 import com.biblioteca.entities.UserDomain;
@@ -31,6 +33,7 @@ import com.biblioteca.repository.BookRepository;
 import com.biblioteca.repository.RoleModelRepository;
 import com.biblioteca.repository.UserDomainRepository;
 import com.biblioteca.requests.BookPostRequestBody;
+import com.biblioteca.requests.LoginGetRequestBody;
 import com.biblioteca.util.BookCreator;
 import com.biblioteca.util.BookPostRequestBodyCreator;
 import com.biblioteca.util.RolesCreator;
@@ -71,17 +74,27 @@ public class BookResourceIT {
 		@Bean(name = "testRestTemplateRoleAdmin")
 		public TestRestTemplate testRestTemplateRoleAdmin(@Value("${local.server.port}") int port) {
 			RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder()
-					.rootUri("http://localhost:" + port)
-					.basicAuthentication("guilherme", "biblioteca");
+					.rootUri("http://localhost:" + port);
 			return new TestRestTemplate(restTemplateBuilder);
 		}
 		@Bean(name = "testRestTemplateRoleUser")
 		public TestRestTemplate testRestTemplateRoleUser(@Value("${local.server.port}") int port) {
 			RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder()
-					.rootUri("http://localhost:" + port)
-					.basicAuthentication("userBiblioteca", "biblioteca");
+					.rootUri("http://localhost:" + port);
 			return new TestRestTemplate(restTemplateBuilder);
 		}
+	}
+	
+	public HttpHeaders httpHeaders() {
+		HttpHeaders httpHeaders = new HttpHeaders();		
+		httpHeaders.add("Authorization", "Bearer " + login().getToken());		
+		return httpHeaders;
+	}
+	
+	public JwtObject login() {
+		LoginGetRequestBody login = new LoginGetRequestBody("userBiblioteca","biblioteca");
+		ResponseEntity<JwtObject> jwt = testRestTemplateRoleUser.postForEntity("/login", login, JwtObject.class);
+		return jwt.getBody();
 	}
 	
 	@Test
@@ -93,7 +106,7 @@ public class BookResourceIT {
 		
 		Book BookSaved = bookRepository.save(BookCreator.createValidBook());
 		
-		PageableResponse<Book> BookPage = testRestTemplateRoleUser.exchange("/books", HttpMethod.GET, null, 
+		PageableResponse<Book> BookPage = testRestTemplateRoleUser.exchange("/books", HttpMethod.GET, new HttpEntity<>(httpHeaders()), 
 				new ParameterizedTypeReference<PageableResponse<Book>>() {
 		}).getBody();
 		
@@ -110,7 +123,7 @@ public class BookResourceIT {
 		
 		Book BookSaved = bookRepository.save(BookCreator.createValidBook());
 		
-		List<Book> Book = testRestTemplateRoleUser.exchange("/books/all", HttpMethod.GET, null, 
+		List<Book> Book = testRestTemplateRoleUser.exchange("/books/all", HttpMethod.GET, new HttpEntity<>(httpHeaders()), 
 				 new ParameterizedTypeReference<List<Book>>() {
 				}).getBody();
 		
@@ -129,7 +142,7 @@ public class BookResourceIT {
 			
 		String url = String.format("/books/findbytitle?title=%s",BookSaved.getTitle());
 		
-		List<Book> Book = testRestTemplateRoleUser.exchange(url, HttpMethod.GET,null,
+		List<Book> Book = testRestTemplateRoleUser.exchange(url, HttpMethod.GET,new HttpEntity<>(httpHeaders()),
 				new ParameterizedTypeReference<List<Book>>() {
 				}).getBody();		
 		
@@ -144,7 +157,7 @@ public class BookResourceIT {
 		roleModelRepository.saveAll(Arrays.asList(RoleADMIN,RoleUSER));
 		userDomainRepository.save(USER);
 		
-		List<Book> Book = testRestTemplateRoleUser.exchange("/books/findbytitle?title=test", HttpMethod.GET,null,
+		List<Book> Book = testRestTemplateRoleUser.exchange("/books/findbytitle?title=test", HttpMethod.GET,new HttpEntity<>(httpHeaders()),
 				new ParameterizedTypeReference<List<Book>>() {
 				}).getBody();		
 		
@@ -161,7 +174,7 @@ public class BookResourceIT {
 			
 		String url = String.format("/books/findbookByStatus?statusBook=%s",BookSaved.getStatusBook());
 		
-		List<Book> Book = testRestTemplateRoleUser.exchange(url, HttpMethod.GET,null,
+		List<Book> Book = testRestTemplateRoleUser.exchange(url, HttpMethod.GET,new HttpEntity<>(httpHeaders()),
 				new ParameterizedTypeReference<List<Book>>() {
 				}).getBody();		
 		
@@ -180,7 +193,8 @@ public class BookResourceIT {
 		
 		Book BookSaved = bookRepository.save(BookCreator.createValidBook());
 			
-		Book Book = testRestTemplateRoleUser.getForObject("/books/{id}", Book.class, BookSaved.getId());
+		Book Book = testRestTemplateRoleUser.exchange("/books/{id}", HttpMethod.GET
+				,new HttpEntity<>(httpHeaders()),Book.class, BookSaved.getId()).getBody();
 		
 		Assertions.assertThat(Book).isNotNull();
 		Assertions.assertThat(Book.getId()).isNotNull();
@@ -196,7 +210,8 @@ public class BookResourceIT {
 		
 		BookPostRequestBody BookPostRequestBody = BookPostRequestBodyCreator.createBookPostRequestBodyCreator();
 			
-		ResponseEntity<Book> entityBook = testRestTemplateRoleUser.postForEntity("/books", BookPostRequestBody, Book.class);
+		ResponseEntity<Book> entityBook = testRestTemplateRoleUser.exchange("/books", HttpMethod.POST
+				,new HttpEntity<>(BookPostRequestBody,httpHeaders()), Book.class);
 		
 		Assertions.assertThat(entityBook).isNotNull();
 		Assertions.assertThat(entityBook.getBody()).isNotNull();
@@ -212,7 +227,9 @@ public class BookResourceIT {
 		
 		Book BookSaved = bookRepository.save(BookCreator.createValidBook());
 			
-		ResponseEntity<Void> entityBook = testRestTemplateRoleUser.exchange("/books/{id}", HttpMethod.DELETE, null, Void.class,BookSaved.getId());		
+		ResponseEntity<Void> entityBook = testRestTemplateRoleUser.exchange("/books/{id}", HttpMethod.DELETE
+				, new HttpEntity<>(httpHeaders()), Void.class,BookSaved.getId());	
+		
 		Assertions.assertThat(entityBook).isNotNull();
 		Assertions.assertThat(entityBook.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);			
 	}
@@ -227,7 +244,7 @@ public class BookResourceIT {
 		BookSaved.setTitle("gabriel dias");
 			
 		ResponseEntity<Void> entityBook = testRestTemplateRoleUser.exchange("/books", HttpMethod.PUT, 
-				new HttpEntity<>(BookSaved), Void.class);
+				new HttpEntity<>(BookSaved,httpHeaders()), Void.class);
 		
 		Assertions.assertThat(entityBook).isNotNull();
 		Assertions.assertThat(entityBook.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);			
