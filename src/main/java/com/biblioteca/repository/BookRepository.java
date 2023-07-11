@@ -21,6 +21,10 @@ public interface BookRepository extends JpaRepository<Book, Long>{
 		
 	List<Book> findByUserDomainId(long UserDomainId);
 	
+	List<Book> findByUserDomainIdAndAuthorsContainingIgnoreCase(long UserDomainId,String authors);
+	
+	List<Book> findByUserDomainIdAndGenrersNameContainingIgnoreCase(long UserDomainId,String genrer);
+	
     @Query("select u from Book u where lower(u.title) like lower(concat('%', ?1,'%')) and u.userDomain.id=?2")
     List<Book> findAuthenticatedUserBooksByTitle(String name,long userDomainId);
 	

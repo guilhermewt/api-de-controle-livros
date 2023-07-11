@@ -62,9 +62,21 @@ public class BookResources {
 	}
 	
 	@GetMapping(value = "/findbookByStatus")
-	@Operation(summary = "find book by title")
+	@Operation(summary = "find book by status")
 	public ResponseEntity<List<Book>> findBookByStatus(@RequestParam String statusBook){
 		return ResponseEntity.ok(serviceBook.findAllBooksByStatusNonPageable(StatusBook.valueOf(statusBook)));
+	}
+	
+	@GetMapping(value = "/find-by-author")
+	@Operation(summary = "find book by title")
+	public ResponseEntity<List<Book>> findByAuthor(@RequestParam String author){
+		return ResponseEntity.ok(serviceBook.findByAuthors(author));
+	}
+	
+	@GetMapping(value = "/find-by-genrer")
+	@Operation(summary = "find book by genrer")
+	public ResponseEntity<List<Book>> findByGenrer(@RequestParam String genrer){
+		return ResponseEntity.ok(serviceBook.findByGenrer(genrer));
 	}
 	
 	@PostMapping

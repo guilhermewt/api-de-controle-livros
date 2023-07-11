@@ -85,7 +85,6 @@ public class UserDomainService implements UserDetailsService{
 	public UserDomain update(UserDomainPutRequestBody userDomainPutRequestBody) {
 		UserDomain savedUserDomain = userRepository.findById(userAuthenticated.userAuthenticated().getId()).get();
 		UserDomain UserDomain = UserDomainMapper.INSTANCE.updateUserDomain(userDomainPutRequestBody, savedUserDomain);
-		UserDomain.setPassword(new BCryptPasswordEncoder().encode(UserDomain.getPassword()));
 		return userRepository.save(UserDomain);
 	}
 	

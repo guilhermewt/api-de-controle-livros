@@ -23,11 +23,9 @@ import com.biblioteca.services.exceptions.BadRequestException;
 import com.biblioteca.services.utilService.GetUserDetails;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 
 @Service
 @RequiredArgsConstructor
-@Log4j2
 public class BookService {
 
 	private final BookRepository bookRepository;
@@ -59,6 +57,16 @@ public class BookService {
 	
 	public List<Book> findByTitle(String title){
 		return bookRepository.findAuthenticatedUserBooksByTitle(title,userAuthenticated.userAuthenticated().getId());
+	}
+	
+	public List<Book> findByGenrer(String genrer){	
+		return bookRepository.findByUserDomainIdAndGenrersNameContainingIgnoreCase(
+				userAuthenticated.userAuthenticated().getId(), genrer);
+	}
+	
+	public List<Book> findByAuthors(String author){	
+		return bookRepository.findByUserDomainIdAndAuthorsContainingIgnoreCase(
+				userAuthenticated.userAuthenticated().getId(), author);
 	}
 
 	@Transactional

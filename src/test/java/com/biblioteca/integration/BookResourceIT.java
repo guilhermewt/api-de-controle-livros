@@ -165,6 +165,38 @@ public class BookResourceIT {
 	}
 	
 	@Test
+	@DisplayName("findByAuthor Return List Of Book whenSuccessful")
+	void findByAuthor_ReturnListOfBook_whenSuccessful() {
+		roleModelRepository.saveAll(Arrays.asList(RoleADMIN,RoleUSER));
+		userDomainRepository.save(USER);
+		
+		Book BookSaved = bookRepository.save(BookCreator.createValidBook());
+			
+		String url = String.format("/books/find-by-author?author=%s",BookSaved.getAuthors());
+		
+		List<Book> Book = testRestTemplateRoleUser.exchange(url, HttpMethod.GET,new HttpEntity<>(httpHeaders()),
+				new ParameterizedTypeReference<List<Book>>() {
+				}).getBody();		
+		
+		Assertions.assertThat(Book).isNotNull().isNotEmpty();
+		Assertions.assertThat(Book.get(0).getId()).isNotNull();
+		Assertions.assertThat(Book.get(0)).isEqualTo(BookSaved);
+	}
+	
+	@Test
+	@DisplayName("findByAuthor Return Empty List Of Book whenSuccessful")
+	void findByAuthor_ReturnEmptyListOfBook_whenSuccessful() {
+		roleModelRepository.saveAll(Arrays.asList(RoleADMIN,RoleUSER));
+		userDomainRepository.save(USER);
+		
+		List<Book> Book = testRestTemplateRoleUser.exchange("/books/find-by-author?author=test", HttpMethod.GET,new HttpEntity<>(httpHeaders()),
+				new ParameterizedTypeReference<List<Book>>() {
+				}).getBody();		
+		
+		Assertions.assertThat(Book).isNotNull().isEmpty();
+	}
+	
+	@Test
 	@DisplayName("findByStatus Return List Of Book whenSuccessful")
 	void findByStatus_ReturnListOfBook_whenSuccessful() {
 		roleModelRepository.saveAll(Arrays.asList(RoleADMIN,RoleUSER));
@@ -183,7 +215,37 @@ public class BookResourceIT {
 		Assertions.assertThat(Book.get(0)).isEqualTo(BookSaved);
 	}
 	
+	@Test
+	@DisplayName("findByGenrer Return List Of Book whenSuccessful")
+	void findByGenrer_ReturnListOfBook_whenSuccessful() {
+		roleModelRepository.saveAll(Arrays.asList(RoleADMIN,RoleUSER));
+		userDomainRepository.save(USER);
+		
+		Book BookSaved = bookRepository.save(BookCreator.createValidBook());
+			
+		String url = String.format("/books/find-by-genrer?genrer=%s",BookSaved.getGenrers().get(0).getName());
+		
+		List<Book> Book = testRestTemplateRoleUser.exchange(url, HttpMethod.GET,new HttpEntity<>(httpHeaders()),
+				new ParameterizedTypeReference<List<Book>>() {
+				}).getBody();		
+		
+		Assertions.assertThat(Book).isNotNull().isNotEmpty();
+		Assertions.assertThat(Book.get(0).getId()).isNotNull();
+		Assertions.assertThat(Book.get(0)).isEqualTo(BookSaved);
+	}
 	
+	@Test
+	@DisplayName("findByGenrer Return Empty List Of Book whenSuccessful")
+	void findByGenrer_ReturnEmptyListOfBook_whenSuccessful() {
+		roleModelRepository.saveAll(Arrays.asList(RoleADMIN,RoleUSER));
+		userDomainRepository.save(USER);
+		
+		List<Book> Book = testRestTemplateRoleUser.exchange("/books/find-by-genrer?genrer=test", HttpMethod.GET,new HttpEntity<>(httpHeaders()),
+				new ParameterizedTypeReference<List<Book>>() {
+				}).getBody();		
+		
+		Assertions.assertThat(Book).isNotNull().isEmpty();
+	}
 	
 	@Test
 	@DisplayName("findById Return Book whenSuccessful")
