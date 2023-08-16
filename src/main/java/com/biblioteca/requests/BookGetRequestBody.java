@@ -8,7 +8,6 @@ import javax.validation.constraints.NotEmpty;
 import com.biblioteca.entities.Genrer;
 import com.biblioteca.enums.StatusBook;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -16,16 +15,13 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @Data
 @SuperBuilder
-public class BookPutRequestBody implements Serializable{
+public class BookGetRequestBody implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 	
-	@Schema(description = "id to identify the book to be updated")
 	private Long id;
-	
 	@NotEmpty(message = "the book title cannot be empty")
 	private String title;
-	
 	private String description;
 	private String imageLink;
 	private StatusBook statusBook;
@@ -34,16 +30,14 @@ public class BookPutRequestBody implements Serializable{
     
     private List<Genrer> genrers;
 
-	public BookPutRequestBody(Long id, String title,String description, String imageLink,StatusBook statusBook, String authors,String externalCode, List<Genrer> genrer) {
+    public BookGetRequestBody(Long id,String title,String description, String imageLink,StatusBook statusBook, String author,String externalCode, List<Genrer> genrer) {
 		super();
 		this.id = id;
 		this.title = title;
-		this.description = description;
-		this.imageLink = imageLink;
 		this.statusBook = statusBook;
-		this.authors = authors;
+		this.authors = author; 
 		this.externalCode = externalCode;
 		this.genrers = genrer;
-	} 
-	
+    }
+
 }

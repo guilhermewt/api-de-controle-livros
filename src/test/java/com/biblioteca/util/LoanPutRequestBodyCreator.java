@@ -9,6 +9,7 @@ public class LoanPutRequestBodyCreator {
 				.id(1l)
 				.startOfTheLoan(DateConvert.convertData("2024/04/14"))
 				.endOfLoan(DateConvert.convertData("2024/04/24"))
+				.addressee("test addressee")
 				.build();
 	}
 }

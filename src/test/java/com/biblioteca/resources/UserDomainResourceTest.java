@@ -17,10 +17,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.biblioteca.entities.UserDomain;
-import com.biblioteca.requests.UserDomainPostRequestBody;
+import com.biblioteca.requests.UserDomainGetRequestBody;
 import com.biblioteca.services.UserDomainService;
 import com.biblioteca.services.utilService.GetUserDetails;
 import com.biblioteca.util.UserDomainCreator;
+import com.biblioteca.util.UserDomainGetRequestBodyCreator;
 import com.biblioteca.util.UserDomainPostRequestBodyCreator;
 import com.biblioteca.util.UserDomainPutRequestBodyCreator;
 
@@ -51,9 +52,9 @@ public class UserDomainResourceTest {
 		
 		BDDMockito.when(userServiceMock.getMyUser()).thenReturn(UserDomainCreator.createUserDomainWithRoleADMIN());
 		
-		BDDMockito.when(userServiceMock.saveUser(ArgumentMatchers.any(UserDomainPostRequestBody.class))).thenReturn(UserDomainCreator.createUserDomainWithRoleADMIN());
+		BDDMockito.when(userServiceMock.saveUser(ArgumentMatchers.any(UserDomain.class))).thenReturn(UserDomainCreator.createUserDomainWithRoleADMIN());
 		
-		BDDMockito.when(userServiceMock.saveUserAdmin(ArgumentMatchers.any(UserDomainPostRequestBody.class))).thenReturn(UserDomainCreator.createUserDomainWithRoleADMIN());
+		BDDMockito.when(userServiceMock.saveUserAdmin(ArgumentMatchers.any(UserDomain.class))).thenReturn(UserDomainCreator.createUserDomainWithRoleADMIN());
 
 		BDDMockito.doNothing().when(userServiceMock).delete(ArgumentMatchers.anyLong());
 
@@ -64,85 +65,74 @@ public class UserDomainResourceTest {
 	@Test
 	@DisplayName("find all user books Return List Of Object Inside Page whenSuccessful")
 	void findAll_returnListOfObjectInsidePage_whenSuccessful() {
-		UserDomain userDomainSaved = UserDomainCreator.createUserDomainWithRoleADMIN();
-
-		Page<UserDomain> userPage = userResource.findAll(PageRequest.of(0, 1)).getBody();
+		Page<UserDomainGetRequestBody> userPage = userResource.findAll(PageRequest.of(0, 1)).getBody();
 
 		Assertions.assertThat(userPage).isNotNull();
 		Assertions.assertThat(userPage.toList().get(0).getId()).isNotNull();
-		Assertions.assertThat(userPage.toList().get(0)).isEqualTo(userDomainSaved);
+		Assertions.assertThat(userPage.toList().get(0)).isEqualTo(UserDomainGetRequestBodyCreator.createUserAdminGetRequestBodyCreator());
 	}
 
 	@Test
 	@DisplayName("find all user books Return List Of User whenSuccessful")
 	void findAll_returnListOfUsers_whenSuccessful() {
-		UserDomain userDomainSaved = UserDomainCreator.createUserDomainWithRoleADMIN();
-
-		List<UserDomain> users = userResource.findAllNonPageable().getBody();
+		List<UserDomainGetRequestBody> users = userResource.findAllNonPageable().getBody();
+		
 		Assertions.assertThat(users).isNotNull();
 		Assertions.assertThat(users.get(0).getId()).isNotNull();
-		Assertions.assertThat(users.get(0)).isEqualTo(userDomainSaved);
+		Assertions.assertThat(users.get(0)).isEqualTo(UserDomainGetRequestBodyCreator.createUserAdminGetRequestBodyCreator());
 	}
 
 	@Test
 	@DisplayName("findByName Return List Of Livro whenSuccessful")
 	void findByName_ReturnListOfUsers_whenSuccessful() {
-		UserDomain userDomainSaved = UserDomainCreator.createUserDomainWithRoleADMIN();
-
-		List<UserDomain> users = this.userResource.findByName(userDomainSaved.getName()).getBody();
+		List<UserDomainGetRequestBody> users = this.userResource.findByName(
+				UserDomainGetRequestBodyCreator.createUserAdminGetRequestBodyCreator().getName()).getBody();
 
 		Assertions.assertThat(users).isNotNull().isNotEmpty();
 		Assertions.assertThat(users.get(0).getId()).isNotNull();
-		Assertions.assertThat(users.get(0)).isEqualTo(userDomainSaved);
+		Assertions.assertThat(users.get(0)).isEqualTo(UserDomainGetRequestBodyCreator.createUserAdminGetRequestBodyCreator());
 	}
 
 	@Test
 	@DisplayName("findById return livro whenSuccessful")
 	void findById_ReturnLivro_whenSuccessful() {
-		UserDomain userDomainSaved = UserDomainCreator.createUserDomainWithRoleADMIN();
-
-		UserDomain userDomain = this.userResource.findById(userDomainSaved.getId()).getBody();
+		UserDomainGetRequestBody userDomain = this.userResource.findById(
+				UserDomainGetRequestBodyCreator.createUserAdminGetRequestBodyCreator().getId()).getBody();
 
 		Assertions.assertThat(userDomain).isNotNull();
 		Assertions.assertThat(userDomain.getId()).isNotNull();
-		Assertions.assertThat(userDomain).isEqualTo(userDomainSaved);
+		Assertions.assertThat(userDomain).isEqualTo(UserDomainGetRequestBodyCreator.createUserAdminGetRequestBodyCreator());
 	}
 
 	@Test
 	@DisplayName("findUser authenticated return user whenSuccessful")
 	void findUser_ReturnUser_whenSuccessful() {
-		UserDomain userDomainSaved = UserDomainCreator.createUserDomainWithRoleADMIN();
-
-		UserDomain userDomain = this.userResource.getMyUser().getBody();
+		UserDomainGetRequestBody userDomain = this.userResource.getMyUser().getBody();
 
 		Assertions.assertThat(userDomain).isNotNull();
 		Assertions.assertThat(userDomain.getId()).isNotNull();
-		Assertions.assertThat(userDomain).isEqualTo(userDomainSaved);
+		Assertions.assertThat(userDomain).isEqualTo(UserDomainGetRequestBodyCreator.createUserAdminGetRequestBodyCreator());
 	}
 
 	@Test
 	@DisplayName("save user with ROLE_USER Return Livro whenSuccessful")
 	void save_ReturnUser_whenSuccessful() {
-		UserDomain userDomainSaved = UserDomainCreator.createUserDomainWithRoleADMIN();
-
-		UserDomain userDomain = this.userResource.saveUser(UserDomainPostRequestBodyCreator.createUserPostRequestBodyCreator()).getBody();
+		UserDomainGetRequestBody userDomain = this.userResource.saveUser(UserDomainPostRequestBodyCreator.createUserPostRequestBodyCreator()).getBody();
 
 		Assertions.assertThat(userDomain).isNotNull();
 		Assertions.assertThat(userDomain.getId()).isNotNull();
-		Assertions.assertThat(userDomain).isEqualTo(userDomainSaved);
+		Assertions.assertThat(userDomain).isEqualTo(UserDomainGetRequestBodyCreator.createUserAdminGetRequestBodyCreator());
 	}
 
 	@Test
 	@DisplayName("save user with ROLE_ADMIN Return Livro whenSuccessful")
 	void save_ReturnUserAdmin_whenSuccessful() {
-		UserDomain userDomainSaved = UserDomainCreator.createUserDomainWithRoleADMIN();
-
-		UserDomain userDomain = this.userResource
+		UserDomainGetRequestBody userDomain = this.userResource
 				.saveUserAdmin(UserDomainPostRequestBodyCreator.createUserPostRequestBodyCreator()).getBody();
 
 		Assertions.assertThat(userDomain).isNotNull();
 		Assertions.assertThat(userDomain.getId()).isNotNull();
-		Assertions.assertThat(userDomain).isEqualTo(userDomainSaved);
+		Assertions.assertThat(userDomain).isEqualTo(UserDomainGetRequestBodyCreator.createUserAdminGetRequestBodyCreator());
 	}
 
 	@Test

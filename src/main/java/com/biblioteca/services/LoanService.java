@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.biblioteca.entities.Loan;
 import com.biblioteca.entities.Book;
 import com.biblioteca.entities.UserDomain;
+import com.biblioteca.enums.StatusBook;
 import com.biblioteca.mapper.LoanMapper;
 import com.biblioteca.repository.LoanRepository;
 import com.biblioteca.repository.BookRepository;
@@ -48,20 +49,20 @@ public class LoanService {
 	}
 
 	@Transactional
-	public Loan save(LoanPostRequestBody loansPostRequestBody, Long idbook) {
-		Book bookSaved = bookRepository.findAuthenticatedUserBooksById(idbook, userAuthenticated.userAuthenticated().getId())
+	public Loan save(Loan loan, Long idbook) {
+		Book bookSaved = bookRepository.findByIdAndUserDomainId(idbook, userAuthenticated.userAuthenticated().getId())
 				.orElseThrow(() -> new BadRequestException("book not found"));
 		
-		if(bookSaved.getloans().size() > 0) {
+		if(bookSaved.getloans() != null) {
 			throw new BadRequestException("this book is already on loan");
 		}
 		
 		UserDomain usuarioSaved = userDomainRepository.findById(userAuthenticated.userAuthenticated().getId()).get();
-        
-		Loan loan = LoanMapper.INSTANCE.toLoan(loansPostRequestBody);
-		
+
+		bookSaved.setStatusBook(StatusBook.EMPRESTADO);
 		loan.setUserDomain(usuarioSaved);
-		loan.getBooks().add(bookSaved);
+		loan.setBooks(bookSaved);	
+		
 		return loanRepository.save(loan);
 	}
 

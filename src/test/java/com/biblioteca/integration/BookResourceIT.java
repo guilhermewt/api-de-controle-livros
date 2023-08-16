@@ -32,9 +32,11 @@ import com.biblioteca.entities.UserDomain;
 import com.biblioteca.repository.BookRepository;
 import com.biblioteca.repository.RoleModelRepository;
 import com.biblioteca.repository.UserDomainRepository;
+import com.biblioteca.requests.BookGetRequestBody;
 import com.biblioteca.requests.BookPostRequestBody;
 import com.biblioteca.requests.LoginGetRequestBody;
 import com.biblioteca.util.BookCreator;
+import com.biblioteca.util.BookGetRequestBodyCreator;
 import com.biblioteca.util.BookPostRequestBodyCreator;
 import com.biblioteca.util.RolesCreator;
 import com.biblioteca.util.UserDomainCreator;
@@ -101,18 +103,16 @@ public class BookResourceIT {
 	@DisplayName("findAll Return List Of Object Inside Page whenSuccessful")
 	void findAll_ReturnListOfObjectInsidePage_whenSuccessful() {
 		roleModelRepository.saveAll(Arrays.asList(RoleADMIN,RoleUSER));
-		
 		userDomainRepository.save(USER);
+	    bookRepository.save(BookCreator.createValidBook());
 		
-		Book BookSaved = bookRepository.save(BookCreator.createValidBook());
-		
-		PageableResponse<Book> BookPage = testRestTemplateRoleUser.exchange("/books", HttpMethod.GET, new HttpEntity<>(httpHeaders()), 
-				new ParameterizedTypeReference<PageableResponse<Book>>() {
+		PageableResponse<BookGetRequestBody> BookPage = testRestTemplateRoleUser.exchange("/books", HttpMethod.GET, new HttpEntity<>(httpHeaders()), 
+				new ParameterizedTypeReference<PageableResponse<BookGetRequestBody>>() {
 		}).getBody();
 		
 		Assertions.assertThat(BookPage).isNotNull().isNotEmpty();
 		Assertions.assertThat(BookPage.toList().get(0).getId()).isNotNull();
-		Assertions.assertThat(BookPage.toList().get(0)).isEqualTo(BookSaved);		
+		Assertions.assertThat(BookPage.toList().get(0)).isEqualTo(BookGetRequestBodyCreator.createBookGetRequestBodyCreator());		
 	}
 	
 	@Test
@@ -120,35 +120,34 @@ public class BookResourceIT {
 	void findAll_ReturnListBook_whenSuccessful() {
 		roleModelRepository.saveAll(Arrays.asList(RoleADMIN,RoleUSER));
 		userDomainRepository.save(USER);
+		bookRepository.save(BookCreator.createValidBook());
+
 		
-		Book BookSaved = bookRepository.save(BookCreator.createValidBook());
-		
-		List<Book> Book = testRestTemplateRoleUser.exchange("/books/all", HttpMethod.GET, new HttpEntity<>(httpHeaders()), 
-				 new ParameterizedTypeReference<List<Book>>() {
+		List<BookGetRequestBody> Book = testRestTemplateRoleUser.exchange("/books/all", HttpMethod.GET, new HttpEntity<>(httpHeaders()), 
+				 new ParameterizedTypeReference<List<BookGetRequestBody>>() {
 				}).getBody();
 		
 		Assertions.assertThat(Book).isNotNull().isNotEmpty();
 		Assertions.assertThat(Book.get(0).getId()).isNotNull();
-		Assertions.assertThat(Book.get(0)).isEqualTo(BookSaved);
+		Assertions.assertThat(Book.get(0)).isEqualTo(BookGetRequestBodyCreator.createBookGetRequestBodyCreator());
 	}
 	
 	@Test
-	@DisplayName("findByName Return List Of Book whenSuccessful")
-	void findByName_ReturnListOfBook_whenSuccessful() {
+	@DisplayName("findByTitle Return List Of Object Inside Page whenSuccessful")
+	void findByTitle_ReturnListOfObjectInsidePage_whenSuccessful() {
 		roleModelRepository.saveAll(Arrays.asList(RoleADMIN,RoleUSER));
 		userDomainRepository.save(USER);
-		
-		Book BookSaved = bookRepository.save(BookCreator.createValidBook());
+		bookRepository.save(BookCreator.createValidBook());
 			
-		String url = String.format("/books/findbytitle?title=%s",BookSaved.getTitle());
+		String url = String.format("/books/find-by-title?title=%s",BookGetRequestBodyCreator.createBookGetRequestBodyCreator().getTitle());
 		
-		List<Book> Book = testRestTemplateRoleUser.exchange(url, HttpMethod.GET,new HttpEntity<>(httpHeaders()),
-				new ParameterizedTypeReference<List<Book>>() {
+		PageableResponse<BookGetRequestBody> Book = testRestTemplateRoleUser.exchange(url, HttpMethod.GET,new HttpEntity<>(httpHeaders()),
+				new ParameterizedTypeReference<PageableResponse<BookGetRequestBody>>() {
 				}).getBody();		
 		
 		Assertions.assertThat(Book).isNotNull().isNotEmpty();
-		Assertions.assertThat(Book.get(0).getId()).isNotNull();
-		Assertions.assertThat(Book.get(0)).isEqualTo(BookSaved);
+		Assertions.assertThat(Book.toList().get(0).getId()).isNotNull();
+		Assertions.assertThat(Book.toList().get(0)).isEqualTo(BookGetRequestBodyCreator.createBookGetRequestBodyCreator());
 	}
 	
 	@Test
@@ -157,30 +156,29 @@ public class BookResourceIT {
 		roleModelRepository.saveAll(Arrays.asList(RoleADMIN,RoleUSER));
 		userDomainRepository.save(USER);
 		
-		List<Book> Book = testRestTemplateRoleUser.exchange("/books/findbytitle?title=test", HttpMethod.GET,new HttpEntity<>(httpHeaders()),
-				new ParameterizedTypeReference<List<Book>>() {
+		PageableResponse<BookGetRequestBody> Book = testRestTemplateRoleUser.exchange("/books/find-by-title?title=test", HttpMethod.GET,new HttpEntity<>(httpHeaders()),
+				new ParameterizedTypeReference<PageableResponse<BookGetRequestBody>>() {
 				}).getBody();		
 		
 		Assertions.assertThat(Book).isNotNull().isEmpty();
 	}
 	
 	@Test
-	@DisplayName("findByAuthor Return List Of Book whenSuccessful")
+	@DisplayName("findByAuthor Return List Of Object Inside Page whenSuccessful")
 	void findByAuthor_ReturnListOfBook_whenSuccessful() {
 		roleModelRepository.saveAll(Arrays.asList(RoleADMIN,RoleUSER));
 		userDomainRepository.save(USER);
-		
-		Book BookSaved = bookRepository.save(BookCreator.createValidBook());
+		bookRepository.save(BookCreator.createValidBook());
 			
-		String url = String.format("/books/find-by-author?author=%s",BookSaved.getAuthors());
+		String url = String.format("/books/find-by-author?author=%s",BookGetRequestBodyCreator.createBookGetRequestBodyCreator().getAuthors());
 		
-		List<Book> Book = testRestTemplateRoleUser.exchange(url, HttpMethod.GET,new HttpEntity<>(httpHeaders()),
-				new ParameterizedTypeReference<List<Book>>() {
+		PageableResponse<BookGetRequestBody> Book = testRestTemplateRoleUser.exchange(url, HttpMethod.GET,new HttpEntity<>(httpHeaders()),
+				new ParameterizedTypeReference<PageableResponse<BookGetRequestBody>>() {
 				}).getBody();		
 		
 		Assertions.assertThat(Book).isNotNull().isNotEmpty();
-		Assertions.assertThat(Book.get(0).getId()).isNotNull();
-		Assertions.assertThat(Book.get(0)).isEqualTo(BookSaved);
+		Assertions.assertThat(Book.toList().get(0).getId()).isNotNull();
+		Assertions.assertThat(Book.toList().get(0)).isEqualTo(BookGetRequestBodyCreator.createBookGetRequestBodyCreator());
 	}
 	
 	@Test
@@ -189,49 +187,47 @@ public class BookResourceIT {
 		roleModelRepository.saveAll(Arrays.asList(RoleADMIN,RoleUSER));
 		userDomainRepository.save(USER);
 		
-		List<Book> Book = testRestTemplateRoleUser.exchange("/books/find-by-author?author=test", HttpMethod.GET,new HttpEntity<>(httpHeaders()),
-				new ParameterizedTypeReference<List<Book>>() {
+		PageableResponse<BookGetRequestBody> Book = testRestTemplateRoleUser.exchange("/books/find-by-author?author=test", HttpMethod.GET,new HttpEntity<>(httpHeaders()),
+				new ParameterizedTypeReference<PageableResponse<BookGetRequestBody>>() {
 				}).getBody();		
 		
 		Assertions.assertThat(Book).isNotNull().isEmpty();
 	}
 	
 	@Test
-	@DisplayName("findByStatus Return List Of Book whenSuccessful")
-	void findByStatus_ReturnListOfBook_whenSuccessful() {
+	@DisplayName("findByStatus Return List Of Object Inside Page whenSuccessful")
+	void findByStatus_ReturnListOfObjectInsidePage_whenSuccessful() {
 		roleModelRepository.saveAll(Arrays.asList(RoleADMIN,RoleUSER));
 		userDomainRepository.save(USER);
-		
-		Book BookSaved = bookRepository.save(BookCreator.createValidBook());
+		 bookRepository.save(BookCreator.createValidBook());
 			
-		String url = String.format("/books/findbookByStatus?statusBook=%s",BookSaved.getStatusBook());
+		String url = String.format("/books/find-by-Status?statusBook=%s",BookGetRequestBodyCreator.createBookGetRequestBodyCreator().getStatusBook());
 		
-		List<Book> Book = testRestTemplateRoleUser.exchange(url, HttpMethod.GET,new HttpEntity<>(httpHeaders()),
-				new ParameterizedTypeReference<List<Book>>() {
+		PageableResponse<BookGetRequestBody> Book = testRestTemplateRoleUser.exchange(url, HttpMethod.GET,new HttpEntity<>(httpHeaders()),
+				new ParameterizedTypeReference<PageableResponse<BookGetRequestBody>>() {
 				}).getBody();		
 		
 		Assertions.assertThat(Book).isNotNull().isNotEmpty();
-		Assertions.assertThat(Book.get(0).getId()).isNotNull();
-		Assertions.assertThat(Book.get(0)).isEqualTo(BookSaved);
+		Assertions.assertThat(Book.toList().get(0).getId()).isNotNull();
+		Assertions.assertThat(Book.toList().get(0)).isEqualTo(BookGetRequestBodyCreator.createBookGetRequestBodyCreator());
 	}
 	
 	@Test
-	@DisplayName("findByGenrer Return List Of Book whenSuccessful")
+	@DisplayName("findByGenrer Return List Of Object Inside Page whenSuccessful")
 	void findByGenrer_ReturnListOfBook_whenSuccessful() {
 		roleModelRepository.saveAll(Arrays.asList(RoleADMIN,RoleUSER));
 		userDomainRepository.save(USER);
-		
-		Book BookSaved = bookRepository.save(BookCreator.createValidBook());
+	     bookRepository.save(BookCreator.createValidBook());
 			
-		String url = String.format("/books/find-by-genrer?genrer=%s",BookSaved.getGenrers().get(0).getName());
+		String url = String.format("/books/find-by-genrer?genrer=%s",BookGetRequestBodyCreator.createBookGetRequestBodyCreator().getGenrers().get(0).getName());
 		
-		List<Book> Book = testRestTemplateRoleUser.exchange(url, HttpMethod.GET,new HttpEntity<>(httpHeaders()),
-				new ParameterizedTypeReference<List<Book>>() {
+		PageableResponse<BookGetRequestBody> Book = testRestTemplateRoleUser.exchange(url, HttpMethod.GET,new HttpEntity<>(httpHeaders()),
+				new ParameterizedTypeReference<PageableResponse<BookGetRequestBody>>() {
 				}).getBody();		
 		
 		Assertions.assertThat(Book).isNotNull().isNotEmpty();
-		Assertions.assertThat(Book.get(0).getId()).isNotNull();
-		Assertions.assertThat(Book.get(0)).isEqualTo(BookSaved);
+		Assertions.assertThat(Book.toList().get(0).getId()).isNotNull();
+		Assertions.assertThat(Book.toList().get(0)).isEqualTo(BookGetRequestBodyCreator.createBookGetRequestBodyCreator());
 	}
 	
 	@Test
@@ -240,8 +236,8 @@ public class BookResourceIT {
 		roleModelRepository.saveAll(Arrays.asList(RoleADMIN,RoleUSER));
 		userDomainRepository.save(USER);
 		
-		List<Book> Book = testRestTemplateRoleUser.exchange("/books/find-by-genrer?genrer=test", HttpMethod.GET,new HttpEntity<>(httpHeaders()),
-				new ParameterizedTypeReference<List<Book>>() {
+		PageableResponse<BookGetRequestBody> Book = testRestTemplateRoleUser.exchange("/books/find-by-genrer?genrer=test", HttpMethod.GET,new HttpEntity<>(httpHeaders()),
+				new ParameterizedTypeReference<PageableResponse<BookGetRequestBody>>() {
 				}).getBody();		
 		
 		Assertions.assertThat(Book).isNotNull().isEmpty();
@@ -252,15 +248,14 @@ public class BookResourceIT {
 	void findById_ReturnBook_whenSuccessful() {
 		roleModelRepository.saveAll(Arrays.asList(RoleADMIN,RoleUSER));
 		userDomainRepository.save(USER);
-		
-		Book BookSaved = bookRepository.save(BookCreator.createValidBook());
+        bookRepository.save(BookCreator.createValidBook());
 			
-		Book Book = testRestTemplateRoleUser.exchange("/books/{id}", HttpMethod.GET
-				,new HttpEntity<>(httpHeaders()),Book.class, BookSaved.getId()).getBody();
+		BookGetRequestBody Book = testRestTemplateRoleUser.exchange("/books/{id}", HttpMethod.GET
+				,new HttpEntity<>(httpHeaders()),BookGetRequestBody.class, BookGetRequestBodyCreator.createBookGetRequestBodyCreator().getId()).getBody();
 		
 		Assertions.assertThat(Book).isNotNull();
 		Assertions.assertThat(Book.getId()).isNotNull();
-		Assertions.assertThat(Book).isEqualTo(BookSaved);
+		Assertions.assertThat(Book).isEqualTo(BookGetRequestBodyCreator.createBookGetRequestBodyCreator());
 	}
 	
 	@Test
@@ -268,8 +263,7 @@ public class BookResourceIT {
 	void save_ReturnBook_whenSuccessful() {
 		roleModelRepository.saveAll(Arrays.asList(RoleADMIN,RoleUSER));
 		userDomainRepository.save(USER);
-	
-		
+
 		BookPostRequestBody BookPostRequestBody = BookPostRequestBodyCreator.createBookPostRequestBodyCreator();
 			
 		ResponseEntity<Book> entityBook = testRestTemplateRoleUser.exchange("/books", HttpMethod.POST

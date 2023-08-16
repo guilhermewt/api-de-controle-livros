@@ -3,7 +3,8 @@ package com.biblioteca.requests;
 import java.io.Serializable;
 import java.util.Date;
 
-import org.springframework.lang.NonNull;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -20,19 +21,22 @@ public class LoanPutRequestBody implements Serializable{
 	@Schema(description = "id to identify the book to be updated")
 	private Long id;
 	
-	@NonNull
+	@NotNull(message = "the loan startOfTheLoan cannot be empty")
 	@Schema(description = "start of the loan")
 	private Date startOfTheLoan;
 	
-	@NonNull
+	@NotNull(message = "the loan endOfLoan cannot be empty")
 	@Schema(description = "end of the loan")
 	private Date endOfLoan;
+	
+	@NotEmpty(message = "the loan addressee cannot be empty")
+	private String addressee;
 
-	public LoanPutRequestBody(Long id, Date startOfTheLoan, Date endOfLoan) {
+	public LoanPutRequestBody(Date startOfTheLoan, Date endOfLoan, String addressee) {
 		super();
-		this.id = id;
 		this.startOfTheLoan = startOfTheLoan;
 		this.endOfLoan = endOfLoan;
+		this.addressee = addressee;
 	}
 
 }

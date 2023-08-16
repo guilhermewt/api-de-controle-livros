@@ -18,13 +18,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.biblioteca.entities.UserDomain;
-import com.biblioteca.repository.UserDomainRepository;
 import com.biblioteca.repository.RoleModelRepository;
+import com.biblioteca.repository.UserDomainRepository;
 import com.biblioteca.services.UserDomainService;
 import com.biblioteca.services.utilService.GetUserDetails;
 import com.biblioteca.util.RolesCreator;
 import com.biblioteca.util.UserDomainCreator;
-import com.biblioteca.util.UserDomainPostRequestBodyCreator;
 import com.biblioteca.util.UserDomainPutRequestBodyCreator;
 
 @ExtendWith(SpringExtension.class)
@@ -131,7 +130,7 @@ public class UserDomainServiceTest {
 	void save_ReturnUser_whenSuccessful() {
 		UserDomain userDomainSaved = UserDomainCreator.createUserDomainWithRoleADMIN();
 
-		UserDomain userDomain = this.userService.saveUser(UserDomainPostRequestBodyCreator.createUserPostRequestBodyCreator());
+		UserDomain userDomain = this.userService.saveUser(UserDomainCreator.createUserDomainToSave());
 
 		Assertions.assertThat(userDomain).isNotNull();
 		Assertions.assertThat(userDomain.getId()).isNotNull();
@@ -144,21 +143,22 @@ public class UserDomainServiceTest {
 		UserDomain userDomainSaved = UserDomainCreator.createUserDomainWithRoleADMIN();
 
 		UserDomain userDomain = this.userService
-				.saveUserAdmin(UserDomainPostRequestBodyCreator.createUserPostRequestBodyCreator());
+				.saveUserAdmin(UserDomainCreator.createUserDomainToSave());
 
 		Assertions.assertThat(userDomain).isNotNull();
 		Assertions.assertThat(userDomain.getId()).isNotNull();
 		Assertions.assertThat(userDomain).isEqualTo(userDomainSaved);
+		Assertions.assertThatCode(() -> this.userService.delete(userDomain.getId())).doesNotThrowAnyException();
 	}
 
 	@Test
-	@DisplayName("delete Removes Livro whenSuccessful")
+	@DisplayName("delete Removes user whenSuccessful")
 	void delete_RemovesLivro_whenSuccessful() {
 		Assertions.assertThatCode(() -> this.userService.delete(1l)).doesNotThrowAnyException();
 	}
 
 	@Test
-	@DisplayName("update Replace Livro whenSuccessful")
+	@DisplayName("update Replace user whenSuccessful")
 	void update_ReplaveLivro_whenSuccessful() {
 		Assertions
 				.assertThatCode(

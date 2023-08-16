@@ -28,6 +28,16 @@ public class UserDomainCreator {
 				.build();
 	}
 	
+	public static UserDomain createUserDomainToSave() {
+		return UserDomain.builder()
+				.id(1l)
+				.name("joao")
+				.username("userBiblioteca")
+				.email("joao@gmail.com")
+				.password("$2a$10$2n9REGGbEqSHj7fcEEg2heGAzkwcwTnnyKIlQaW21P5QVpwiQOrk6")
+				.build();
+	}
+	
 	public static UserDomain createUserDomainToBeUpdate() {
 		return UserDomain.builder()
 				.id(1l)

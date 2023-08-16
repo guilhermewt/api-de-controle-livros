@@ -21,7 +21,7 @@ public class BookCreator {
 		return Book.builder()
 				.title("o poder da acao")
 				.authors("author name")
-				.externalCode("123")
+				.externalCode("1234")
 				.statusBook(StatusBook.LER)
 				.genrers(GenrerCreator.createValidGenrer())
 				.build();

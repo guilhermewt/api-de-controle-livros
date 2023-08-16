@@ -17,18 +17,19 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import com.biblioteca.entities.Book;
 import com.biblioteca.entities.Loan;
-import com.biblioteca.repository.LoanRepository;
+import com.biblioteca.enums.StatusBook;
 import com.biblioteca.repository.BookRepository;
-import com.biblioteca.repository.UserDomainRepository;
+import com.biblioteca.repository.LoanRepository;
 import com.biblioteca.repository.RoleModelRepository;
+import com.biblioteca.repository.UserDomainRepository;
 import com.biblioteca.services.LoanService;
 import com.biblioteca.services.exceptions.BadRequestException;
 import com.biblioteca.services.utilService.GetUserDetails;
-import com.biblioteca.util.LoanCreator;
-import com.biblioteca.util.LoanPostRequestBodyCreator;
-import com.biblioteca.util.LoanPutRequestBodyCreator;
 import com.biblioteca.util.BookCreator;
+import com.biblioteca.util.LoanCreator;
+import com.biblioteca.util.LoanPutRequestBodyCreator;
 import com.biblioteca.util.RolesCreator;
 import com.biblioteca.util.UserDomainCreator;
 
@@ -68,7 +69,7 @@ public class LoanServiceTest {
 		
 		BDDMockito.doNothing().when(loanRepositoryMock).deleteAuthenticatedUserLoanById(ArgumentMatchers.anyLong(), ArgumentMatchers.anyLong());
 		
-		BDDMockito.when(bookRepositoryMock.findAuthenticatedUserBooksById(ArgumentMatchers.anyLong(),ArgumentMatchers.anyLong()))
+		BDDMockito.when(bookRepositoryMock.findByIdAndUserDomainId(ArgumentMatchers.anyLong(),ArgumentMatchers.anyLong()))
 		.thenReturn(Optional.of(BookCreator.createValidBook()));
 		
 		BDDMockito.when(userAuthenticated.userAuthenticated()).thenReturn(UserDomainCreator.createUserDomainWithRoleADMIN());
@@ -132,7 +133,9 @@ public class LoanServiceTest {
 	void save_Returnloan_whenSuccessful() {
 		Loan loanSaved = LoanCreator.createValidLoan();
 		
-		Loan loan = this.loanService.save(LoanPostRequestBodyCreator.createLoanPostRequestBodyCreator(),1l);
+		Loan loan = this.loanService.save(LoanCreator.createLoanToBeSaved(),1l);
+		Book bookToVerifyStatus = BookCreator.createValidBook();
+		bookToVerifyStatus.setStatusBook(StatusBook.EMPRESTADO);
 		
 		Assertions.assertThat(loan).isNotNull();
 		Assertions.assertThat(loan.getId()).isNotNull();

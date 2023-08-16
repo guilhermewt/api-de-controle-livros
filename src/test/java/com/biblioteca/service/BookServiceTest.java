@@ -22,13 +22,12 @@ import com.biblioteca.entities.Book;
 import com.biblioteca.enums.StatusBook;
 import com.biblioteca.repository.BookRepository;
 import com.biblioteca.repository.GenrerRepository;
-import com.biblioteca.repository.UserDomainRepository;
 import com.biblioteca.repository.RoleModelRepository;
+import com.biblioteca.repository.UserDomainRepository;
 import com.biblioteca.services.BookService;
 import com.biblioteca.services.exceptions.BadRequestException;
 import com.biblioteca.services.utilService.GetUserDetails;
 import com.biblioteca.util.BookCreator;
-import com.biblioteca.util.BookPostRequestBodyCreator;
 import com.biblioteca.util.BookPutRequestBodyCreator;
 import com.biblioteca.util.GenrerCreator;
 import com.biblioteca.util.RolesCreator;
@@ -58,31 +57,40 @@ public class BookServiceTest {
 	@BeforeEach
 	void setUp() {
 		PageImpl<Book> bookPage = new PageImpl<>(List.of(BookCreator.createValidBook()));
-		BDDMockito.when(bookRepositoryMock.findByUserDomainId(ArgumentMatchers.anyLong(), ArgumentMatchers.any(PageRequest.class))).thenReturn(bookPage);
+		BDDMockito.when(bookRepositoryMock.findByUserDomainIdOrderByIdDesc(ArgumentMatchers.anyLong(), ArgumentMatchers.any(PageRequest.class))).thenReturn(bookPage);
+		
+		BDDMockito.when(bookRepositoryMock.findByUserDomainIdOrderByIdDesc(ArgumentMatchers.anyLong())).thenReturn(List.of(BookCreator.createValidBook()));
 		
 		BDDMockito.when(bookRepositoryMock.findByUserDomainId(ArgumentMatchers.anyLong())).thenReturn(List.of(BookCreator.createValidBook()));
 		
-		BDDMockito.when(bookRepositoryMock.findAuthenticatedUserBooksById(ArgumentMatchers.anyLong(),ArgumentMatchers.anyLong()))
+		BDDMockito.when(bookRepositoryMock.findByIdAndUserDomainId(ArgumentMatchers.anyLong(),ArgumentMatchers.anyLong()))
 		.thenReturn(Optional.of(BookCreator.createValidBook()));
 		
-		BDDMockito.when(bookRepositoryMock.findAuthenticatedUserBooksByTitle(ArgumentMatchers.anyString(),ArgumentMatchers.anyLong()))
-		.thenReturn(List.of(BookCreator.createValidBook()));
-		BDDMockito.when(bookRepositoryMock.findByUserDomainIdAndAuthorsContainingIgnoreCase(ArgumentMatchers.anyLong(),ArgumentMatchers.anyString()))
-		.thenReturn(List.of(BookCreator.createValidBook()));
+		BDDMockito.when(bookRepositoryMock.findByUserDomainIdAndTitleContainingIgnoreCaseOrderByIdDesc(ArgumentMatchers.anyLong(),ArgumentMatchers.anyString(),ArgumentMatchers.any(PageRequest.class)))
+		.thenReturn(bookPage);
+		
+		BDDMockito.when(bookRepositoryMock.findByUserDomainIdAndAuthorsContainingIgnoreCaseOrderByIdDesc(ArgumentMatchers.anyLong(),ArgumentMatchers.anyString(),ArgumentMatchers.any(PageRequest.class)))
+		.thenReturn(bookPage);
 		
 		BDDMockito.when(bookRepositoryMock.save(ArgumentMatchers.any(Book.class))).thenReturn(BookCreator.createValidBook());
 		
-		BDDMockito.doNothing().when(bookRepositoryMock).deleteAuthenticatedUserBookById(ArgumentMatchers.anyLong(), ArgumentMatchers.anyLong());
+		BDDMockito.doNothing().when(bookRepositoryMock).deleteByIdAndUserDomainId(ArgumentMatchers.anyLong(), ArgumentMatchers.anyLong());
 		
 		BDDMockito.when(userAuthenticated.userAuthenticated()).thenReturn(UserDomainCreator.createUserDomainWithRoleADMIN());
 		
 		BDDMockito.when(roleModelRepository.findById(ArgumentMatchers.eq(1l))).thenReturn(Optional.of(RolesCreator.createAdminRoleModel()));
+	
 		BDDMockito.when(roleModelRepository.findById(ArgumentMatchers.eq(2l))).thenReturn(Optional.of(RolesCreator.createUserRoleModel()));
 	
 		BDDMockito.when(genrerRepository.findAll()).thenReturn(GenrerCreator.createValidGenrer());
 		
-		BDDMockito.when(bookRepositoryMock.findByUserDomainIdAndGenrersNameContainingIgnoreCase(
-				ArgumentMatchers.anyLong(), ArgumentMatchers.anyString())).thenReturn(List.of(BookCreator.createValidBook()));
+		BDDMockito.when(bookRepositoryMock.findByUserDomainIdAndGenrersNameContainingIgnoreCaseOrderByIdDesc(
+				ArgumentMatchers.anyLong(), ArgumentMatchers.anyString(),ArgumentMatchers.any(PageRequest.class))).thenReturn(bookPage);
+	
+		BDDMockito.when(bookRepositoryMock.findByUserDomainIdAndStatusBookOrderByIdDesc(ArgumentMatchers.anyLong(),ArgumentMatchers.any(StatusBook.class),ArgumentMatchers.any(PageRequest.class)))
+		.thenReturn(bookPage);
+		
+		
 	}
 	
 	@Test
@@ -98,7 +106,7 @@ public class BookServiceTest {
 	}
 	
 	@Test
-	@DisplayName("find all user books by id Return List Of book whenSuccessful")
+	@DisplayName("find all  Return List Of book whenSuccessful")
 	void findAll_ReturnListOfbook_whenSuccessful() {
 		Book bookSaved = BookCreator.createValidBook();
 		
@@ -124,7 +132,7 @@ public class BookServiceTest {
 	@Test
 	@DisplayName("findById Return Bad Request Exception When book Is Not Found")
 	void findById_ReturnBadRequestExceptionWhenbookIsNotFound() {
-		BDDMockito.when(bookRepositoryMock.findAuthenticatedUserBooksById(ArgumentMatchers.anyLong(),ArgumentMatchers.anyLong()))
+		BDDMockito.when(bookRepositoryMock.findByIdAndUserDomainId(ArgumentMatchers.anyLong(),ArgumentMatchers.anyLong()))
 		.thenReturn(Optional.empty());
 		
 		Assertions.assertThatCode(() -> this.bookService.findByIdOrElseThrowResourceNotFoundException(1l))
@@ -132,77 +140,82 @@ public class BookServiceTest {
 	}
 	
 	@Test
-	@DisplayName("findByTitulo Return List Of book whenSuccessful")
-	void findByTitulo_ReturnListOfbook_whenSuccessful() {
+	@DisplayName("findByTitle Return List Of Object Inside Page whenSuccessful")
+	void findByTitle_ReturnListOfObjectInsidePage_whenSuccessful() {
 		Book bookSaved = BookCreator.createValidBook();
 		
-		List<Book> book = this.bookService.findByTitle(bookSaved.getTitle());
+		Page<Book> book = this.bookService.findByTitle(bookSaved.getTitle(),PageRequest.of(0, 5));
 		
 		Assertions.assertThat(book).isNotNull().isNotEmpty();
-		Assertions.assertThat(book.get(0).getId()).isNotNull();
-		Assertions.assertThat(book.get(0)).isEqualTo(bookSaved);	
+		Assertions.assertThat(book.toList().get(0).getId()).isNotNull();
+		Assertions.assertThat(book.toList().get(0)).isEqualTo(bookSaved);	
 	}
 	
 	@Test
-	@DisplayName("findByAuthor Return List Of book whenSuccessful")
-	void findByAuthor_ReturnListOfbook_whenSuccessful() {
+	@DisplayName("findByAuthor Return List Of Object Inside Page whenSuccessful")
+	void findByAuthor_ReturnListOfObjectInsidePage_whenSuccessful() {
 		Book bookSaved = BookCreator.createValidBook();
 		
-		List<Book> book = this.bookService.findByAuthors(bookSaved.getAuthors());
+		Page<Book> book = this.bookService.findByAuthors(bookSaved.getAuthors(),PageRequest.of(0,5));
 		
 		Assertions.assertThat(book).isNotNull().isNotEmpty();
-		Assertions.assertThat(book.get(0).getId()).isNotNull();
-		Assertions.assertThat(book.get(0)).isEqualTo(bookSaved);	
+		Assertions.assertThat(book.toList().get(0).getId()).isNotNull();
+		Assertions.assertThat(book.toList().get(0)).isEqualTo(bookSaved);	
 	}
 	
 	@Test
 	@DisplayName("findByAuthor Return Empty List when no book is found")
 	void findByAuthor_ReturnEmptyListWhenNobookIsFound() {
-		BDDMockito.when(bookRepositoryMock.findByUserDomainIdAndAuthorsContainingIgnoreCase(ArgumentMatchers.anyLong(),ArgumentMatchers.anyString()))
-		.thenReturn(Collections.emptyList());
-		
-		List<Book> book = this.bookService.findByAuthors("test");
+		BDDMockito.when(bookRepositoryMock.findByUserDomainIdAndAuthorsContainingIgnoreCaseOrderByIdDesc(ArgumentMatchers.anyLong(),ArgumentMatchers.anyString(),ArgumentMatchers.any(PageRequest.class)))
+		.thenReturn(new PageImpl<>(Collections.emptyList()));
+	
+		Page<Book> book = this.bookService.findByAuthors("test",PageRequest.of(0,5));
 		
 		Assertions.assertThat(book).isNotNull().isEmpty();
 	}
 	
 	@Test
-	@DisplayName("findByGenrer Return List Of book whenSuccessful")
-	void findByGenrer_ReturnListOfbook_whenSuccessful() {
+	@DisplayName("findByGenrer Return List Of Object Inside Page whenSuccessful")
+	void findByGenrer_ReturnListOfObjectInsidePage_whenSuccessful() {
 		Book bookSaved = BookCreator.createValidBook();
 		
-		List<Book> book = this.bookService.findByGenrer(bookSaved.getGenrers().get(0).getName());
+		Page<Book> book = this.bookService.findByGenrer(bookSaved.getGenrers().get(0).getName(),PageRequest.of(0, 5));
 		
 		Assertions.assertThat(book).isNotNull().isNotEmpty();
-		Assertions.assertThat(book.get(0).getId()).isNotNull();
-		Assertions.assertThat(book.get(0)).isEqualTo(bookSaved);	
+		Assertions.assertThat(book.toList().get(0).getId()).isNotNull();
+		Assertions.assertThat(book.toList().get(0)).isEqualTo(bookSaved);	
 	}
 	
 	@Test
 	@DisplayName("findByGenrer Return Empty List when no book is found")
 	void findByGenrer_ReturnEmptyListWhenNobookIsFound() {
-		BDDMockito.when(bookRepositoryMock.findByUserDomainIdAndGenrersNameContainingIgnoreCase(ArgumentMatchers.anyLong(),ArgumentMatchers.anyString()))
-		.thenReturn(Collections.emptyList());
+		BDDMockito.when(bookRepositoryMock.findByUserDomainIdAndGenrersNameContainingIgnoreCaseOrderByIdDesc(
+				ArgumentMatchers.anyLong()
+				,ArgumentMatchers.anyString()
+				,ArgumentMatchers.any(PageRequest.class))).thenReturn(new PageImpl<>(Collections.emptyList()));
 		
-		List<Book> book = this.bookService.findByGenrer("test");
+		Page<Book> book = this.bookService.findByGenrer("test",PageRequest.of(0, 5));
 		
 		Assertions.assertThat(book).isNotNull().isEmpty();
 	}
 	
 	@Test
-	@DisplayName("findByStatus Return List Of book whenSuccessful")
-	void findByStatus_ReturnListOfbook_whenSuccessful() {	
-		List<Book> book = this.bookService.findAllBooksByStatusNonPageable(StatusBook.LER);
+	@DisplayName("findByStatus Return List Of Object Inside Page whenSuccessful")
+	void findByStatus_ReturnListOfObjectInsidePage_whenSuccessful() {	
+		Page<Book> book = this.bookService.findAllBooksByStatus(StatusBook.LER,PageRequest.of(0, 5));
 		
-		Assertions.assertThat(book).isNotNull().isNotEmpty();
-		Assertions.assertThat(book.get(0).getId()).isNotNull();
-		Assertions.assertThat(book.get(0)).isEqualTo(BookCreator.createValidBook());	
+		Assertions.assertThat(book.toList()).isNotNull().isNotEmpty();
+		Assertions.assertThat(book.toList().get(0).getId()).isNotNull();
+		Assertions.assertThat(book.toList().get(0)).isEqualTo(BookCreator.createValidBook());	
 	}
 	
 	@Test
 	@DisplayName("findByStatus Return Empty List when no book is found")
 	void findByStatus_ReturnEmptyListWhenNobookIsFound() {		
-		List<Book> book = this.bookService.findAllBooksByStatusNonPageable(StatusBook.LENDO);
+		BDDMockito.when(bookRepositoryMock.findByUserDomainIdAndStatusBookOrderByIdDesc(ArgumentMatchers.anyLong(),ArgumentMatchers.any(StatusBook.class),ArgumentMatchers.any(PageRequest.class)))
+		.thenReturn(new PageImpl<>(Collections.emptyList()));
+		
+		Page<Book> book = this.bookService.findAllBooksByStatus(StatusBook.LENDO,PageRequest.of(0,5));
 		
 		Assertions.assertThat(book).isNotNull().isEmpty();
 	}
@@ -211,10 +224,10 @@ public class BookServiceTest {
 	@Test
 	@DisplayName("findByName Return Empty List when no book is found")
 	void findByName_ReturnEmptyListWhenNobookIsFound() {
-		BDDMockito.when(bookRepositoryMock.findAuthenticatedUserBooksByTitle(ArgumentMatchers.anyString(),ArgumentMatchers.anyLong()))
-		.thenReturn(Collections.emptyList());
+		BDDMockito.when(bookRepositoryMock.findByUserDomainIdAndTitleContainingIgnoreCaseOrderByIdDesc(ArgumentMatchers.anyLong(),ArgumentMatchers.anyString(),ArgumentMatchers.any(PageRequest.class)))
+		.thenReturn(new PageImpl<>(Collections.emptyList()));
 		
-		List<Book> book = this.bookService.findByTitle("xaxa");
+		Page<Book> book = this.bookService.findByTitle("xaxa",PageRequest.of(0, 5));
 		
 		Assertions.assertThat(book).isNotNull().isEmpty();
 	}
@@ -227,11 +240,13 @@ public class BookServiceTest {
 		
 		Book bookSaved = BookCreator.createValidBook();
 		
-		Book book = this.bookService.save(BookPostRequestBodyCreator.createBookPostRequestBodyCreator());
+		Book book = this.bookService.save(BookCreator.createBookToBeSaved());
 		
 		Assertions.assertThat(book).isNotNull();
 		Assertions.assertThat(book.getId()).isNotNull();
-		Assertions.assertThat(book).isEqualTo(bookSaved);
+		Assertions.assertThat(book.getTitle()).isEqualTo(bookSaved.getTitle());
+		Assertions.assertThat(book.getGenrers()).isEqualTo(bookSaved.getGenrers());
+		Assertions.assertThat(book.getUserDomain()).isEqualTo(bookSaved.getUserDomain());
 	}
 	
 	@Test

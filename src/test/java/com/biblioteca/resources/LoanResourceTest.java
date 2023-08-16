@@ -18,10 +18,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.biblioteca.entities.Loan;
-import com.biblioteca.requests.LoanPostRequestBody;
+import com.biblioteca.requests.LoanGetRequestBody;
 import com.biblioteca.services.LoanService;
 import com.biblioteca.services.utilService.GetUserDetails;
 import com.biblioteca.util.LoanCreator;
+import com.biblioteca.util.LoanGetRequestBodyCreator;
 import com.biblioteca.util.LoanPostRequestBodyCreator;
 import com.biblioteca.util.LoanPutRequestBodyCreator;
 import com.biblioteca.util.UserDomainCreator;
@@ -49,7 +50,7 @@ public class LoanResourceTest {
 		BDDMockito.when(loanServiceMock.findByIdOrElseThrowResourceNotFoundException(ArgumentMatchers.anyLong()))
 		.thenReturn(LoanCreator.createValidLoan());
 		
-		BDDMockito.when(loanServiceMock.save(ArgumentMatchers.any(LoanPostRequestBody.class), ArgumentMatchers.anyLong()))
+		BDDMockito.when(loanServiceMock.save(ArgumentMatchers.any(Loan.class), ArgumentMatchers.anyLong()))
 		.thenReturn(LoanCreator.createValidLoan());
 		
 		BDDMockito.doNothing().when(loanServiceMock).delete(ArgumentMatchers.anyLong());
@@ -61,50 +62,43 @@ public class LoanResourceTest {
 	@Test
 	@DisplayName("find all user books by id Return List Of Object Inside Page whenSuccessful")
 	void findAll_ReturnListOfObjectInsidePage_whenSuccessful() {
-		Loan loanSaved = LoanCreator.createValidLoan();
-		
-		Page<Loan> loan = this.loanResource.findAll(null).getBody();
+		Page<LoanGetRequestBody> loan = this.loanResource.findAll(null).getBody();
 		
 		Assertions.assertThat(loan).isNotNull().isNotEmpty();
 		Assertions.assertThat(loan.toList().get(0).getId()).isNotNull();
-		Assertions.assertThat(loan.toList().get(0)).isEqualTo(loanSaved);		
+		Assertions.assertThat(loan.toList().get(0)).isEqualTo(LoanGetRequestBodyCreator.createLoanGetRequestBodyCreator());		
 	}
 	
 	@Test
 	@DisplayName("find all user books by id Return List of loan whenSuccessful")
 	void findAll_ReturnListOfloan_whenSuccessful() {
-		Loan loanSaved = LoanCreator.createValidLoan();
-		
-		List<Loan> loan = this.loanResource.findAllNonPageable().getBody();
+		List<LoanGetRequestBody> loan = this.loanResource.findAllNonPageable().getBody();
 		
 		Assertions.assertThat(loan).isNotNull().isNotEmpty();
 		Assertions.assertThat(loan.get(0).getId()).isNotNull();
-		Assertions.assertThat(loan.get(0)).isEqualTo(loanSaved);		
+		Assertions.assertThat(loan.get(0)).isEqualTo(LoanGetRequestBodyCreator.createLoanGetRequestBodyCreator());		
 	}
 	
 	@Test
 	@DisplayName("findById Return loan whenSuccessful")
 	void findById_Returnloan_whenSuccessful() {
-		Loan loanSaved = LoanCreator.createValidLoan();
-		
-		Loan loan = this.loanResource.findById(1).getBody();
+		LoanGetRequestBody loan = this.loanResource.findById(1).getBody();
 		
 		Assertions.assertThat(loan).isNotNull();
 		Assertions.assertThat(loan.getId()).isNotNull();
-		Assertions.assertThat(loan).isEqualTo(loanSaved);		
+		Assertions.assertThat(loan).isEqualTo(LoanGetRequestBodyCreator.createLoanGetRequestBodyCreator());		
 	}
 	
 	@Test
 	@DisplayName("save Return loan whenSuccessful")
 	void save_Returnloan_whenSuccessful() {
-		Loan loanSaved = LoanCreator.createValidLoan();
-		
-		Loan loan = this.loanResource.save(LoanPostRequestBodyCreator.createLoanPostRequestBodyCreator(),1l)
+
+		LoanGetRequestBody loan = this.loanResource.save(LoanPostRequestBodyCreator.createLoanPostRequestBodyCreator(),1l)
 				.getBody();
 		
 		Assertions.assertThat(loan).isNotNull();
 		Assertions.assertThat(loan.getId()).isNotNull();
-		Assertions.assertThat(loan).isEqualTo(loanSaved);		
+		Assertions.assertThat(loan).isEqualTo(LoanGetRequestBodyCreator.createLoanGetRequestBodyCreator());		
 	}
 	
 	@Test

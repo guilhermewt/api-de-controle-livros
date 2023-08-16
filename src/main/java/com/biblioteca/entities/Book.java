@@ -2,10 +2,9 @@ package com.biblioteca.entities;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -15,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 
@@ -52,9 +52,8 @@ public class Book implements Serializable {
 	@JoinColumn(name = "userDomain_id")
 	private UserDomain userDomain;
 
-	@ManyToMany(mappedBy = "books", fetch = FetchType.EAGER)
-	@Builder.Default
-	private Set<Loan> loans = new HashSet<>();
+	@OneToOne(mappedBy = "books",cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
+	private Loan loans;
 	
 	@ManyToMany
 	@JoinTable(name = "tb_book_genrer", joinColumns = @JoinColumn(name = "book_id"), inverseJoinColumns = @JoinColumn(name = "genrer_id"))
@@ -77,7 +76,7 @@ public class Book implements Serializable {
 	}
 
 	@JsonIgnore
-	public Set<Loan> getloans() {
+	public Loan getloans() {
 		return loans;
 	}
 

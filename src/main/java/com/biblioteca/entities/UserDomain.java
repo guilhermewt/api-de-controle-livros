@@ -48,15 +48,12 @@ public class UserDomain implements Serializable, UserDetails {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	
 	@NotEmpty(message = "the userDomain name cannot be empty")
 	private String name;
 	private String email;
-	
-	@NotEmpty(message = "the userDomain username cannot be empty")
 	@Column(nullable = false, unique = true)
 	private String username;
-	
-	@NotEmpty(message = "the userDomain password cannot be empty")
 	@Column(nullable = false)
 	private String password;
 	
@@ -67,13 +64,12 @@ public class UserDomain implements Serializable, UserDetails {
 	@Builder.Default
 	private List<RoleModel> roles = new ArrayList<>();
 
-	
 	@OneToMany(mappedBy = "userDomain",cascade = CascadeType.REMOVE)
 	@Builder.Default
 	@JsonIgnore
 	private Set<Book> books = new HashSet<>();
 
-	@OneToMany(mappedBy = "userDomain",cascade = CascadeType.REMOVE,fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "userDomain",cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
 	@Builder.Default
 	private Set<Loan> loans = new HashSet<>();
 	
@@ -104,25 +100,21 @@ public class UserDomain implements Serializable, UserDetails {
 
 	@Override
 	public boolean isAccountNonExpired() {
-		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
 	public boolean isAccountNonLocked() {
-		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
 	public boolean isCredentialsNonExpired() {
-		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
 	public boolean isEnabled() {
-		// TODO Auto-generated method stub
 		return true;
 	}
 	

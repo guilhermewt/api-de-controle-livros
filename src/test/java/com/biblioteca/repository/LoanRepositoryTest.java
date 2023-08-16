@@ -18,7 +18,6 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import com.biblioteca.entities.Book;
 import com.biblioteca.entities.Loan;
-import com.biblioteca.entities.UserDomain;
 import com.biblioteca.util.BookCreator;
 import com.biblioteca.util.GenrerCreator;
 import com.biblioteca.util.LoanCreator;
@@ -91,7 +90,7 @@ public class LoanRepositoryTest {
 		Book livro = this.bookRepository.save(BookCreator.createValidBook());
 		
 		Loan loanToBeSaved = LoanCreator.createValidLoan();
-		loanToBeSaved.getBooks().add(livro);
+		loanToBeSaved.setBooks(livro);
 		
 		Loan loanSaved = this.loanRepository.save(loanToBeSaved);
 		
@@ -106,7 +105,7 @@ public class LoanRepositoryTest {
 		Book livro = this.bookRepository.save(BookCreator.createValidBook());
 		
 		Loan loanToBeSaved = LoanCreator.createValidLoan();
-		loanToBeSaved.getBooks().add(livro);
+		loanToBeSaved.setBooks(livro);
 		
 		Loan loanSaved = this.loanRepository.save(loanToBeSaved);
 		

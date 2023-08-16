@@ -32,10 +32,12 @@ import com.biblioteca.entities.UserDomain;
 import com.biblioteca.repository.RoleModelRepository;
 import com.biblioteca.repository.UserDomainRepository;
 import com.biblioteca.requests.LoginGetRequestBody;
+import com.biblioteca.requests.UserDomainGetRequestBody;
 import com.biblioteca.requests.UserDomainPostRequestBody;
 import com.biblioteca.requests.UserDomainPutRequestBody;
 import com.biblioteca.util.RolesCreator;
 import com.biblioteca.util.UserDomainCreator;
+import com.biblioteca.util.UserDomainGetRequestBodyCreator;
 import com.biblioteca.util.UserDomainPostRequestBodyCreator;
 import com.biblioteca.util.UserDomainPutRequestBodyCreator;
 import com.biblioteca.wrapper.PageableResponse;
@@ -113,103 +115,103 @@ public class UserDomainResourceIT {
 	@DisplayName("findAll Return List Of userDomain Object Inside Page whenSuccessful")
 	void findAll_ReturnListOfUserDomainObjectInsidePage_whenSuccessful() {
 		roleModelRepository.saveAll(Arrays.asList(RoleADMIN,RoleUSER));
+       repositoryUser.save(ADMIN);
 		
-		UserDomain userDomainSaved = repositoryUser.save(ADMIN);
-		
-		PageableResponse<UserDomain> userDomainPage = testRestTemplateRoleAdmin.exchange("/userDomains/admin", HttpMethod.GET, new HttpEntity<>(httpHeaders()), 
-				new ParameterizedTypeReference<PageableResponse<UserDomain>>() {
+		PageableResponse<UserDomainGetRequestBody> userDomainPage = testRestTemplateRoleAdmin.exchange("/userDomains/admin", HttpMethod.GET, new HttpEntity<>(httpHeaders()), 
+				new ParameterizedTypeReference<PageableResponse<UserDomainGetRequestBody>>() {
 		}).getBody();
 		
 		Assertions.assertThat(userDomainPage).isNotNull().isNotEmpty();
 		Assertions.assertThat(userDomainPage.toList().get(0).getId()).isNotNull();
-		Assertions.assertThat(userDomainPage.toList().get(0)).isEqualTo(userDomainSaved);		
+		Assertions.assertThat(userDomainPage.toList().get(0)).isEqualTo(UserDomainGetRequestBodyCreator.createUserAdminGetRequestBodyCreator());		
 	}
 	
 	@Test
-	@DisplayName("findAll Return List Of userDomain whenSuccessful")
-	void findAll_ReturnListuserDomain_whenSuccessful() {
+	@DisplayName("findAll Return List Of UserDomainGetRequestBody whenSuccessful")
+	void findAll_ReturnListUserDomainGetRequestBody_whenSuccessful() {
 		roleModelRepository.saveAll(Arrays.asList(RoleADMIN,RoleUSER));
+       repositoryUser.save(ADMIN);
 		
-		UserDomain userDomainSaved = repositoryUser.save(ADMIN);
-		
-		List<UserDomain> userDomain = testRestTemplateRoleAdmin.exchange("/userDomains/admin/all", HttpMethod.GET, new HttpEntity<>(httpHeaders()), 
-				 new ParameterizedTypeReference<List<UserDomain>>() {
+		List<UserDomainGetRequestBody> userDomain = testRestTemplateRoleAdmin.exchange("/userDomains/admin/all", HttpMethod.GET, new HttpEntity<>(httpHeaders()), 
+				 new ParameterizedTypeReference<List<UserDomainGetRequestBody>>() {
 				}).getBody();
 		
 		Assertions.assertThat(userDomain).isNotNull().isNotEmpty();
 		Assertions.assertThat(userDomain.get(0).getId()).isNotNull();
-		Assertions.assertThat(userDomain.get(0)).isEqualTo(userDomainSaved);
+		Assertions.assertThat(userDomain.get(0)).isEqualTo(UserDomainGetRequestBodyCreator.createUserAdminGetRequestBodyCreator());
 	}
 	
 	@Test
-	@DisplayName("findByName Return List Of userDomain whenSuccessful")
+	@DisplayName("findByName Return List Of UserDomainGetRequestBody whenSuccessful")
 	void findByName_ReturnListOfuserDomain_whenSuccessful() {
 		roleModelRepository.saveAll(Arrays.asList(RoleADMIN,RoleUSER));
-		
-		UserDomain userDomainSaved = repositoryUser.save(ADMIN);
+       repositoryUser.save(ADMIN);
 			
-		String url = String.format("/userDomains/admin/findname?name=%s",userDomainSaved.getName());
+		String url = String.format("/userDomains/admin/findname?name=%s",
+				UserDomainGetRequestBodyCreator.createUserAdminGetRequestBodyCreator()
+				.getName());
 		
-		List<UserDomain> userDomain = testRestTemplateRoleAdmin.exchange(url, HttpMethod.GET,new HttpEntity<>(httpHeaders()),
-				new ParameterizedTypeReference<List<UserDomain>>() {
+		List<UserDomainGetRequestBody> userDomain = testRestTemplateRoleAdmin.exchange(url, HttpMethod.GET,new HttpEntity<>(httpHeaders()),
+				new ParameterizedTypeReference<List<UserDomainGetRequestBody>>() {
 				}).getBody();		
 		
 		Assertions.assertThat(userDomain).isNotNull().isNotEmpty();
 		Assertions.assertThat(userDomain.get(0).getId()).isNotNull();
-		Assertions.assertThat(userDomain.get(0)).isEqualTo(userDomainSaved);
+		Assertions.assertThat(userDomain.get(0)).isEqualTo(UserDomainGetRequestBodyCreator.createUserAdminGetRequestBodyCreator());
 	}
 	
 	@Test
-	@DisplayName("findByName Return Empty List Of userDomain whenSuccessful")
+	@DisplayName("findByName Return Empty List Of UserDomainGetRequestBody whenSuccessful")
 	void findByName_ReturnEmptyListOfuserDomain_whenSuccessful() {
 		roleModelRepository.saveAll(Arrays.asList(RoleADMIN,RoleUSER));
 		
 		repositoryUser.save(ADMIN);
 		
-		List<UserDomain> userDomain = testRestTemplateRoleAdmin.exchange("/userDomains/admin/findname?name=test", HttpMethod.GET,new HttpEntity<>(httpHeaders()),
-				new ParameterizedTypeReference<List<UserDomain>>() {
+		List<UserDomainGetRequestBody> userDomain = testRestTemplateRoleAdmin.exchange("/userDomains/admin/findname?name=test", HttpMethod.GET,new HttpEntity<>(httpHeaders()),
+				new ParameterizedTypeReference<List<UserDomainGetRequestBody>>() {
 				}).getBody();		
 		
 		Assertions.assertThat(userDomain).isNotNull().isEmpty();
 	}
 	
 	@Test
-	@DisplayName("findById Return userDomain whenSuccessful")
+	@DisplayName("findById Return UserDomainGetRequestBody whenSuccessful")
 	void findById_ReturnuserDomain_whenSuccessful() {
 		roleModelRepository.saveAll(Arrays.asList(RoleADMIN,RoleUSER));
-		
-		UserDomain userDomainSaved = repositoryUser.save(ADMIN);
+		repositoryUser.save(ADMIN);
 			
-		UserDomain userDomain = testRestTemplateRoleAdmin.exchange("/userDomains/admin/{id}", HttpMethod.GET, new HttpEntity<>(httpHeaders()),UserDomain.class,userDomainSaved.getId()).getBody();
+		UserDomainGetRequestBody userDomain = testRestTemplateRoleAdmin.exchange("/userDomains/admin/{id}"
+				, HttpMethod.GET, new HttpEntity<>(httpHeaders())
+				,UserDomainGetRequestBody.class,UserDomainGetRequestBodyCreator.createUserAdminGetRequestBodyCreator().getId()).getBody();
 		
 		Assertions.assertThat(userDomain).isNotNull();
 		Assertions.assertThat(userDomain.getId()).isNotNull();
-		Assertions.assertThat(userDomain).isEqualTo(userDomainSaved);
+		Assertions.assertThat(userDomain).isEqualTo(UserDomainGetRequestBodyCreator.createUserAdminGetRequestBodyCreator());
 	}
 	
 	@Test
-	@DisplayName("GetUser Return UserDomain Authenticated whenSuccessful")
-	void GetUser_ReturnUserDomainAuthenticated_whenSuccessful() {
+	@DisplayName("GetUser Return UserDomainGetRequestBody Authenticated whenSuccessful")
+	void GetUser_ReturnUserDomainGetRequestBodyAuthenticated_whenSuccessful() {
 		roleModelRepository.saveAll(Arrays.asList(RoleADMIN,RoleUSER));
-		
-		UserDomain userDomainSaved = repositoryUser.save(ADMIN);
+		 repositoryUser.save(ADMIN);
 			
-		UserDomain userDomain = testRestTemplateRoleAdmin.exchange("/userDomains/users-logged",HttpMethod.GET,new HttpEntity<>(httpHeaders()),UserDomain.class).getBody();	
+		UserDomainGetRequestBody userDomain = testRestTemplateRoleAdmin.exchange("/userDomains/users-logged",HttpMethod.GET,new HttpEntity<>(httpHeaders()),UserDomainGetRequestBody.class).getBody();	
 		Assertions.assertThat(userDomain).isNotNull();
 		Assertions.assertThat(userDomain.getId()).isNotNull();
-		Assertions.assertThat(userDomain).isEqualTo(userDomainSaved);
+		Assertions.assertThat(userDomain).isEqualTo(UserDomainGetRequestBodyCreator.createUserAdminGetRequestBodyCreator());
 	}
 	
 	@Test
-	@DisplayName("save save Return UserDomain With RoleAdmin whenSuccessful")
-	void save_ReturnUserDomainWithRoleAdmin_whenSuccessful() {
+	@DisplayName("save save Return UserDomainGetRequestBodyGetRequestBody With RoleAdmin whenSuccessful")
+	void save_ReturnUserDomainGetRequestBodyWithRoleAdmin_whenSuccessful() {
 		roleModelRepository.saveAll(Arrays.asList(RoleADMIN,RoleUSER));
 		
 		repositoryUser.save(ADMIN);
 	
 		UserDomainPostRequestBody userDomainPostRequestBody = UserDomainPostRequestBodyCreator.createUserPostRequestBodyCreator();
 			
-		ResponseEntity<UserDomain> entityuserDomain = testRestTemplateRoleAdmin.exchange("/userDomains/admin/saveAdmin", HttpMethod.POST , new HttpEntity<>(userDomainPostRequestBody,httpHeaders()),UserDomain.class);
+		ResponseEntity<UserDomainGetRequestBody> entityuserDomain = testRestTemplateRoleAdmin.exchange("/userDomains/admin/saveAdmin", HttpMethod.POST , new HttpEntity<>(userDomainPostRequestBody
+				,httpHeaders()),UserDomainGetRequestBody.class);
 		
 		Assertions.assertThat(entityuserDomain).isNotNull();
 		Assertions.assertThat(entityuserDomain.getBody()).isNotNull();
@@ -219,7 +221,7 @@ public class UserDomainResourceIT {
 	}
 	
 	@Test
-	@DisplayName("save save Return UserDomain With RoleUser whenSuccessful")
+	@DisplayName("save save Return UserDomainGetRequestBody With RoleUser whenSuccessful")
 	void save_ReturnUserDomainWithRoleUser_whenSuccessful() {
 		roleModelRepository.saveAll(Arrays.asList(RoleADMIN,RoleUSER));
 		
@@ -243,7 +245,7 @@ public class UserDomainResourceIT {
 		
 		UserDomain userDomainSaved =  repositoryUser.save(ADMIN);
 			
-		ResponseEntity<Void> entityuserDomain = testRestTemplateRoleAdmin.exchange("/userDomains/admin/{id}", HttpMethod.DELETE, null, Void.class,userDomainSaved.getId());		
+		ResponseEntity<Void> entityuserDomain = testRestTemplateRoleAdmin.exchange("/userDomains/admin/{id}", HttpMethod.DELETE, new HttpEntity<>(httpHeaders()), Void.class,userDomainSaved.getId());		
 		Assertions.assertThat(entityuserDomain).isNotNull();
 		Assertions.assertThat(entityuserDomain.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);			
 	}

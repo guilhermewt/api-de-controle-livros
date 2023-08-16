@@ -52,33 +52,33 @@ public class BookRepositoryTest {
 	}
 	
 	@Test
-	@DisplayName("find all user books by id and author return list of book whensuccessful")
-	void findByAuthor_returnListOfbook_whenSuccessful() {
-		List<Book> bookSaved = this.bookRepository.findByUserDomainIdAndAuthorsContainingIgnoreCase(
+	@DisplayName("find all user books by id and author return list  of object inside page whensuccessful")
+	void findByAuthor_returnListOfObjectInsidePage_whenSuccessful() {
+		Page<Book> bookSaved = this.bookRepository.findByUserDomainIdAndAuthorsContainingIgnoreCaseOrderByIdDesc(
 				UserDomainCreator.createUserDomainWithRoleUSER().getId()
-				, "AuThor name");
+				, "AuThor name",PageRequest.of(0, 5));
 		
 		Assertions.assertThat(bookSaved).isNotNull().isNotEmpty();
-		Assertions.assertThat(bookSaved.get(0)).isEqualTo(BookCreator.createValidBook());
+		Assertions.assertThat(bookSaved.toList().get(0)).isEqualTo(BookCreator.createValidBook());
 	}
 	
 	@Test
-	@DisplayName("find all user books by id and genrer return list of book whensuccessful")
-	void findByGenrer_returnListOfbook_whenSuccessful() {
-		List<Book> bookSaved = this.bookRepository.findByUserDomainIdAndGenrersNameContainingIgnoreCase(
+	@DisplayName("find all user books by id and genrer return list of object inside page whensuccessful")
+	void findByGenrer_returnListOfObjectInsidePage_whenSuccessful() {
+		Page<Book> bookSaved = this.bookRepository.findByUserDomainIdAndGenrersNameContainingIgnoreCaseOrderByIdDesc(
 				UserDomainCreator.createUserDomainWithRoleUSER().getId()
-				, GenrerCreator.createValidGenrer().get(0).getName());
+				, GenrerCreator.createValidGenrer().get(0).getName(),PageRequest.of(0, 5));
 		
 		Assertions.assertThat(bookSaved).isNotNull().isNotEmpty();
-		Assertions.assertThat(bookSaved.get(0)).isEqualTo(BookCreator.createValidBook());
+		Assertions.assertThat(bookSaved.toList().get(0)).isEqualTo(BookCreator.createValidBook());
 	}
 	
 	@Test
 	@DisplayName("find all user books by id and genrer return empty list of book whensuccessful")
 	void findByGenrer_returnEmptyListOfbook_whenSuccessful() {
-		List<Book> bookSaved = this.bookRepository.findByUserDomainIdAndGenrersNameContainingIgnoreCase(
+		Page<Book> bookSaved = this.bookRepository.findByUserDomainIdAndGenrersNameContainingIgnoreCaseOrderByIdDesc(
 				UserDomainCreator.createUserDomainWithRoleUSER().getId()
-				, "test");
+				, "test",PageRequest.of(0, 5));
 		
 		Assertions.assertThat(bookSaved).isEmpty();
 		
@@ -88,7 +88,7 @@ public class BookRepositoryTest {
 	@Test
 	@DisplayName("find all user books return list of object inside page whensuccessful")
 	void findAll_returnListOfObjectInsidePage_whenSuccessful() {
-		Page<Book> bookSaved = this.bookRepository.findByUserDomainId(
+		Page<Book> bookSaved = this.bookRepository.findByUserDomainIdOrderByIdDesc(
 				UserDomainCreator.createUserDomainWithRoleUSER().getId(), PageRequest.of(0, 5));
 		
 		Assertions.assertThat(bookSaved).isNotNull().isNotEmpty();
@@ -108,7 +108,7 @@ public class BookRepositoryTest {
 	@Test
 	@DisplayName("findById return book whenSuccessful")
 	void findByid_returnbook_whenSuccessful() {
-		Book bookSaved = this.bookRepository.findAuthenticatedUserBooksById(
+		Book bookSaved = this.bookRepository.findByIdAndUserDomainId(
 				BookCreator.createValidBook().getId(), UserDomainCreator.createUserDomainWithRoleUSER().getId()).get();
 		
 		Assertions.assertThat(bookSaved).isNotNull();
@@ -117,15 +117,18 @@ public class BookRepositoryTest {
 	}
 	
 	@Test
-	@DisplayName("findAuthenticatedUserBooksByTitle Return List Of book whenSuccessful")
+	@DisplayName("findByTitle Return List of object inside page whenSuccessful")
 	void findAuthenticatedUserBooksByTitle_ReturnListOfbook_whenSuccessful() {
 		String title = BookCreator.createValidBook().getTitle();
 		
-		List<Book> bookSaved = this.bookRepository.findAuthenticatedUserBooksByTitle(title, BookCreator.createValidBook().getUserDomain().getId());
+		Page<Book> bookSaved = this.bookRepository.findByUserDomainIdAndTitleContainingIgnoreCaseOrderByIdDesc(
+				BookCreator.createValidBook().getUserDomain().getId()
+				,title
+				,PageRequest.of(0, 5));
 		
 		Assertions.assertThat(bookSaved).isNotNull().isNotEmpty();
-		Assertions.assertThat(bookSaved.get(0).getId()).isNotNull();
-		Assertions.assertThat(bookSaved.get(0)).isEqualTo(BookCreator.createValidBook());
+		Assertions.assertThat(bookSaved.toList().get(0).getId()).isNotNull();
+		Assertions.assertThat(bookSaved.toList().get(0)).isEqualTo(BookCreator.createValidBook());
 	}
 	
 	@Test
@@ -143,9 +146,8 @@ public class BookRepositoryTest {
 	void delete_removesbook_whenSuccessful() {
 		Book bookSaved = this.bookRepository.save(BookCreator.createValidBook());
 		
-	    this.bookRepository.deleteAuthenticatedUserBookById(bookSaved.getId(),bookSaved.getUserDomain().getId());
-	    
-	    Optional<Book> bookDeleted = this.bookRepository.findAuthenticatedUserBooksById(bookSaved.getId(), UserDomainCreator.createUserDomainWithRoleUSER().getId());
+	    this.bookRepository.deleteByIdAndUserDomainId(bookSaved.getId(),bookSaved.getUserDomain().getId());
+	    Optional<Book> bookDeleted = this.bookRepository.findByIdAndUserDomainId(bookSaved.getId(), UserDomainCreator.createUserDomainWithRoleUSER().getId());
 	    
 	    Assertions.assertThat(bookDeleted).isEmpty();
 	}

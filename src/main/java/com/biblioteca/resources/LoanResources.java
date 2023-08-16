@@ -6,6 +6,7 @@ import javax.validation.Valid;
 
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.biblioteca.entities.Loan;
+import com.biblioteca.mapper.LoanMapper;
+import com.biblioteca.requests.LoanGetRequestBody;
 import com.biblioteca.requests.LoanPostRequestBody;
 import com.biblioteca.requests.LoanPutRequestBody;
 import com.biblioteca.services.LoanService;
@@ -37,26 +40,31 @@ public class LoanResources {
 	
 	@GetMapping(value = "/all")
 	@Operation(summary = "find all loans that are not paginated")
-	public ResponseEntity<List<Loan>> findAllNonPageable(){
-		return ResponseEntity.ok(serviceLoan.findAllNonPageable());
+	public ResponseEntity<List<LoanGetRequestBody>> findAllNonPageable(){
+		return ResponseEntity.ok(LoanMapper.INSTANCE.toListOfLoanGetRequestBody(serviceLoan.findAllNonPageable()));
 	}
 	
 	@GetMapping
 	@Operation(summary = "find all loans paginated", description = "the default size is 20, use the parameter to change the default value")
-	public ResponseEntity<Page<Loan>> findAll(@ParameterObject Pageable pageable){
-		return ResponseEntity.ok(serviceLoan.findAll(pageable));
+	public ResponseEntity<Page<LoanGetRequestBody>> findAll(@ParameterObject Pageable pageable){
+
+		PageImpl<LoanGetRequestBody> loanPage = new PageImpl<>(LoanMapper.INSTANCE.toListOfLoanGetRequestBody(serviceLoan.findAll(pageable).toList()));
+		
+		return ResponseEntity.ok(loanPage);
 	}
 	
 	@GetMapping(value = "/{id}")
 	@Operation(summary = "find loan by Id")
-	public ResponseEntity<Loan> findById(@PathVariable long id){
-		return ResponseEntity.ok(serviceLoan.findByIdOrElseThrowResourceNotFoundException(id));
+	public ResponseEntity<LoanGetRequestBody> findById(@PathVariable long id){
+		return ResponseEntity.ok(LoanMapper.INSTANCE.toLoanGetRequestBOdy(serviceLoan.findByIdOrElseThrowResourceNotFoundException(id)));
 	}
 	
 	@PostMapping(path = "/{idBook}")
 	@Operation(description = "for the loan to be made, the user id and the book id are required")
-	public ResponseEntity<Loan> save(@RequestBody @Valid LoanPostRequestBody loansPostRequestBody, @PathVariable Long idBook){
-		return new ResponseEntity<>(serviceLoan.save(loansPostRequestBody,idBook), HttpStatus.CREATED);
+	public ResponseEntity<LoanGetRequestBody> save(@RequestBody @Valid LoanPostRequestBody loansPostRequestBody, @PathVariable Long idBook){
+		
+		Loan loan = serviceLoan.save(LoanMapper.INSTANCE.toLoan(loansPostRequestBody),idBook);
+		return new ResponseEntity<>(LoanMapper.INSTANCE.toLoanGetRequestBOdy(loan), HttpStatus.CREATED);
 	}
 	
 	@DeleteMapping(value = "/{id}")

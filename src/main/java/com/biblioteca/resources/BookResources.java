@@ -6,6 +6,7 @@ import javax.validation.Valid;
 
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.biblioteca.entities.Book;
 import com.biblioteca.enums.StatusBook;
+import com.biblioteca.mapper.BookMapper;
+import com.biblioteca.requests.BookGetRequestBody;
 import com.biblioteca.requests.BookPostRequestBody;
 import com.biblioteca.requests.BookPutRequestBody;
 import com.biblioteca.services.BookService;
@@ -39,65 +42,94 @@ public class BookResources {
 
 	@GetMapping(value = "/all")
 	@Operation(summary = "find all books non paginated")
-	public ResponseEntity<List<Book>> findAllNonPageable(){
-		return ResponseEntity.ok(serviceBook.findAllNonPageable());
+	public ResponseEntity<List<BookGetRequestBody>> findAllNonPageable() {
+		return ResponseEntity.ok(BookMapper.INSTANCE.toListOfBookGetRequetBody(serviceBook.findAllNonPageable()));
 	}
-	
+
 	@GetMapping
 	@Operation(summary = "find all books paginated", description = "the default size is 20, use the parameter to change the default value")
-	public ResponseEntity<Page<Book>> findAll(@ParameterObject Pageable pageable){
-		return ResponseEntity.ok(serviceBook.findAll(pageable));
+	public ResponseEntity<Page<BookGetRequestBody>> findAll(@ParameterObject Pageable pageable) {
+
+		Page<Book> book = serviceBook.findAll(pageable);
+
+		PageImpl<BookGetRequestBody> bookGetPage = new PageImpl<>(
+				BookMapper.INSTANCE.toListOfBookGetRequetBody(book.toList()), pageable, book.getTotalElements());
+
+		return ResponseEntity.ok(bookGetPage);
 	}
-	
+
 	@GetMapping(value = "/{id}")
 	@Operation(summary = "find book by id")
-	public ResponseEntity<Book> findById(@PathVariable Long id){
-		return ResponseEntity.ok(serviceBook.findByIdOrElseThrowResourceNotFoundException(id));
+	public ResponseEntity<BookGetRequestBody> findById(@PathVariable Long id) {
+		return ResponseEntity.ok(
+				BookMapper.INSTANCE.toBookGetRequetBody(serviceBook.findByIdOrElseThrowResourceNotFoundException(id)));
 	}
-	
-	@GetMapping(value = "/findbytitle")
+
+	@GetMapping(value = "/find-by-title")
 	@Operation(summary = "find book by title")
-	public ResponseEntity<List<Book>> findByTitle(@RequestParam String title){
-		return ResponseEntity.ok(serviceBook.findByTitle(title));
+	public ResponseEntity<Page<BookGetRequestBody>> findByTitle(@RequestParam String title,@ParameterObject Pageable pageable) {
+		Page<Book> books = serviceBook.findByTitle(title,pageable);
+		
+		PageImpl<BookGetRequestBody> bookGetPage = new PageImpl<>(BookMapper.INSTANCE.toListOfBookGetRequetBody(books.toList())
+				,pageable
+				,books.getTotalElements());
+		
+		return ResponseEntity.ok(bookGetPage);
 	}
-	
-	@GetMapping(value = "/findbookByStatus")
+
+	@GetMapping(value = "/find-by-Status")
 	@Operation(summary = "find book by status")
-	public ResponseEntity<List<Book>> findBookByStatus(@RequestParam String statusBook){
-		return ResponseEntity.ok(serviceBook.findAllBooksByStatusNonPageable(StatusBook.valueOf(statusBook)));
+	public ResponseEntity<Page<BookGetRequestBody>> findBookByStatus(@RequestParam String statusBook,@ParameterObject Pageable pageable) {
+		Page<Book> books = serviceBook.findAllBooksByStatus(StatusBook.valueOf(statusBook),pageable);
+		
+		PageImpl<BookGetRequestBody> bookGetPage = new PageImpl<>(BookMapper.INSTANCE.toListOfBookGetRequetBody(books.toList()),pageable,books.getTotalElements());
+		
+		return ResponseEntity.ok(bookGetPage);
 	}
-	
+
 	@GetMapping(value = "/find-by-author")
-	@Operation(summary = "find book by title")
-	public ResponseEntity<List<Book>> findByAuthor(@RequestParam String author){
-		return ResponseEntity.ok(serviceBook.findByAuthors(author));
+	@Operation(summary = "find book by author")
+	public ResponseEntity<Page<BookGetRequestBody>> findByAuthor(@RequestParam String author,@ParameterObject Pageable pageable) {
+		Page<Book> books =serviceBook.findByAuthors(author,pageable);
+		
+		PageImpl<BookGetRequestBody> bookGetPage = new PageImpl<>(BookMapper.INSTANCE.toListOfBookGetRequetBody(books.toList())
+				,pageable
+				,books.getTotalElements());
+		
+		return ResponseEntity.ok(bookGetPage);
 	}
-	
+
 	@GetMapping(value = "/find-by-genrer")
 	@Operation(summary = "find book by genrer")
-	public ResponseEntity<List<Book>> findByGenrer(@RequestParam String genrer){
-		return ResponseEntity.ok(serviceBook.findByGenrer(genrer));
+	public ResponseEntity<Page<BookGetRequestBody>> findByGenrer(@RequestParam String genrer,@ParameterObject Pageable pageable) {
+		Page<Book> books = serviceBook.findByGenrer(genrer,pageable);
+		
+		PageImpl<BookGetRequestBody> bookGetPage = new PageImpl<>(BookMapper.INSTANCE.toListOfBookGetRequetBody(books.toList())
+				,pageable
+				,books.getTotalElements());
+		return ResponseEntity.ok(bookGetPage);
 	}
-	
+
 	@PostMapping
 	@Operation(description = "for the book to be made,the publisher Id and the author Id are required")
-	public ResponseEntity<Book> save(@RequestBody @Valid BookPostRequestBody bookPostRequestBody){
-		return new ResponseEntity<Book>(serviceBook.save(bookPostRequestBody), HttpStatus.CREATED);
+	public ResponseEntity<BookGetRequestBody> save(@RequestBody @Valid BookPostRequestBody bookPostRequestBody) {
+		Book book = BookMapper.INSTANCE.toBook(bookPostRequestBody);
+
+		return new ResponseEntity<BookGetRequestBody>(BookMapper.INSTANCE.toBookGetRequetBody(serviceBook.save(book)),
+				HttpStatus.CREATED);
 	}
-	
+
 	@DeleteMapping(value = "/{id}")
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = "204", description = "successful operation"),
-			@ApiResponse(responseCode = "400", description = "when publisher does not exist in the dataBase")
-	})
-	public ResponseEntity<Void> delete(@PathVariable Long id){
+	@ApiResponses(value = { @ApiResponse(responseCode = "204", description = "successful operation"),
+			@ApiResponse(responseCode = "400", description = "when publisher does not exist in the dataBase") })
+	public ResponseEntity<Void> delete(@PathVariable Long id) {
 		serviceBook.delete(id);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-	}	
-	
-    @PutMapping
-    @Operation(description = "for the book to be made, the user Id,the publisher Id and the author Id are required")
-	public ResponseEntity<Void> update(@RequestBody @Valid BookPutRequestBody bookPutRequestBody){
+	}
+
+	@PutMapping
+	@Operation(description = "for the book to be made, the user Id,the publisher Id and the author Id are required")
+	public ResponseEntity<Void> update(@RequestBody @Valid BookPutRequestBody bookPutRequestBody) {
 		serviceBook.update(bookPutRequestBody);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}

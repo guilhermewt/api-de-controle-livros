@@ -62,17 +62,13 @@ public class UserDomainService implements UserDetailsService{
 	}
 	
 
-	public UserDomain saveUser(UserDomainPostRequestBody userDomainPostRequestBody) {	
-	   	log.info(roleModelRepository.findById(2l).get());
-
-		UserDomain userDomain = UserDomainMapper.INSTANCE.toUserDomain(userDomainPostRequestBody);
+	public UserDomain saveUser(UserDomain userDomain) {	
 		userDomain.setPassword(new BCryptPasswordEncoder().encode(userDomain.getPassword()));		
 		userDomain.getRoles().add(roleModelRepository.findById(2l).get());	    
 		return userRepository.save(userDomain);		
 	}
 	
-	public UserDomain saveUserAdmin(UserDomainPostRequestBody userDomainPostRequestBody) {	
-		UserDomain userDomain = UserDomainMapper.INSTANCE.toUserDomain(userDomainPostRequestBody);
+	public UserDomain saveUserAdmin(UserDomain userDomain) {	
 		userDomain.setPassword(new BCryptPasswordEncoder().encode(userDomain.getPassword()));
 		userDomain.getRoles().addAll(Arrays.asList(roleModelRepository.findById(1l).get(),roleModelRepository.findById(2l).get()));
 	    return userRepository.save(userDomain);

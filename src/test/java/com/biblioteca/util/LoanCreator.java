@@ -10,6 +10,7 @@ public class LoanCreator {
 				.startOfTheLoan(DateConvert.convertData("2022/09/15"))
 				.endOfLoan(DateConvert.convertData("2022/09/20"))
 				.userDomain(UserDomainCreator.createUserDomainWithRoleADMIN())
+				.addressee("test addressee")
 				.build();
 	}
 	
@@ -17,6 +18,7 @@ public class LoanCreator {
 		return Loan.builder()
 				.startOfTheLoan(DateConvert.convertData("2022/09/15"))
 				.endOfLoan(DateConvert.convertData("2022/09/20"))
+				.addressee("test addressee")
 				.build();
 	}
 	
@@ -25,6 +27,7 @@ public class LoanCreator {
 				.id(1l)
 				.startOfTheLoan(DateConvert.convertData("2024/04/14"))
 				.endOfLoan(DateConvert.convertData("2024/04/24"))
+				.addressee("test addressee")
 				.build();
 	}
 }

@@ -1,16 +1,8 @@
 tarefas:
 
-- buscar livros por autor (criar test empty e de integration) ok
-- buscar livros por generos ok
-- arrumar dtos para nao voltar a senha
 - dtos dos get
-- corrigir o atualizacao dos dados do usuario tirar a senha do put ok
+- arrumar dtos para nao voltar a senha
 - endpoint para pegar as estatistica dos livros
+- mudar o status do livro ao salvar loan
 
  =========o que fizemos====
- 
-- atualizacao de novos atributos (descricao:string,imageLink:string,salvar livro pelo usbn,genero,authors:objeto ok
-
- - antes de salvar vamos fazer a comparacao dos livros entre os atributos title e authors ok 
- 
- - seguranca com jwt

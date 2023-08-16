@@ -14,10 +14,11 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @Data
 @SuperBuilder
-public class LoanPostRequestBody implements Serializable{
+public class LoanGetRequestBody implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 	
+	private Long id;
 	@NotNull(message = "the loan startOfTheLoan cannot be empty")
 	@Schema(description = "start of the loan")
 	private Date startOfTheLoan;
@@ -29,7 +30,7 @@ public class LoanPostRequestBody implements Serializable{
 	@NotEmpty(message = "the loan addressee cannot be empty")
 	private String addressee;
 
-	public LoanPostRequestBody(Date startOfTheLoan, Date endOfLoan, String addressee) {
+	public LoanGetRequestBody(Date startOfTheLoan, Date endOfLoan, String addressee) {
 		super();
 		this.startOfTheLoan = startOfTheLoan;
 		this.endOfLoan = endOfLoan;

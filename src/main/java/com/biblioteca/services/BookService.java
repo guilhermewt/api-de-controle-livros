@@ -1,7 +1,6 @@
 package com.biblioteca.services;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -17,7 +16,6 @@ import com.biblioteca.mapper.BookMapper;
 import com.biblioteca.repository.BookRepository;
 import com.biblioteca.repository.GenrerRepository;
 import com.biblioteca.repository.UserDomainRepository;
-import com.biblioteca.requests.BookPostRequestBody;
 import com.biblioteca.requests.BookPutRequestBody;
 import com.biblioteca.services.exceptions.BadRequestException;
 import com.biblioteca.services.utilService.GetUserDetails;
@@ -31,96 +29,103 @@ public class BookService {
 	private final BookRepository bookRepository;
 
 	private final UserDomainRepository userDomainRepository;
-	
+
 	private final GenrerRepository genrerRepository;
- 
+
 	private final GetUserDetails userAuthenticated;
+	
 
 	public List<Book> findAllNonPageable() {
-		return bookRepository.findByUserDomainId(userAuthenticated.userAuthenticated().getId());
-	}
-	
-	public Page<Book> findAll(Pageable pageable) {
-		return bookRepository.findByUserDomainId(userAuthenticated.userAuthenticated().getId(), pageable);
-	}
-	
-	public List<Book> findAllBooksByStatusNonPageable(StatusBook statusBook) {
-		List<Book> books = bookRepository.findByUserDomainId(userAuthenticated.userAuthenticated().getId());
-		
-		return books.stream().filter(x -> x.getStatusBook() == statusBook).collect(Collectors.toList());
+		return bookRepository.findByUserDomainIdOrderByIdDesc(userAuthenticated.userAuthenticated().getId());
 	}
 
+	public Page<Book> findAll(Pageable pageable) {
+//		Sort sort = Sort.by(Sort.Direction.DESC,"id");
+//        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+
+		return bookRepository.findByUserDomainIdOrderByIdDesc(userAuthenticated.userAuthenticated().getId(), pageable);
+	}
+
+	public Page<Book> findAllBooksByStatus(StatusBook statusBook,Pageable pageable) {
+		return bookRepository.findByUserDomainIdAndStatusBookOrderByIdDesc(userAuthenticated.userAuthenticated().getId(),statusBook,pageable);
+	}	
+
 	public Book findByIdOrElseThrowResourceNotFoundException(Long idBook) {
-		return  bookRepository.findAuthenticatedUserBooksById(idBook, userAuthenticated.userAuthenticated().getId())
+		return bookRepository.findByIdAndUserDomainId(idBook, userAuthenticated.userAuthenticated().getId())
 				.orElseThrow(() -> new BadRequestException("book not found"));
 	}
-	
-	public List<Book> findByTitle(String title){
-		return bookRepository.findAuthenticatedUserBooksByTitle(title,userAuthenticated.userAuthenticated().getId());
+
+	public Page<Book> findByTitle(String title,Pageable pageable) {
+		return bookRepository.findByUserDomainIdAndTitleContainingIgnoreCaseOrderByIdDesc(userAuthenticated.userAuthenticated().getId(),title,pageable);
 	}
-	
-	public List<Book> findByGenrer(String genrer){	
-		return bookRepository.findByUserDomainIdAndGenrersNameContainingIgnoreCase(
-				userAuthenticated.userAuthenticated().getId(), genrer);
+
+	public Page<Book> findByGenrer(String genrer,Pageable pageable) {
+		return bookRepository.findByUserDomainIdAndGenrersNameContainingIgnoreCaseOrderByIdDesc(
+				userAuthenticated.userAuthenticated().getId(), genrer,pageable);
 	}
-	
-	public List<Book> findByAuthors(String author){	
-		return bookRepository.findByUserDomainIdAndAuthorsContainingIgnoreCase(
-				userAuthenticated.userAuthenticated().getId(), author);
+
+	public Page<Book> findByAuthors(String author,Pageable pageable) {
+		return bookRepository.findByUserDomainIdAndAuthorsContainingIgnoreCaseOrderByIdDesc(
+				userAuthenticated.userAuthenticated().getId(), author,pageable);
 	}
 
 	@Transactional
-	public Book save(BookPostRequestBody bookPostRequestBody) {
-		UserDomain userDomain = userDomainRepository.findById(userAuthenticated.userAuthenticated().getId()).get();	
-		Book book = BookMapper.INSTANCE.toBook(bookPostRequestBody);
-		
-		book.setUserDomain(userDomain);	
-
+	public Book save(Book book) {
+		if(book.getExternalCode() != null) {
+			  if(book.getExternalCode().isEmpty()) {
+		    	  book.setExternalCode(null);
+		      }
+		}
+    
+		UserDomain userDomain = userDomainRepository.findById(userAuthenticated.userAuthenticated().getId()).get();
+		book.setUserDomain(userDomain);
 		validationBook(book);
-		
+
 		return bookRepository.save(book);
 	}
-	
+
 	public void validationBook(Book book) {
-		boolean bookExist = bookRepository.findAll()
-				    .stream()
-					.anyMatch((x) -> x.getExternalCode().equals(book.getExternalCode()) && x.getUserDomain() == book.getUserDomain() || x.equals(book));
-	
-		if(bookExist) {
-				throw new BadRequestException("the book already exist");
+
+		List<Book> booksList = bookRepository.findByUserDomainId(userAuthenticated.userAuthenticated().getId());
+
+		Boolean verifyBookExternal = booksList.stream()
+				.filter((x) -> x.getExternalCode() != null )
+				.anyMatch(x -> x.getExternalCode().equals(book.getExternalCode()));
+
+		Boolean verifyBookEquals = booksList.stream().anyMatch(x -> x.equals(book));
+
+		if (verifyBookExternal || verifyBookEquals) {
+			throw new BadRequestException("the book already exist");
 		}
-		
-		if(!genrerRepository.findAll().containsAll(book.getGenrers())) {
+
+		if (!genrerRepository.findAll().containsAll(book.getGenrers())) {
 			throw new BadRequestException("Genrer not found");
-	    }
+		}
 
 	}
-	
+
 	@Transactional
 	public void delete(Long idBook) {
 		try {
-			bookRepository.deleteAuthenticatedUserBookById(findByIdOrElseThrowResourceNotFoundException(idBook)
-					.getId(),userAuthenticated.userAuthenticated()
-					.getId());
+			bookRepository.deleteByIdAndUserDomainId(findByIdOrElseThrowResourceNotFoundException(idBook).getId(),
+					userAuthenticated.userAuthenticated().getId());
 		} catch (DataIntegrityViolationException e) {
 			throw new BadRequestException(e.getMessage());
 		}
 	}
-	
+
 	@Transactional
 	public void update(BookPutRequestBody bookPutRequestBody) {
 		UserDomain userDomain = userDomainRepository.findById(userAuthenticated.userAuthenticated().getId()).get();
 
-		
-		Book bookSaved = bookRepository.findAuthenticatedUserBooksById(bookPutRequestBody.getId(), 
-				userAuthenticated.userAuthenticated()
-				.getId())
+		Book bookSaved = bookRepository
+				.findByIdAndUserDomainId(bookPutRequestBody.getId(),
+						userAuthenticated.userAuthenticated().getId())
 				.orElseThrow(() -> new BadRequestException("book not found"));
-		
-		
+
 		Book book = BookMapper.INSTANCE.toBook(bookPutRequestBody);
 		book.setId(bookSaved.getId());
-		book.setUserDomain(userDomain);	
+		book.setUserDomain(userDomain);
 		bookRepository.save(book);
 	}
 }

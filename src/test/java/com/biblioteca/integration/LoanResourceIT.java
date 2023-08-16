@@ -32,11 +32,13 @@ import com.biblioteca.repository.BookRepository;
 import com.biblioteca.repository.LoanRepository;
 import com.biblioteca.repository.RoleModelRepository;
 import com.biblioteca.repository.UserDomainRepository;
+import com.biblioteca.requests.LoanGetRequestBody;
 import com.biblioteca.requests.LoanPostRequestBody;
 import com.biblioteca.requests.LoginGetRequestBody;
 import com.biblioteca.util.BookCreator;
 import com.biblioteca.util.DateConvert;
 import com.biblioteca.util.LoanCreator;
+import com.biblioteca.util.LoanGetRequestBodyCreator;
 import com.biblioteca.util.LoanPostRequestBodyCreator;
 import com.biblioteca.util.RolesCreator;
 import com.biblioteca.util.UserDomainCreator;
@@ -107,15 +109,15 @@ public class LoanResourceIT {
 		roleModelRepository.saveAll(Arrays.asList(RoleADMIN,RoleUSER));
 		userDomainRepository.save(USER);
 		
-		Loan loanSaved = loanRepository.save(LoanCreator.createValidLoan());
+		loanRepository.save(LoanCreator.createValidLoan());
 		
-		PageableResponse<Loan> loanPage = testRestTemplateRoleUser.exchange("/loans", HttpMethod.GET, new HttpEntity<>(httpHeaders()), 
-				new ParameterizedTypeReference<PageableResponse<Loan>>() {
+		PageableResponse<LoanGetRequestBody> loanPage = testRestTemplateRoleUser.exchange("/loans", HttpMethod.GET, new HttpEntity<>(httpHeaders()), 
+				new ParameterizedTypeReference<PageableResponse<LoanGetRequestBody>>() {
 		}).getBody();
 		
 		Assertions.assertThat(loanPage).isNotNull().isNotEmpty();
 		Assertions.assertThat(loanPage.toList().get(0).getId()).isNotNull();
-		Assertions.assertThat(loanPage.toList().get(0)).isEqualTo(loanSaved);		
+		Assertions.assertThat(loanPage.toList().get(0)).isEqualTo(LoanGetRequestBodyCreator.createLoanGetRequestBodyCreator());		
 	}
 	
 	@Test
@@ -123,16 +125,15 @@ public class LoanResourceIT {
 	void findAll_ReturnListloan_whenSuccessful() {
 		roleModelRepository.saveAll(Arrays.asList(RoleADMIN,RoleUSER));
 		userDomainRepository.save(USER);
+        loanRepository.save(LoanCreator.createValidLoan());
 		
-		Loan loanSaved = loanRepository.save(LoanCreator.createValidLoan());
-		
-		List<Loan> loan = testRestTemplateRoleUser.exchange("/loans/all", HttpMethod.GET, new HttpEntity<>(httpHeaders()), 
-				 new ParameterizedTypeReference<List<Loan>>() {
+		List<LoanGetRequestBody> loan = testRestTemplateRoleUser.exchange("/loans/all", HttpMethod.GET, new HttpEntity<>(httpHeaders()), 
+				 new ParameterizedTypeReference<List<LoanGetRequestBody>>() {
 				}).getBody();
 		
 		Assertions.assertThat(loan).isNotNull().isNotEmpty();
 		Assertions.assertThat(loan.get(0).getId()).isNotNull();
-		Assertions.assertThat(loan.get(0)).isEqualTo(loanSaved);
+		Assertions.assertThat(loan.get(0)).isEqualTo(LoanGetRequestBodyCreator.createLoanGetRequestBodyCreator());
 	}
 	
 	@Test
@@ -140,15 +141,14 @@ public class LoanResourceIT {
 	void findById_Returnloan_whenSuccessful() {
 		roleModelRepository.saveAll(Arrays.asList(RoleADMIN,RoleUSER));
 		userDomainRepository.save(USER);
-		
-		Loan loanSaved = loanRepository.save(LoanCreator.createValidLoan());
+        loanRepository.save(LoanCreator.createValidLoan());
 			
-		Loan loan = testRestTemplateRoleUser.exchange("/loans/{id}", HttpMethod.GET
-				,new HttpEntity<>(httpHeaders()),Loan.class, loanSaved.getId()).getBody();
+		LoanGetRequestBody loan = testRestTemplateRoleUser.exchange("/loans/{id}", HttpMethod.GET
+				,new HttpEntity<>(httpHeaders()),LoanGetRequestBody.class, LoanGetRequestBodyCreator.createLoanGetRequestBodyCreator().getId()).getBody();
 		
 		Assertions.assertThat(loan).isNotNull();
 		Assertions.assertThat(loan.getId()).isNotNull();
-		Assertions.assertThat(loan).isEqualTo(loanSaved);
+		Assertions.assertThat(loan).isEqualTo(LoanGetRequestBodyCreator.createLoanGetRequestBodyCreator());
 	}
 	
 	@Test
@@ -161,7 +161,8 @@ public class LoanResourceIT {
 		
 		LoanPostRequestBody loanPostRequestBody = LoanPostRequestBodyCreator.createLoanPostRequestBodyCreator();
 			
-		ResponseEntity<Loan> entityloan = testRestTemplateRoleUser.exchange("/loans/{idBook}", HttpMethod.POST,new HttpEntity<>(loanPostRequestBody,httpHeaders()), Loan.class,1);
+		ResponseEntity<LoanGetRequestBody> entityloan = testRestTemplateRoleUser.exchange(
+				"/loans/{idBook}", HttpMethod.POST,new HttpEntity<>(loanPostRequestBody,httpHeaders()), LoanGetRequestBody.class,1);
 		
 		Assertions.assertThat(entityloan).isNotNull();
 		Assertions.assertThat(entityloan.getBody()).isNotNull();
