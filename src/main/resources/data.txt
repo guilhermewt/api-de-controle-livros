@@ -1,11 +1,10 @@
-INSERT INTO tb_user_domain(id,email,name,password,username)
-values(default,'rafa@gmall.com', 'rafael silva', '$2a$10$2n9REGGbEqSHj7fcEEg2heGAzkwcwTnnyKIlQaW21P5QVpwiQOrk6', 'rafasilva');
+insert into tb_users_roles(user_domain_id,role_id)
+values(1,1);
 
-INSERT INTO tb_role(role_id,role_name)
-values(1,'ROLE_ADMIN'),(2,'ROLE_USER');
+insert into tb_book(authors,description,external_code,image_link,status_book,title,user_domain_id)
+values
+('George Orwell', U&'Com o seu 1984, George Orwell reinventou o romance de fic\00e7\00e3o cient\00edfica. Quando menino, ele adorava os romances de H. G. Wells. Como Wells, ele se apoderou das tend\00eancias de seu pr\00f3prio tempo, e tentou imaginar como elas poderiam se desenvolve etc...', NULL, 'http://books.google.com/books/content?id=L-ErEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api', 0, '1984', 1)
 
-INSERT INTO tb_users_roles(user_domain_id,role_id)
-values(1,1),(1,2);
-
-
-
+insert into tb_book_genrer(book_id,genrer_id)
+values
+(1, 3)

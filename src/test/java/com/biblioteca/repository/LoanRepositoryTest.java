@@ -51,6 +51,8 @@ public class LoanRepositoryTest {
 	   this.userRepository.save(UserDomainCreator.createUserDomainWithRoleADMIN());
 		
 	   this.genrerRepository.saveAll(GenrerCreator.createValidGenrer());
+	
+	   
 	}
 		
 	@Test
@@ -76,11 +78,15 @@ public class LoanRepositoryTest {
 	@Test
 	@DisplayName("findById return loan whenSuccessful")
 	void findByid_returnloan_whenSuccessful() {
-		Loan loanToBeSaved = this.loanRepository.save(LoanCreator.createValidLoan());
-		Loan loanSaved = this.loanRepository.findAuthenticatedUserById(loanToBeSaved.getId(),UserDomainCreator.createUserDomainWithRoleADMIN().getId()).get();
+		Book book = this.bookRepository.save(BookCreator.createValidBook());
+		Loan loan = LoanCreator.createValidLoan();
+		loan.setBooks(book);
+
+		Loan loanToBeSaved = this.loanRepository.save(loan);
+		
+		Loan loanSaved = this.loanRepository.findAuthenticatedUserById(book.getId(),UserDomainCreator.createUserDomainWithRoleADMIN().getId()).get();
 		
 		Assertions.assertThat(loanSaved).isNotNull();
-		Assertions.assertThat(loanSaved.getId()).isNotNull();
 		Assertions.assertThat(loanSaved).isEqualTo(loanToBeSaved);
 	}
 	

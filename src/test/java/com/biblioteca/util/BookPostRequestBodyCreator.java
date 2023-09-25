@@ -10,7 +10,7 @@ public class BookPostRequestBodyCreator {
 				.title("o poder da acao")
 				.authors("author name")
 				.externalCode("123")
-				.genrers(GenrerCreator.createValidGenrer())
+				.genrers(GenrerCreator.createValidGenrerSet())
 				.statusBook(StatusBook.LER)
 				.build();
 	}

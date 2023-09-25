@@ -18,6 +18,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import com.biblioteca.services.exceptions.BadRequestException;
 import com.biblioteca.services.exceptions.BadRequestExceptionDetails;
+import com.biblioteca.services.exceptions.ConflictRequestException;
 import com.biblioteca.services.exceptions.StandardError;
 import com.biblioteca.services.exceptions.ValidationExceptionDetails;
 
@@ -69,15 +70,26 @@ public class ResourceExceptionHandler extends ResponseEntityExceptionHandler{
 	}
 	
 	//DataIntegrityViolationException
-	@ExceptionHandler(DataIntegrityViolationException.class)
-	public ResponseEntity<BadRequestExceptionDetails> resourceNotFound(DataIntegrityViolationException bre){
+//	@ExceptionHandler(DataIntegrityViolationException.class)
+//	public ResponseEntity<BadRequestExceptionDetails> resourceNotFound(DataIntegrityViolationException bre){
+//		return new ResponseEntity<>(BadRequestExceptionDetails.builder()
+//				.timestamp(Instant.now())
+//				.status(HttpStatus.CONFLICT.value())
+//				.title("bad Request Exception, check the documentation")
+//				.details(bre.getMessage())
+//				.developerMessage(bre.getClass().getName())
+//				.build(), HttpStatus.BAD_REQUEST);
+//	}
+	
+	@ExceptionHandler(ConflictRequestException.class)
+	public ResponseEntity<BadRequestExceptionDetails> conflictRequestException(ConflictRequestException bre){
 		return new ResponseEntity<>(BadRequestExceptionDetails.builder()
 				.timestamp(Instant.now())
 				.status(HttpStatus.CONFLICT.value())
-				.title("bad Request Exception, check the documentation")
+				.title("Conflict Exception, check the documentation")
 				.details(bre.getMessage())
 				.developerMessage(bre.getClass().getName())
-				.build(), HttpStatus.BAD_REQUEST);
+				.build(), HttpStatus.CONFLICT);
 	}
 	
 }

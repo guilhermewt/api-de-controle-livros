@@ -1,8 +1,9 @@
 package com.biblioteca.entities;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
+
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -55,12 +56,12 @@ public class Book implements Serializable {
 	@OneToOne(mappedBy = "books",cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
 	private Loan loans;
 	
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "tb_book_genrer", joinColumns = @JoinColumn(name = "book_id"), inverseJoinColumns = @JoinColumn(name = "genrer_id"))
 	@Builder.Default
-	private List<Genrer> genrers = new ArrayList<>();
+	private Set<Genrer> genrers = new HashSet<>();
 	
-	public Book(Long id, String title,String description, String imageLink,StatusBook statusBook, String author,String externalCode,List<Genrer> genrers) {
+	public Book(Long id, String title,String description, String imageLink,StatusBook statusBook, String author,String externalCode,Set<Genrer> genrers) {
 		super();
 		this.id = id;
 		this.title = title;

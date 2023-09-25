@@ -12,7 +12,7 @@ public class BookGetRequestBodyCreator {
 				.authors("author name")
 				.externalCode("123")
 				.statusBook(StatusBook.LER)
-				.genrers(GenrerCreator.createValidGenrer())
+				.genrers(GenrerCreator.createValidGenrerSet())
 				.build();
 	}
 }

@@ -21,11 +21,13 @@ public interface LoanRepository extends JpaRepository<Loan, Long>{
 	
 	Page<Loan> findByUserDomainId(Long UserDomainId, Pageable pageable);
 	
-	@Query("select u from Loan u where u.id = ?1 and u.userDomain.id = ?2")
+	@Query("select u from Loan u where u.books.id = ?1 and u.userDomain.id = ?2")
 	Optional<Loan> findAuthenticatedUserById(long idBook, long idUser);
 	
 	@Modifying
 	@Transactional
 	@Query("DELETE from Loan u where u.id = ?1 and u.userDomain.id = ?2")
 	void deleteAuthenticatedUserLoanById(long idBook,long idUserDomain);
+	
+	Optional<Loan>findByIdAndUserDomainId(long id,long userId);
 }

@@ -5,6 +5,19 @@ import com.biblioteca.enums.StatusBook;
 
 public class BookCreator {
 	
+	public static Book createBookWithLoan() {
+		return Book.builder()
+				.id(1l)
+				.title("o poder da acao")
+				.authors("author name")
+				.externalCode("123")
+				.userDomain(UserDomainCreator.createUserDomainWithRoleUSER())
+				.statusBook(StatusBook.LER)
+				.genrers(GenrerCreator.createValidGenrerSet())
+				.loans(LoanCreator.createValidLoan())
+				.build();
+	}
+	
 	public static Book createValidBook() {
 		return Book.builder()
 				.id(1l)
@@ -13,7 +26,7 @@ public class BookCreator {
 				.externalCode("123")
 				.userDomain(UserDomainCreator.createUserDomainWithRoleUSER())
 				.statusBook(StatusBook.LER)
-				.genrers(GenrerCreator.createValidGenrer())
+				.genrers(GenrerCreator.createValidGenrerSet())
 				.build();
 	}
 	
@@ -23,7 +36,7 @@ public class BookCreator {
 				.authors("author name")
 				.externalCode("1234")
 				.statusBook(StatusBook.LER)
-				.genrers(GenrerCreator.createValidGenrer())
+				.genrers(GenrerCreator.createValidGenrerSet())
 				.build();
 	}
 	

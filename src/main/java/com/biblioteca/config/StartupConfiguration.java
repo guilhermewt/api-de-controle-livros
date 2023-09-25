@@ -41,10 +41,7 @@ public class StartupConfiguration implements CommandLineRunner{
 			
 			rolesRepository.saveAll(roles);
 			
-			UserDomain userDomain = new UserDomain(null, "guilherme", "gui@", "guilherme", "$2a$10$2n9REGGbEqSHj7fcEEg2heGAzkwcwTnnyKIlQaW21P5QVpwiQOrk6");
-			
-			UserDomain pedro = new UserDomain(null, "pedro", "pedro@", "pedro", "$2a$10$2n9REGGbEqSHj7fcEEg2heGAzkwcwTnnyKIlQaW21P5QVpwiQOrk6");	
-   
+			UserDomain userDomain = new UserDomain(null, "El Tripaseca", "eltripaseca@gmail", "El Tripaseca", "$2a$10$e.MVyyZt62VzM0wGkSEVjeIbRtr3BQQhLKpu1MlTRpl0snkWiv4ZO");
 			
 			userRepository.save(userDomain);
 					
@@ -78,6 +75,7 @@ public class StartupConfiguration implements CommandLineRunner{
 		        genres.add(new Genrer(null, "Ficção de guerra"));
 		        genres.add(new Genrer(null, "Livros de autoajuda financeira"));
 		        genres.add(new Genrer(null, "Ficção científica pós-apocalíptica"));
+		        genres.add(new Genrer(null, "Tecnologia da informação"));
 		        
 		        genrer.saveAll(genres);
 		}

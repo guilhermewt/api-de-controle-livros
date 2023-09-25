@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.biblioteca.entities.Book;
+import com.biblioteca.entities.BooksStatistics;
 import com.biblioteca.enums.StatusBook;
 import com.biblioteca.requests.BookGetRequestBody;
 import com.biblioteca.services.BookService;
@@ -28,6 +29,7 @@ import com.biblioteca.util.BookCreator;
 import com.biblioteca.util.BookGetRequestBodyCreator;
 import com.biblioteca.util.BookPostRequestBodyCreator;
 import com.biblioteca.util.BookPutRequestBodyCreator;
+import com.biblioteca.util.BookStatisticsCreator;
 import com.biblioteca.util.UserDomainCreator;
 
 @ExtendWith(SpringExtension.class)
@@ -68,7 +70,20 @@ public class BookResourceTest {
 		
 		BDDMockito.when(bookServiceMock.findByGenrer(ArgumentMatchers.anyString(),ArgumentMatchers.any(PageRequest.class))).thenReturn(bookPage);
 		
+		BDDMockito.when(bookServiceMock.getBooksStatistics()).thenReturn(BookStatisticsCreator.createBookStatistics());
+		
 	}
+	
+	@Test
+	@DisplayName("get statistics return statistics about books whenSuccessful")
+	void getStatistics_ReturnStatisticsAboudBooks_whenSuccessful() {
+		BooksStatistics statistics = this.bookResource.getBooksStatistics().getBody();
+		
+		Assertions.assertThat(statistics).isNotNull();
+		Assertions.assertThat(statistics).isNotNull();
+		Assertions.assertThat(statistics).isEqualTo(BookStatisticsCreator.createBookStatistics());
+	}
+	
 	
 	@Test
 	@DisplayName("find all user books Return List Of Object Inside Page whenSuccessful")
@@ -172,7 +187,7 @@ public class BookResourceTest {
 	void findByGenrer_ReturnListOfObjectInsidePage_whenSuccessful() {
 		Book bookSaved = BookCreator.createValidBook();
 		
-		Page<BookGetRequestBody> book = this.bookResource.findByGenrer(bookSaved.getGenrers().get(0).getName(),PageRequest.of(0, 1)).getBody();
+		Page<BookGetRequestBody> book = this.bookResource.findByGenrer("Ficção científica",PageRequest.of(0, 1)).getBody();
 		
 		Assertions.assertThat(book).isNotNull().isNotEmpty();
 		Assertions.assertThat(book.toList().get(0).getId()).isNotNull();

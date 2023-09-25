@@ -11,7 +11,7 @@ public class BookPutRequestBodyCreator {
 				.title("o poder da acao 2")
 				.authors("author name")
 				.externalCode("123")
-				.genrers(GenrerCreator.createValidGenrer())
+				.genrers(GenrerCreator.createValidGenrerSet())
 				.statusBook(StatusBook.LER)
 				.build();
 	}

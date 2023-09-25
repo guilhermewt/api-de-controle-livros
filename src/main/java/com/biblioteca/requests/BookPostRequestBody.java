@@ -1,9 +1,11 @@
 package com.biblioteca.requests;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 
+import javax.persistence.Enumerated;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 import com.biblioteca.entities.Genrer;
 import com.biblioteca.enums.StatusBook;
@@ -23,13 +25,15 @@ public class BookPostRequestBody implements Serializable{
 	private String title;
 	private String description;
 	private String imageLink;
+	@NotNull(message = "the book staus cannot be empty or null")
+    @Enumerated
 	private StatusBook statusBook;
     private String authors;
     private String externalCode;
     
-    private List<Genrer> genrers;
+    private Set<Genrer> genrers;
 
-    public BookPostRequestBody(String title,String description, String imageLink,StatusBook statusBook, String author,String externalCode, List<Genrer> genrer) {
+    public BookPostRequestBody(String title,String description, String imageLink,StatusBook statusBook, String author,String externalCode, Set<Genrer> genrer) {
 		super();
 		this.title = title;
 		this.statusBook = statusBook;

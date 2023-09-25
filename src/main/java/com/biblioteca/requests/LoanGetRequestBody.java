@@ -30,8 +30,9 @@ public class LoanGetRequestBody implements Serializable{
 	@NotEmpty(message = "the loan addressee cannot be empty")
 	private String addressee;
 
-	public LoanGetRequestBody(Date startOfTheLoan, Date endOfLoan, String addressee) {
+	public LoanGetRequestBody(Long id,Date startOfTheLoan, Date endOfLoan, String addressee) {
 		super();
+		this.id = id;
 		this.startOfTheLoan = startOfTheLoan;
 		this.endOfLoan = endOfLoan;
 		this.addressee = addressee;

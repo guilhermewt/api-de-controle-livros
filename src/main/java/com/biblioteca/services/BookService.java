@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.biblioteca.entities.Book;
+import com.biblioteca.entities.BooksStatistics;
 import com.biblioteca.entities.UserDomain;
 import com.biblioteca.enums.StatusBook;
 import com.biblioteca.mapper.BookMapper;
@@ -18,6 +19,7 @@ import com.biblioteca.repository.GenrerRepository;
 import com.biblioteca.repository.UserDomainRepository;
 import com.biblioteca.requests.BookPutRequestBody;
 import com.biblioteca.services.exceptions.BadRequestException;
+import com.biblioteca.services.exceptions.ConflictRequestException;
 import com.biblioteca.services.utilService.GetUserDetails;
 
 import lombok.RequiredArgsConstructor;
@@ -33,7 +35,18 @@ public class BookService {
 	private final GenrerRepository genrerRepository;
 
 	private final GetUserDetails userAuthenticated;
+
+	public BooksStatistics getBooksStatistics() {
+		List<Book> books = bookRepository.findByUserDomainIdOrderByIdDesc(userAuthenticated.userAuthenticated().getId());
 	
+		Long numberOfBooks = books.stream().count();
+		Long numberOfBooksToRead = books.stream().filter(x -> x.getStatusBook().equals(StatusBook.LER)).count();		
+		Long numberOfBooksRead = books.stream().filter(x -> x.getStatusBook().equals(StatusBook.LIDO)).count();
+		Long amountBooksReading = books.stream().filter(x -> x.getStatusBook().equals(StatusBook.LENDO)).count();
+		Long numberBooksBorrowed = books.stream().filter(x -> x.getStatusBook().equals(StatusBook.EMPRESTADO)).count();
+		
+		return new BooksStatistics(numberOfBooks,numberOfBooksToRead,numberOfBooksRead,amountBooksReading,numberBooksBorrowed);
+	}
 
 	public List<Book> findAllNonPageable() {
 		return bookRepository.findByUserDomainIdOrderByIdDesc(userAuthenticated.userAuthenticated().getId());
@@ -90,12 +103,12 @@ public class BookService {
 
 		Boolean verifyBookExternal = booksList.stream()
 				.filter((x) -> x.getExternalCode() != null )
-				.anyMatch(x -> x.getExternalCode().equals(book.getExternalCode()));
+				.anyMatch(x -> x.getExternalCode().equals(book.getExternalCode()) && x.getId() != book.getId());
 
-		Boolean verifyBookEquals = booksList.stream().anyMatch(x -> x.equals(book));
+		Boolean verifyBookEquals = booksList.stream().anyMatch(x -> x.equals(book) && x.getId() != book.getId());
 
 		if (verifyBookExternal || verifyBookEquals) {
-			throw new BadRequestException("the book already exist");
+			throw new ConflictRequestException("the book already exist");
 		}
 
 		if (!genrerRepository.findAll().containsAll(book.getGenrers())) {
@@ -126,6 +139,7 @@ public class BookService {
 		Book book = BookMapper.INSTANCE.toBook(bookPutRequestBody);
 		book.setId(bookSaved.getId());
 		book.setUserDomain(userDomain);
+		validationBook(book);
 		bookRepository.save(book);
 	}
 }

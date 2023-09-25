@@ -27,6 +27,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import com.biblioteca.data.JwtObject;
 import com.biblioteca.entities.Book;
+import com.biblioteca.entities.BooksStatistics;
 import com.biblioteca.entities.RoleModel;
 import com.biblioteca.entities.UserDomain;
 import com.biblioteca.repository.BookRepository;
@@ -38,6 +39,7 @@ import com.biblioteca.requests.LoginGetRequestBody;
 import com.biblioteca.util.BookCreator;
 import com.biblioteca.util.BookGetRequestBodyCreator;
 import com.biblioteca.util.BookPostRequestBodyCreator;
+import com.biblioteca.util.BookStatisticsCreator;
 import com.biblioteca.util.RolesCreator;
 import com.biblioteca.util.UserDomainCreator;
 import com.biblioteca.wrapper.PageableResponse;
@@ -97,6 +99,21 @@ public class BookResourceIT {
 		LoginGetRequestBody login = new LoginGetRequestBody("userBiblioteca","biblioteca");
 		ResponseEntity<JwtObject> jwt = testRestTemplateRoleUser.postForEntity("/login", login, JwtObject.class);
 		return jwt.getBody();
+	}
+	
+	@Test
+	@DisplayName("get statistics return statistics about books whenSuccessful")
+	void getStatistics_ReturnStatisticsAboudBooks_whenSuccessful() {
+		roleModelRepository.saveAll(Arrays.asList(RoleADMIN,RoleUSER));
+		userDomainRepository.save(USER);
+		bookRepository.save(BookCreator.createValidBook());
+				
+		BooksStatistics statistics = testRestTemplateRoleUser.exchange("/books/get-books-statistics", HttpMethod.GET,new HttpEntity<>(httpHeaders()),
+				new ParameterizedTypeReference<BooksStatistics>() {
+				}).getBody();		
+		
+		Assertions.assertThat(statistics).isNotNull();
+		Assertions.assertThat(statistics).isEqualTo(BookStatisticsCreator.createBookStatistics());
 	}
 	
 	@Test
@@ -219,7 +236,7 @@ public class BookResourceIT {
 		userDomainRepository.save(USER);
 	     bookRepository.save(BookCreator.createValidBook());
 			
-		String url = String.format("/books/find-by-genrer?genrer=%s",BookGetRequestBodyCreator.createBookGetRequestBodyCreator().getGenrers().get(0).getName());
+		String url = String.format("/books/find-by-genrer?genrer=%s","Ficção científica");
 		
 		PageableResponse<BookGetRequestBody> Book = testRestTemplateRoleUser.exchange(url, HttpMethod.GET,new HttpEntity<>(httpHeaders()),
 				new ParameterizedTypeReference<PageableResponse<BookGetRequestBody>>() {

@@ -1,8 +1,7 @@
 tarefas:
 
-- dtos dos get
-- arrumar dtos para nao voltar a senha
-- endpoint para pegar as estatistica dos livros
-- mudar o status do livro ao salvar loan
+- estatisticas 
+- testes estatisticas
+- configurar respostar 409 livro usuario
 
  =========o que fizemos====

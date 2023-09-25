@@ -5,15 +5,19 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
+import javax.validation.ConstraintViolationException;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.biblioteca.data.UserDomainDetails;
 import com.biblioteca.entities.UserDomain;
@@ -23,6 +27,7 @@ import com.biblioteca.repository.UserDomainRepository;
 import com.biblioteca.requests.UserDomainPostRequestBody;
 import com.biblioteca.requests.UserDomainPutRequestBody;
 import com.biblioteca.services.exceptions.BadRequestException;
+import com.biblioteca.services.exceptions.ConflictRequestException;
 import com.biblioteca.services.utilService.GetUserDetails;
 
 import lombok.RequiredArgsConstructor;
@@ -61,17 +66,27 @@ public class UserDomainService implements UserDetailsService{
 		return userAuthenticated.userAuthenticated();
 	}
 	
-
 	public UserDomain saveUser(UserDomain userDomain) {	
+		
 		userDomain.setPassword(new BCryptPasswordEncoder().encode(userDomain.getPassword()));		
 		userDomain.getRoles().add(roleModelRepository.findById(2l).get());	    
-		return userRepository.save(userDomain);		
+		try {
+			return userRepository.save(userDomain);
+		}catch(DataIntegrityViolationException e) {
+			throw new ConflictRequestException("the user already exist");
+		}		
 	}
 	
 	public UserDomain saveUserAdmin(UserDomain userDomain) {	
+	
 		userDomain.setPassword(new BCryptPasswordEncoder().encode(userDomain.getPassword()));
 		userDomain.getRoles().addAll(Arrays.asList(roleModelRepository.findById(1l).get(),roleModelRepository.findById(2l).get()));
-	    return userRepository.save(userDomain);
+		try {
+			return userRepository.save(userDomain);
+		}catch(DataIntegrityViolationException  e) {
+			throw new ConflictRequestException("the user already exist");
+		}
+	    
 	}
 	
 	public void delete(long id) {	
@@ -101,4 +116,7 @@ public class UserDomainService implements UserDetailsService{
 
 		return new UserDomainDetails(userDomain);
 	}
+	
+	
+
 }

@@ -19,6 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.biblioteca.entities.Book;
+import com.biblioteca.entities.BooksStatistics;
 import com.biblioteca.enums.StatusBook;
 import com.biblioteca.repository.BookRepository;
 import com.biblioteca.repository.GenrerRepository;
@@ -29,6 +30,7 @@ import com.biblioteca.services.exceptions.BadRequestException;
 import com.biblioteca.services.utilService.GetUserDetails;
 import com.biblioteca.util.BookCreator;
 import com.biblioteca.util.BookPutRequestBodyCreator;
+import com.biblioteca.util.BookStatisticsCreator;
 import com.biblioteca.util.GenrerCreator;
 import com.biblioteca.util.RolesCreator;
 import com.biblioteca.util.UserDomainCreator;
@@ -91,6 +93,16 @@ public class BookServiceTest {
 		.thenReturn(bookPage);
 		
 		
+	}
+	
+	@Test
+	@DisplayName("get statistics return statistics about books whenSuccessful")
+	void getStatistics_ReturnStatisticsAboudBooks_whenSuccessful() {
+		BooksStatistics statistics = this.bookService.getBooksStatistics();
+		
+		Assertions.assertThat(statistics).isNotNull();
+		Assertions.assertThat(statistics).isNotNull();
+		Assertions.assertThat(statistics).isEqualTo(BookStatisticsCreator.createBookStatistics());
 	}
 	
 	@Test
@@ -179,7 +191,7 @@ public class BookServiceTest {
 	void findByGenrer_ReturnListOfObjectInsidePage_whenSuccessful() {
 		Book bookSaved = BookCreator.createValidBook();
 		
-		Page<Book> book = this.bookService.findByGenrer(bookSaved.getGenrers().get(0).getName(),PageRequest.of(0, 5));
+		Page<Book> book = this.bookService.findByGenrer("Ficção científica",PageRequest.of(0, 5));
 		
 		Assertions.assertThat(book).isNotNull().isNotEmpty();
 		Assertions.assertThat(book.toList().get(0).getId()).isNotNull();

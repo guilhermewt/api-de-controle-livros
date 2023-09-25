@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.biblioteca.entities.Book;
+import com.biblioteca.entities.BooksStatistics;
 import com.biblioteca.enums.StatusBook;
 import com.biblioteca.mapper.BookMapper;
 import com.biblioteca.requests.BookGetRequestBody;
@@ -111,7 +112,7 @@ public class BookResources {
 	}
 
 	@PostMapping
-	@Operation(description = "for the book to be made,the publisher Id and the author Id are required")
+	@Operation()
 	public ResponseEntity<BookGetRequestBody> save(@RequestBody @Valid BookPostRequestBody bookPostRequestBody) {
 		Book book = BookMapper.INSTANCE.toBook(bookPostRequestBody);
 
@@ -132,5 +133,11 @@ public class BookResources {
 	public ResponseEntity<Void> update(@RequestBody @Valid BookPutRequestBody bookPutRequestBody) {
 		serviceBook.update(bookPutRequestBody);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	}
+	
+	@GetMapping(value = "/get-books-statistics")
+	@Operation(summary = "statistics about books")
+	public ResponseEntity<BooksStatistics> getBooksStatistics(){
+		return ResponseEntity.ok(serviceBook.getBooksStatistics());
 	}
 }

@@ -17,7 +17,6 @@ import com.biblioteca.mapper.LoanMapper;
 import com.biblioteca.repository.LoanRepository;
 import com.biblioteca.repository.BookRepository;
 import com.biblioteca.repository.UserDomainRepository;
-import com.biblioteca.requests.LoanPostRequestBody;
 import com.biblioteca.requests.LoanPutRequestBody;
 import com.biblioteca.services.exceptions.BadRequestException;
 import com.biblioteca.services.utilService.GetUserDetails;
@@ -74,10 +73,14 @@ public class LoanService {
 		}
 	}
 
+	@Transactional
 	public void update(LoanPutRequestBody loansPutRequestBody) {
 		Loan loan = loanRepository
-				.findAuthenticatedUserById(loansPutRequestBody.getId(),userAuthenticated.userAuthenticated().getId())
+				.findByIdAndUserDomainId(loansPutRequestBody.getId(), userAuthenticated.userAuthenticated().getId())
 				.orElseThrow(() -> new BadRequestException("loan not found"));
+		
+//		 Book book = loan.getBooks();
+//		    book.getGenrers().size();
 		
 		LoanMapper.INSTANCE.updateLoan(loansPutRequestBody, loan);
 				

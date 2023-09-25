@@ -78,6 +78,10 @@ public class LoanServiceTest {
 		
 		BDDMockito.when(roleModelRepository.findById(ArgumentMatchers.eq(1l))).thenReturn(Optional.of(RolesCreator.createAdminRoleModel()));
 		BDDMockito.when(roleModelRepository.findById(ArgumentMatchers.eq(2l))).thenReturn(Optional.of(RolesCreator.createUserRoleModel()));
+		
+		BDDMockito.when(loanRepositoryMock.findByIdAndUserDomainId(ArgumentMatchers.anyLong(), ArgumentMatchers.anyLong())).thenReturn(Optional.of(LoanCreator.createValidLoan()));
+		
+	
 	}
 	
 	@Test

@@ -1,7 +1,7 @@
 package com.biblioteca.requests;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 
 import javax.validation.constraints.NotEmpty;
 
@@ -32,9 +32,9 @@ public class BookPutRequestBody implements Serializable{
     private String authors;
     private String externalCode;
     
-    private List<Genrer> genrers;
+    private Set<Genrer> genrers;
 
-	public BookPutRequestBody(Long id, String title,String description, String imageLink,StatusBook statusBook, String authors,String externalCode, List<Genrer> genrer) {
+	public BookPutRequestBody(Long id, String title,String description, String imageLink,StatusBook statusBook, String authors,String externalCode, Set<Genrer> genrer) {
 		super();
 		this.id = id;
 		this.title = title;
