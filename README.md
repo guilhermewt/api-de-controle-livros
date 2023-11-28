@@ -1,11 +1,18 @@
+<div align="center">
+	<img src="https://github.com/guilhermewt/assets/blob/main/Api%20de%20pedidos/spring-boot.webp" style="width:90px;height:50px;">
+	<img src="https://github.com/guilhermewt/assets/blob/main/Api%20de%20pedidos/java.webp" style="width:70px;height:50px;">
+	<img src="https://github.com/guilhermewt/assets/blob/main/Api%20de%20pedidos/jwt.png" style="width:90px;height:50px;">
+	<img src="https://github.com/guilhermewt/assets/blob/main/Api%20de%20pedidos/postgre.jpg" style="width:80px;height:50px;">
+	<img src="https://github.com/guilhermewt/assets/blob/main/Api%20de%20pedidos/docker.jpg" style="width:90px;height:50px;">
+	<img src="https://github.com/guilhermewt/assets/blob/main/Api%20de%20pedidos/JUnit.svg" style="width:90px;height:50px;">
+</div>
 
 
-### projeto Em construção <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0fm1v4G3YfyGZ5fOEJtQjYIDM3D_kU5ld8w&usqp=CAU">
 
-# Webservice de emprestimo de livros
- Este projeto consiste em um sistema de gerenciamento de livros que permite o controle e organização eficientes da biblioteca pessoal de um usuário. O sistema possui as seguintes funcionalidades:
+# API GESTÃO DE LIVROS
+ Este projeto consiste em um sistema de gerenciamento de livros que permite o controle e organização da biblioteca pessoal de um usuário. O sistema possui as seguintes funcionalidades:
 
-1. Adição de livros: Os usuários podem adicionar livros à sua biblioteca, fornecendo informações como título, autor, gênero, ano de publicação e qualquer outra informação relevante.
+1. Adição de livros: Os usuários podem adicionar livros à sua biblioteca, fornecendo informações como título, autor, gênero, ano de publicação.
 
 2. Acompanhamento do status de leitura: O sistema permite que os usuários rastreiem o status de leitura de cada livro. Eles podem indicar se já leram o livro, se estão lendo no momento ou se ainda não começaram a leitura.
 
@@ -15,11 +22,28 @@
 
 5. Consulta de livros: O sistema permite que os usuários realizem consultas na biblioteca. Eles podem pesquisar livros por nome, gênero ou status de leitura (lidos, não lidos, lendo). Isso facilita a localização de livros específicos ou a visualização de uma lista de livros com determinadas características.
 
-Essas funcionalidades fornecem aos usuários um sistema completo para gerenciar sua biblioteca pessoal de forma organizada. Eles podem adicionar novos livros, acompanhar seu progresso de leitura, estabelecer empréstimos e consultar facilmente sua coleção com base em diferentes critérios. Isso permite que os usuários tenham um controle maior sobre sua leitura e promove uma experiência aprimorada de gerenciamento de livros.
 
-- para usar a api o usuario tem que está autenticado. Se for a primeira vez do usuario no sistema existe um endPoint para ele se cadastrar e assim poder usar o sistema
+## Guia
 
- <br>
+- [Tecnologias utilizadas](#Tecnologias-utilizadas)
+- [Arquitetura](#Arquitetura)
+- [Como usar a Api](#Como-usar-a-Api)
+- [Como executar o sistema?](#Endpoints-da-Api)
+
+# Tecnologias utilizadas
+  - spring boot
+  - maven
+  - jpa/hibernate
+  - postgreSQL
+  - JPQL
+  - swagger
+  - paginação
+  - Docker
+
+# Security
+  - spring security
+  - auth
+  - JWT
   
 # Tests
   - Tests de jpa
@@ -29,25 +53,8 @@ Essas funcionalidades fornecem aos usuários um sistema completo para gerenciar 
   - Para rodar os testes Unitários na linha de comando basta adicionar -> mvn test
   - Para rodar os testes de Integração na linha de comando basta adicionar -> mvn test -Pintegration-tests
   - se o sistema estiver rodando sem banco de dados, com apenas o H2 então comente as anotaçoẽs (@SpringBootTest,@Test) da classe ProjetoBibliotecaApplicationTests
-     
-  
    
-  
-# Security
-  - spring security
-  - auth
-  
-# Tecnologias utilizadas
-  - spring boot<p>
-  - maven<p>
-  - jpa/hibernate<p>
-  - postgreSQL
-  - JPQL
-  - swagger
-
-
-
-# Diagrama de classe do webservice de livros
+# Arquitetura
 <div>
 	  <img src="https://github.com/guilhermewt/assets/blob/main/webservices%20de%20livros/diagrama%20de%20classe.png" style="background:#FFFFFF;
     		width: 500px;
@@ -60,32 +67,32 @@ Essas funcionalidades fornecem aos usuários um sistema completo para gerenciar 
  <br><br>
 
 
-# Documentação swagger
-<div>
-	  <img src="https://github.com/guilhermewt/assets/blob/main/webservices%20de%20livros/userDomainResources.png" style="background:#FFFFFF;
-    		width: 700px;
-      height:800px
-    		padding: 5px;
-    		margin: 5px;
-    		float: left; ">
-	</div>
+# Como usar a Api
+
+  - online:https://api-spring-book.onrender.com/
+  - localmente: localhost:8080
+
+### 1 - Criar usuário:Faça um cadastro utilizando a rota
+     https://api-spring-book.onrender.com/swagger-ui/index.html#/user-domain-resources/saveUser.        
+  - Envie os dados necessários para criar um novo usuário, como nome de usuário, email, ,username e senha.
+
+2 - Fazer o login:
+
+- Para obter um token de autenticação, faça o login na rota '/login'.
+- Envie o nome de usuário (username) e senha para autenticar e receber o token JWT.
+- se estiver usando swagger basta pegar o token na rotar login e colocar em autorize que podera usar toda api pelo swagger.
+
+### 3 - Listar os livros: Liste os livros no endpoint 
+     https://api-spring-book.onrender.com/swagger-ui/index.html#/book-resources/findAllNonPageable
  
- <div>
-	  <img src="https://github.com/guilhermewt/assets/blob/main/webservices%20de%20livros/loanResources.png" style="background:#FFFFFF;
-    		width: 700px;
-      height:800px
-    		padding: 5px;
-    		margin: 5px;
-    		float: left; ">
-	</div>
- <div>
-	  <img src="https://github.com/guilhermewt/assets/blob/main/webservices%20de%20livros/bookResource.png" style="background:#FFFFFF;
-    		width: 700px;
-      height:800px
-    		padding: 5px;
-    		margin: 5px;
-    		float: left; ">
-	</div>
+- lembrando que existe outros endpoint com paginação
+
+### 4 - salvar um livro:
+     https://api-spring-book.onrender.com/swagger-ui/index.html#/book-resources/save_1
+- alguns campos como titulo,descricao,autor, genero etc... Serão necessários
+
+- Lembre-se de incluir o token JWT nos cabeçalhos das requisições subsequentes após fazer o login. O token de autenticação será retornado após o login e deve ser enviado no cabeçalho Authorization de todas as solicitações subsequentes.
+
 
 	
 
