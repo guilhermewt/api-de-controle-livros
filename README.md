@@ -28,7 +28,7 @@
 - [Tecnologias utilizadas](#Tecnologias-utilizadas)
 - [Arquitetura](#Arquitetura)
 - [Como usar a Api](#Como-usar-a-Api)
-- [Como executar o sistema?](#Como-executar-o-sistema?)
+- [Como executar o sistema](#Como-executar-o-sistema)
 
 # Tecnologias utilizadas
   - spring boot
@@ -96,7 +96,7 @@
 
 	
 
-# Como executar o sistema?
+# Como executar o sistema
 Pré-requisitos: java 11
 
 ```bash
