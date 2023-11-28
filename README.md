@@ -31,6 +31,7 @@
 - [Como executar o sistema](#Como-executar-o-sistema)
 
 # Tecnologias utilizadas
+  - Java
   - spring boot
   - maven
   - jpa/hibernate
