@@ -28,7 +28,7 @@
 - [Tecnologias utilizadas](#Tecnologias-utilizadas)
 - [Arquitetura](#Arquitetura)
 - [Como usar a Api](#Como-usar-a-Api)
-- [Como executar o sistema?](#Endpoints-da-Api)
+- [Como executar o sistema?](#Como-executar-o-sistema?)
 
 # Tecnologias utilizadas
   - spring boot
