@@ -29,6 +29,7 @@ import com.biblioteca.services.LoanService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -39,13 +40,15 @@ public class LoanResources {
 	private final LoanService serviceLoan;
 	
 	@GetMapping(value = "/all")
-	@Operation(summary = "find all loans that are not paginated")
+	@Operation(summary = "find all loans that are not paginated",security = { @SecurityRequirement(name = "bearer-key") })
 	public ResponseEntity<List<LoanGetRequestBody>> findAllNonPageable(){
 		return ResponseEntity.ok(LoanMapper.INSTANCE.toListOfLoanGetRequestBody(serviceLoan.findAllNonPageable()));
 	}
 	
 	@GetMapping
-	@Operation(summary = "find all loans paginated", description = "the default size is 20, use the parameter to change the default value")
+	@Operation(summary = "find all loans paginated", 
+	description = "the default size is 20, use the parameter to change the default value",
+	security = { @SecurityRequirement(name = "bearer-key") })
 	public ResponseEntity<Page<LoanGetRequestBody>> findAll(@ParameterObject Pageable pageable){
 
 		PageImpl<LoanGetRequestBody> loanPage = new PageImpl<>(LoanMapper.INSTANCE.toListOfLoanGetRequestBody(serviceLoan.findAll(pageable).toList()));
@@ -54,13 +57,14 @@ public class LoanResources {
 	}
 	
 	@GetMapping(value = "/{id}")
-	@Operation(summary = "find loan by Id")
+	@Operation(summary = "find loan by Id",security = { @SecurityRequirement(name = "bearer-key") })
 	public ResponseEntity<LoanGetRequestBody> findById(@PathVariable long id){
 		return ResponseEntity.ok(LoanMapper.INSTANCE.toLoanGetRequestBOdy(serviceLoan.findByIdOrElseThrowResourceNotFoundException(id)));
 	}
 	
 	@PostMapping(path = "/{idBook}")
-	@Operation(description = "for the loan to be made, the user id and the book id are required")
+	@Operation(description = "for the loan to be made, the user id and the book id are required",
+	security = { @SecurityRequirement(name = "bearer-key") })
 	public ResponseEntity<LoanGetRequestBody> save(@RequestBody @Valid LoanPostRequestBody loansPostRequestBody, @PathVariable Long idBook){
 		
 		Loan loan = serviceLoan.save(LoanMapper.INSTANCE.toLoan(loansPostRequestBody),idBook);
@@ -72,13 +76,15 @@ public class LoanResources {
 			@ApiResponse(responseCode = "204", description = "successful operation"),
 			@ApiResponse(responseCode = "400", description = "when loan does not exist in the dataBase")
 	})
+	@Operation(security = { @SecurityRequirement(name = "bearer-key") })
 	public ResponseEntity<Void> delete(@PathVariable long id){
 		serviceLoan.delete(id);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}	
 	
 	@PutMapping
-	@Operation(description = "for the loan to be made, the user Id and the book Id are required")
+	@Operation(description = "for the loan to be made, the user Id and the book Id are required",
+	security = { @SecurityRequirement(name = "bearer-key") })
 	public ResponseEntity<Void> update(@RequestBody @Valid LoanPutRequestBody loansPutRequestBody){
 		serviceLoan.update(loansPutRequestBody);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);

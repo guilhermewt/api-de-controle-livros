@@ -12,6 +12,7 @@ import com.biblioteca.requests.GenrerGetRequestBody;
 import com.biblioteca.services.GenrerService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -22,9 +23,10 @@ public class GenrerResources {
 	private final GenrerService serviceGenrer;
 
 	@GetMapping(value = "/all")
-	@Operation(summary = "find all Genrers non paginated")
+	@Operation(summary = "find all Genrers non paginated",security = { @SecurityRequirement(name = "bearer-key") })
 	public ResponseEntity<List<GenrerGetRequestBody>> findAllNonPageable(){
 		return ResponseEntity.ok(GenrerMapper.INSTANCE.toListOfGenrerGetRequetBody(serviceGenrer.findAllNonPageable()));
 	}
 	
 }
+

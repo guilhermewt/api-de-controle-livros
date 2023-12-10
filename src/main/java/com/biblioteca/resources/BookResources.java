@@ -33,6 +33,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 @RestController
 @RequestMapping(value = "/books")
@@ -42,13 +43,13 @@ public class BookResources {
 	private final BookService serviceBook;
 
 	@GetMapping(value = "/all")
-	@Operation(summary = "find all books non paginated")
+	@Operation(summary = "find all books non paginated",security = { @SecurityRequirement(name = "bearer-key") })
 	public ResponseEntity<List<BookGetRequestBody>> findAllNonPageable() {
 		return ResponseEntity.ok(BookMapper.INSTANCE.toListOfBookGetRequetBody(serviceBook.findAllNonPageable()));
 	}
 
 	@GetMapping
-	@Operation(summary = "find all books paginated", description = "the default size is 20, use the parameter to change the default value")
+	@Operation(summary = "find all books paginated", description = "the default size is 20, use the parameter to change the default value",security = { @SecurityRequirement(name = "bearer-key") })
 	public ResponseEntity<Page<BookGetRequestBody>> findAll(@ParameterObject Pageable pageable) {
 
 		Page<Book> book = serviceBook.findAll(pageable);
@@ -60,14 +61,14 @@ public class BookResources {
 	}
 
 	@GetMapping(value = "/{id}")
-	@Operation(summary = "find book by id")
+	@Operation(summary = "find book by id",security = { @SecurityRequirement(name = "bearer-key") })
 	public ResponseEntity<BookGetRequestBody> findById(@PathVariable Long id) {
 		return ResponseEntity.ok(
 				BookMapper.INSTANCE.toBookGetRequetBody(serviceBook.findByIdOrElseThrowResourceNotFoundException(id)));
 	}
 
 	@GetMapping(value = "/find-by-title")
-	@Operation(summary = "find book by title")
+	@Operation(summary = "find book by title",security = { @SecurityRequirement(name = "bearer-key") })
 	public ResponseEntity<Page<BookGetRequestBody>> findByTitle(@RequestParam String title,@ParameterObject Pageable pageable) {
 		Page<Book> books = serviceBook.findByTitle(title,pageable);
 		
@@ -79,7 +80,7 @@ public class BookResources {
 	}
 
 	@GetMapping(value = "/find-by-Status")
-	@Operation(summary = "find book by status")
+	@Operation(summary = "find book by status",security = { @SecurityRequirement(name = "bearer-key") })
 	public ResponseEntity<Page<BookGetRequestBody>> findBookByStatus(@RequestParam String statusBook,@ParameterObject Pageable pageable) {
 		Page<Book> books = serviceBook.findAllBooksByStatus(StatusBook.valueOf(statusBook),pageable);
 		
@@ -89,7 +90,7 @@ public class BookResources {
 	}
 
 	@GetMapping(value = "/find-by-author")
-	@Operation(summary = "find book by author")
+	@Operation(summary = "find book by author",security = { @SecurityRequirement(name = "bearer-key") })
 	public ResponseEntity<Page<BookGetRequestBody>> findByAuthor(@RequestParam String author,@ParameterObject Pageable pageable) {
 		Page<Book> books =serviceBook.findByAuthors(author,pageable);
 		
@@ -101,7 +102,7 @@ public class BookResources {
 	}
 
 	@GetMapping(value = "/find-by-genrer")
-	@Operation(summary = "find book by genrer")
+	@Operation(summary = "find book by genrer",security = { @SecurityRequirement(name = "bearer-key") })
 	public ResponseEntity<Page<BookGetRequestBody>> findByGenrer(@RequestParam String genrer,@ParameterObject Pageable pageable) {
 		Page<Book> books = serviceBook.findByGenrer(genrer,pageable);
 		
@@ -112,7 +113,7 @@ public class BookResources {
 	}
 
 	@PostMapping
-	@Operation()
+	@Operation(security = { @SecurityRequirement(name = "bearer-key") })
 	public ResponseEntity<BookGetRequestBody> save(@RequestBody @Valid BookPostRequestBody bookPostRequestBody) {
 		Book book = BookMapper.INSTANCE.toBook(bookPostRequestBody);
 
@@ -123,21 +124,23 @@ public class BookResources {
 	@DeleteMapping(value = "/{id}")
 	@ApiResponses(value = { @ApiResponse(responseCode = "204", description = "successful operation"),
 			@ApiResponse(responseCode = "400", description = "when publisher does not exist in the dataBase") })
+	@Operation(security = { @SecurityRequirement(name = "bearer-key") })
 	public ResponseEntity<Void> delete(@PathVariable Long id) {
 		serviceBook.delete(id);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 
 	@PutMapping
-	@Operation(description = "for the book to be made, the user Id,the publisher Id and the author Id are required")
+	@Operation(description = "for the book to be made, the user Id,the publisher Id and the author Id are required",
+	security = { @SecurityRequirement(name = "bearer-key") })
 	public ResponseEntity<Void> update(@RequestBody @Valid BookPutRequestBody bookPutRequestBody) {
 		serviceBook.update(bookPutRequestBody);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 	
 	@GetMapping(value = "/get-books-statistics")
-	@Operation(summary = "statistics about books")
+	@Operation(summary = "statistics about books",security = { @SecurityRequirement(name = "bearer-key") })
 	public ResponseEntity<BooksStatistics> getBooksStatistics(){
 		return ResponseEntity.ok(serviceBook.getBooksStatistics());
 	}
-}
+}	
